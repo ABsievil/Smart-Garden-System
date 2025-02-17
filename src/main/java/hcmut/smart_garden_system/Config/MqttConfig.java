@@ -1,5 +1,6 @@
 package hcmut.smart_garden_system.Config;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -17,12 +18,21 @@ import hcmut.smart_garden_system.Services.SensorDataService;
 @Configuration
 public class MqttConfig {
     
+    @Value("${mqtt.broker.url}")
+    private String brokerUrl;
+    
+    @Value("${mqtt.client.id}")
+    private String clientId;
+    
+    @Value("${mqtt.topic}")
+    private String topic;
+
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
         
-        options.setServerURIs(new String[] { "tcp://localhost:1883" }); // Địa chỉ MQTT broker
+        options.setServerURIs(new String[] { brokerUrl }); // Địa chỉ MQTT broker
         options.setCleanSession(true);
         
         factory.setConnectionOptions(options);
@@ -36,10 +46,8 @@ public class MqttConfig {
     
     @Bean
     public MessageProducer inbound() {
-        MqttPahoMessageDrivenChannelAdapter adapter =
-            new MqttPahoMessageDrivenChannelAdapter("serverClient", 
-                mqttClientFactory(), 
-                "/home/sensors/esp32"); // MQTT topic để subscribe
+        MqttPahoMessageDrivenChannelAdapter 
+            adapter = new MqttPahoMessageDrivenChannelAdapter(clientId, mqttClientFactory(), topic); // MQTT topic để subscribe
                 
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
