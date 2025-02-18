@@ -9,6 +9,7 @@ import org.springframework.integration.core.MessageProducer;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -26,6 +27,9 @@ public class MqttConfig {
     
     @Value("${mqtt.topic}")
     private String topic;
+
+    @Value("${mqtt.topicfromserver}")
+    private String topicFromServer;
 
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
@@ -65,5 +69,20 @@ public class MqttConfig {
             // Lưu message vào service để render ra view
             SensorDataService.updateLatestData(payload);
         };
+    }
+
+    // Publish message to MQTT broker
+    @Bean
+    public MessageChannel mqttOutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "mqttOutboundChannel")
+    public MessageHandler mqttOutbound() {
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId + "_pub", mqttClientFactory());
+        messageHandler.setAsync(true);
+        messageHandler.setDefaultTopic(topicFromServer);
+        return messageHandler;
     }
 }
