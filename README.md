@@ -2,7 +2,7 @@ Welcome to Smart Garden System
 
 The project for DADN course
 
-### ROLE
+### RULE
 You must read Ref folder to know commit syntax
 
 master branch: to deployment server, collaborators cannot commit to this branch
