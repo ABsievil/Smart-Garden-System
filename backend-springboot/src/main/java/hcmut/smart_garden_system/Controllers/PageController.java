@@ -26,4 +26,8 @@ public class PageController {
         return "sensorData";
     }
 
+    @GetMapping("/sendEmail")
+    String sendEmailPage(){
+        return "emailForm";
+    }
 }
