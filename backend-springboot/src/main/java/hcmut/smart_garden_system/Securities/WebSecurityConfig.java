@@ -30,9 +30,6 @@ public class WebSecurityConfig {
     @Autowired
     private WhiteList whiteList;
 
-    @Autowired
-    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
       DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -97,12 +94,20 @@ public class WebSecurityConfig {
             // detail at: https://www.javadevjournal.com/spring-security/spring-security-session/
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) 
             .cors(Customizer.withDefaults()); // Enable CORS
-            http.oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
-                .defaultSuccessUrl("/api/v1/User/oauth2") // not working
-                .loginPage("/login").permitAll()
-                .successHandler(oAuth2LoginSuccessHandler)
+            
+        http
+            .formLogin((form) -> form
+                .loginPage("/login") // Đặt trang login tại /login
+                .permitAll() // Cho phép tất cả truy cập trang login
+                .defaultSuccessUrl("/home", true) // Chuyển hướng sau khi login thành công
+                .failureUrl("/login?error=true") // Chuyển hướng khi login thất bại
+            )
+            .logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/index")
+                .permitAll()
             );
+
             http.authenticationProvider(authenticationProvider());
             http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);    
 
