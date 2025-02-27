@@ -30,4 +30,32 @@ public class PageController {
     String sendEmailPage(){
         return "emailForm";
     }
+
+    @RequestMapping("/login")
+    String loginPage(){
+        return "login";
+    }
+
+    @RequestMapping("/signout")
+    public String signoutPage(HttpServletResponse response){
+        Cookie cookie = new Cookie("jwt", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "redirect:/index";
+    }
+
+    @Controller
+    public class AcceptedPage {
+
+        @GetMapping("/home")
+        String homePage(){
+            return "homePage";
+        }
+
+        @GetMapping("/sendEmail")
+        String sendEmailPage(){
+            return "emailForm";
+        }
+    }
 }
