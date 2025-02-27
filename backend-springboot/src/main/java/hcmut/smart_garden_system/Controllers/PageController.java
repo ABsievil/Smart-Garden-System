@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import hcmut.smart_garden_system.Services.SensorDataService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class PageController {
@@ -24,11 +26,6 @@ public class PageController {
     public String sensorData(Model model) {
         model.addAttribute("sensorData", sensorDataService.getLatestData());
         return "sensorData";
-    }
-
-    @GetMapping("/sendEmail")
-    String sendEmailPage(){
-        return "emailForm";
     }
 
     @RequestMapping("/login")
