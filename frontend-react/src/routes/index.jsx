@@ -3,6 +3,7 @@ import Layout1 from '../Components/Layouts/Layout1/Layout1';
 import Layout2 from "../Components/Layouts/Layout2/Layout2";
 import Dashboard from "../Pages/Admin/Dashboard/Dashboard";
 import DeviceManager from "../Pages/Admin/DeviceManager/DeviceManager";
+import DeviceRecord from "../Pages/Admin/DeviceRecord/DeviceRecord";
 import Scheduler from "../Pages/Admin/Scheduler/Scheduler";
 import StaffManager from "../Pages/Admin/StaffManager/StaffManager";
 import TreeManager from "../Pages/Admin/TreeManager/TreeManager";
@@ -38,6 +39,10 @@ export const routes = [
       element: <Layout2 />,
       children: [
         {
+          path: "/",
+          element: <Dashboard />,
+        },
+        {
           path: "/dash-board",
           element: <Dashboard />,
         },
@@ -46,9 +51,17 @@ export const routes = [
           element: <DeviceManager/>,
         },
         {
-            path: "/control-device",
+            path: "/",
             element: <ControlDevice/>,
         },
+        {
+          path: "/control-device",
+          element: <ControlDevice/>,
+      },
+        {
+          path: "/device-record",
+          element: <DeviceRecord/>,
+       },
         {
             path: "/tree-manager",
             element: <TreeManager/>,
