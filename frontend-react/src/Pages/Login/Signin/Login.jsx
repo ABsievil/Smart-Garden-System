@@ -35,7 +35,10 @@ const handleLoginSubmit = async (event) => {
       
       const jwt = res.data.data;
       const decodedToken = jwtDecode(jwt);
+      const username = decodedToken.sub;
       const role = decodedToken.role;
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
 
       {role === "USER"? navigate('/control-device') : navigate('/dash-board')}
     } else {
