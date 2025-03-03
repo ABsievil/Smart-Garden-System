@@ -21,7 +21,8 @@ public class WhiteList {
         "/api/authenticate",
         "/api/v1/Email/**",
         "/api/v1/Student/createNewPassword",
-        "/api/v1/Student/addStudent"
+        "/api/v1/Student/addStudent",
+        "/api/v1/sensor/publish"
     };
 
     private String[] RESOURCE_LIST_URL = {
