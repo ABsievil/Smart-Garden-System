@@ -5,5 +5,6 @@ import lombok.Data;
 public class SensorRequest {
     private String deviceName;
     private Boolean active;
-    private String value;
+    private Boolean deviceMode;
+    private String value; // optional, use for P of pump, temperature of Fan
 }
