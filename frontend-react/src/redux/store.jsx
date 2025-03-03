@@ -9,7 +9,7 @@ const allReducers = combineReducers({
 const loadUserData = () => {
   try {
     const userData = localStorage.getItem("userData");
-    return userData ? JSON.parse(userData.data) : undefined;
+    return userData ? userData : undefined;
   } catch (e) {
     console.error(e);
     return undefined;
