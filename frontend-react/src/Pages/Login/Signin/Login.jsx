@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import React, { useState } from 'react';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa6";
@@ -31,7 +32,15 @@ const handleLoginSubmit = async (event) => {
     console.log(res);
     if (res && res.data.status=="OK") {
       dispatch(login(res.data));
-      navigate('/dash-board');
+      
+      const jwt = res.data.data;
+      const decodedToken = jwtDecode(jwt);
+      const username = decodedToken.sub;
+      const role = decodedToken.role;
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
+
+      {role === "USER"? navigate('/control-device') : navigate('/dash-board')}
     } else {
       console.log(res);
       console.log(res.data.message);
