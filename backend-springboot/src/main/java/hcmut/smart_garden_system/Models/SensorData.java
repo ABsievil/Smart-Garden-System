@@ -3,8 +3,9 @@ import lombok.Data;
 
 @Data
 public class SensorData {
-    private Integer temperature;
-    private Integer pressure;
-    private Integer humidity;
-    private Integer gas;
+    private Integer area;
+    private Double temperature;
+    private Double humidity;
+    private Double light;
+    private Double soilMoisture;
 }

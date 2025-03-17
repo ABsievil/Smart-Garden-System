@@ -3,8 +3,9 @@ import lombok.Data;
 
 @Data
 public class SensorRequest {
+    private Integer area;
     private String deviceName;
     private Boolean active;
     private Boolean deviceMode;
-    private String value; // optional, use for P of pump, temperature of Fan
+    private Integer value; // optional, use for P of pump, temperature of Fan
 }
