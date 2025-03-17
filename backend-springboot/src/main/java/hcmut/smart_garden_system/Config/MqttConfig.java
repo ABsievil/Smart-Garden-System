@@ -65,7 +65,7 @@ public class MqttConfig {
     public MessageHandler handler() {
         return message -> {
             String payload = message.getPayload().toString();
-            System.out.println("Received message: " + payload);
+            System.out.println("Sensor received message: " + payload);
             // Lưu message vào service để render ra view
             SensorDataService.updateLatestData(payload);
         };
