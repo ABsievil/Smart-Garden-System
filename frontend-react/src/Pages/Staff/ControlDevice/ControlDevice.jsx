@@ -10,29 +10,49 @@ import './ControlDevice.css';
 
 const ControlDevice = () => {
   const [data, setData] = useState({
-    temperature: 32.5,
-    humidity: 85,
-    light: 60,
-    soilMoisture: 60,
+    // default data
+    temperature: 0,
+    humidity: 0,
+    light: 0,
+    soilMoisture: 0,
     fan: false,
     led: false,
     pump: false,
     pumpSpeed: 50,
     mode: "manual", // manual hoặc auto
   });
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await fetch("YOUR_API_ENDPOINT");
-        // const result = await response.json();
-        // setData(result);
+        const response = await api.get('/api/v1/record/getCurrentRecord/2');
+        
+        if (response.data.status === "OK") {
+          const sensorData = response.data.data;
+          
+          // Update sensor values into const [data, setData]
+          setData(prevData => ({
+            ...prevData,
+            temperature: sensorData.temperature,
+            humidity: sensorData.humidity,
+            light: sensorData.light,
+            soilMoisture: sensorData.soilMoisture
+          }));
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
+    
+    // Setup call fetch data every 5 seconds
+    const intervalId = setInterval(fetchData, 5000);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
+
   const sendDeviceState = async (updatedData) => {
     setData(updatedData);
     try {
