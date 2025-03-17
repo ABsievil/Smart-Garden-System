@@ -15,18 +15,27 @@ import lombok.NoArgsConstructor;
 @Builder
 @Embeddable
 public class PersonalInformation {
-    @Column(name= "last_name")
-    private String last_name;
+    private String ssn;
 
-    @Column(name= "middle_name")
-    private String middle_name;
+    private String sex;
 
-    @Column(name= "first_name")
-    private String first_name;
+    private String id;
 
-    @Column(name= "date_of_birth")
+    @Column(name= "fname")
+    private String fname;
+
+    @Column(name= "lname")
+    private String lname;
+
+    @Column(name= "dob")
     private Date date;
 
-    @Column(name= "phone_number")
-    private String phone_number;
+    private Integer salary;
+
+    private Integer numsofdevice;
+
+    private Integer numofschedules;
+
+    @Column(name= "phonenumber")
+    private String phoneNumber;
 }

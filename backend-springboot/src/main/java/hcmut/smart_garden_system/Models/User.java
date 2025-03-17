@@ -39,3 +39,4 @@ public class User {
     @Embedded
     private PersonalInformation information;
 }
+
