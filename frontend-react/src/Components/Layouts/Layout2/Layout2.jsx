@@ -1,15 +1,25 @@
 import { Outlet } from "react-router-dom";
-import "./Layout2.css";
 import Sidebar from "../../SideBar/SideBar";
+import "./Layout2.css";
 function Layout2() {
   return (
     <>
-      <div className="main-default-layout">
-        <main>
-          <Sidebar />
-        </main>
+    <div className="layout-app-container">
+      <div className="sidebar-component">
+        <Sidebar />
       </div>
-    </>
+      <main className="content-container">
+        {/* <div className={"header-container"}>
+          <Header />
+        </div> */}
+        <div className="content-double">
+          <div className="component-change">
+            <Outlet />
+          </div>
+        </div>
+      </main>
+    </div>
+  </>
   );
 }
 

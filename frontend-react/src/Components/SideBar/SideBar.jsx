@@ -26,68 +26,68 @@ const Sidebar = () => {
     return (
     <div className="sidebar">
         {/* Logo */}
-        <Typography variant="h4" style={{ lineHeight: '54px', fontWeight: '700', fontSize: '36px' }}>
+        <Typography variant="h4" className="sidebar-title">
         SMART GARDEN
         </Typography>
         {/* Navigation */}
         {userRole && userRole === "USER"? 
         <ul>
         <li>
-            <NavLink to="/control-device">
-            <StorageIcon /> Dữ liệu thiết bị
+            <NavLink to="/control-device" className={({ isActive }) => isActive ? "active" : ""}>
+            <StorageIcon style={{ marginRight: "10px", fontSize: "25px" , marginTop: "-4px" }}  /> Dữ liệu thiết bị
             </NavLink>
         </li>
         <li>
-            <NavLink to="/tree-view">
-            <ForestIcon /> Danh sách cây trồng
+            <NavLink to="/tree-view" className={({ isActive }) => isActive ? "active" : ""}>
+            <ForestIcon style={{ marginRight: "10px", fontSize: "25px" , marginTop: "-4px" }} /> Danh sách cây trồng
             </NavLink>
         </li>
         <li>
-            <NavLink to="/scheduler-view">
-            <CalendarMonthIcon /> Lịch trình
+            <NavLink to="/scheduler-view" className={({ isActive }) => isActive ? "active" : ""}>
+            <CalendarMonthIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px"}} /> Lịch trình
             </NavLink>
         </li>
-        <li className="logout-button" onClick={handleLogout}>
+        <div className="logout-button" onClick={handleLogout}>
         <NavLink className="logout-link">
-            <LogoutIcon /> Đăng xuất
+            <LogoutIcon style={{ marginRight: "5px", fontSize: "25px"  }} /> Đăng xuất
         </NavLink>
-        </li>
+        </div>
         </ul> : <ul>
         <li>
-            <NavLink to="/dash-board">
-            <HomeIcon /> Trang chủ
+            <NavLink to="/dash-board" className={({ isActive }) => isActive ? "active" : ""}>
+            <HomeIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Trang chủ
             </NavLink>
         </li>
         <li>
-            <NavLink to="/tree-manager">
-            <ForestIcon /> Quản lý cây trồng
+            <NavLink to="/tree-manager" className={({ isActive }) => isActive ? "active" : ""}>
+            <ForestIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Quản lý cây trồng
             </NavLink>
         </li>
         <li>
-            <NavLink to="/staff-manager">
-            <ManageAccountsIcon /> Quản lý nhân viên
+            <NavLink to="/staff-manager" className={({ isActive }) => isActive ? "active" : ""}>
+            <ManageAccountsIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Quản lý nhân viên
             </NavLink>
         </li>
         <li>
-            <NavLink to="/scheduler">
-            <CalendarMonthIcon /> Lịch trình
+            <NavLink to="/scheduler" className={({ isActive }) => isActive ? "active" : ""}>
+            <CalendarMonthIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Lịch trình
             </NavLink>
         </li>
         <li>
-            <NavLink to="/device-record">
-            <StorageIcon /> Dữ liệu thiết bị
+            <NavLink to="/device-record" className={({ isActive }) => isActive ? "active" : ""}>
+            <StorageIcon style={{marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Dữ liệu thiết bị
             </NavLink>
         </li>
         <li>
-            <NavLink to="/device-manager">
-            <DevicesIcon /> Quản lý thiết bị
+            <NavLink to="/device-manager" className={({ isActive }) => isActive ? "active" : ""}>
+            <DevicesIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Quản lý thiết bị
             </NavLink>
         </li>
-        <li className="logout-button" onClick={handleLogout}>
+        <div className="logout-button" onClick={handleLogout}>
         <NavLink className="logout-link">
-            <LogoutIcon /> Đăng xuất
+            <LogoutIcon style={{ marginRight: "8px",fontSize: "25px"  }} /> Đăng xuất
         </NavLink>
-        </li>
+        </div>
         </ul>
         }
 

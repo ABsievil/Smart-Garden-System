@@ -1,0 +1,92 @@
+/* SideBar.css */
+
+.sidebar {
+    width: 300px;
+    height: 100vh;
+    background-color: #2E7D32; /* Màu xanh theo thiết kế */
+    color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items:first baseline;
+    justify-content: center;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h4 {
+    height: 70px;
+    width: 100%;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    align-items: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar ul li {
+    width: 100%;
+    height: 70px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: flex-start;
+    padding: 25px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: normal;
+    font-display: block;
+    transition: background 0.3s ease-in-out;
+}
+
+.sidebar ul li a:hover {
+    background-color: #1B5E20; /* Màu xanh đậm khi hover */
+    border-left: 5px solid #C8E6C9; /* Hiệu ứng đánh dấu */
+    justify-content: center;
+    align-items: center;
+
+}
+.sidebar ul li a.active {
+    background-color: #f0f0f0; /* Màu nền trắng xanh khi active */
+    border-radius: 30px 0 0 30px;
+    color: #2E7D32; /* Đổi màu chữ cho dễ nhìn */
+    font-weight: bold; /* Làm đậm chữ */
+    border-left: 5px solid #1B5E20; /* Hiệu ứng đánh dấu */
+}
+.sidebar ul li a svg {
+    margin-right: 10px;
+    font-size: 24px; 
+}
+
+
+.sidebar .logout-button {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.sidebar .logout-button a {
+    background-color: #2E7D32;
+    color: white;
+    text-decoration: none;
+    align-items: flex-start;
+    padding: 25px 20px;
+    padding: 25px 20px;
+    font-size: 20px;
+    font-weight: normal;
+    transition: background 0.3s ease-in-out;
+    width: 100%;
+}
+
+.sidebar .logout-button a:hover {
+    background-color: #2E7D32;
+
+}
