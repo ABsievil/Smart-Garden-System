@@ -37,11 +37,14 @@ INSERT INTO tree (nameoftypetree, amount, growthtime, season) VALUES
 ('Birch', 15, '[2022-03-01,2027-03-01]', 'Summer');
 
 -- Insert fake data into record
-INSERT INTO record (priodoftime, temperature, humidity, lightindensity, soilmoisture, id_record) VALUES
-('[2024-03-01,2024-03-31]', 22.5, 55.4, 1000, 40.2, 'U001'),
-('[2024-02-01,2024-02-28]', 18.3, 60.7, 950, 45.5, 'U002'),
-('[2024-04-01,2024-04-30]', 25.0, 50.3, 1100, 38.7, 'U003'),
-('[2024-05-01,2024-05-31]', 27.8, 45.9, 1200, 36.9, 'U004');
+INSERT INTO record (area, temperature, humidity, light, soilMoisture, "datetime") VALUES
+(1, 25.50, 60.75, 450.20, 30.40, '2025-03-17 08:30:00'),
+(1, 28.30, 55.90, 600.10, 45.60, '2025-03-17 12:15:00'),
+(1, 22.80, 70.25, 300.50, 25.30, '2025-03-17 15:45:00'),
+(2, 26.10, 65.40, 500.00, 35.70, '2025-03-17 18:00:00'),
+(2, 24.90, 58.60, 420.80, 40.20, '2025-03-17 21:20:00');
+
+-- select * from record
 
 -- Insert fake data into schedule
 INSERT INTO schedule (datetime, id, id_user, periodoftime_schedule) VALUES

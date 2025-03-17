@@ -120,14 +120,13 @@ CREATE TABLE otp (
 -- DROP TABLE record;
 
 CREATE TABLE record (
-	priodoftime daterange NOT NULL,
-	temperature numeric NOT NULL,
-	humidity numeric NOT NULL,
-	lightindensity float4 NOT NULL,
-	soilmoisture numeric NOT NULL,
-	id_record varchar NOT NULL,
-	CONSTRAINT newtable_pk PRIMARY KEY (priodoftime),
-	CONSTRAINT record_users_fk FOREIGN KEY (id_record) REFERENCES users(id)
+	area INT NULL,
+	temperature DOUBLE PRECISION NOT NULL,
+	humidity DOUBLE PRECISION NOT NULL,
+	light DOUBLE PRECISION NOT NULL,
+	soilMoisture DOUBLE PRECISION NOT NULL,
+	"datetime" datetime NULL,
+	id_record BIGSERIAL PRIMARY KEY
 );
 
 
