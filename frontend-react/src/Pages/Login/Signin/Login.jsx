@@ -89,9 +89,9 @@ return (
             />
             Remember me
           </label>
-          <span className="forgotpassword" onClick={() => navigate('/forget-password')} >
+          <div className="forgotpassword" onClick={() => navigate('/forget-password')} >
                 Forgot Password?
-          </span>
+          </div>
         </div>
         <button type="submit">Login</button>
       </form>

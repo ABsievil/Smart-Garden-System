@@ -23,9 +23,9 @@ const ControlDevice = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("YOUR_API_ENDPOINT");
-        const result = await response.json();
-        setData(result);
+        // const response = await fetch("YOUR_API_ENDPOINT");
+        // const result = await response.json();
+        // setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -70,7 +70,7 @@ const ControlDevice = () => {
   <div className="device-card">
     <h3>TEMPERATURE</h3>
     <div className="content-grid">
-    <CiTempHigh  className='icon'/>
+    <CiTempHigh  className='icon1'/>
     <p>{data.temperature}°C</p> </div>
    
       <span >Fan
@@ -81,7 +81,7 @@ const ControlDevice = () => {
   <div className="device-card">
     <h3>HUMIDITY</h3>
     <div className="content-grid">
-    <RiWaterPercentLine className='icon'/>
+    <RiWaterPercentLine className='icon1'/>
     <p>{data.humidity}%</p>
     </div>
   </div>
@@ -89,7 +89,7 @@ const ControlDevice = () => {
   <div className="device-card">
     <h3>LIGHT</h3>
     <div className="content-grid">
-    <CiLight className='icon'/>
+    <CiLight className='icon1'/>
     <p>{data.light} Lux</p> 
     </div>
     <span> Led
@@ -102,7 +102,7 @@ const ControlDevice = () => {
   <div className="device-card">
     <h3>SOIL MOISTURE</h3>
     <div className="content-grid">
-    <BsMoisture className='icon'/>
+    <BsMoisture className='icon1'/>
     <p>{data.soilMoisture}%</p>
     </div>
     <div className="pump-control">
