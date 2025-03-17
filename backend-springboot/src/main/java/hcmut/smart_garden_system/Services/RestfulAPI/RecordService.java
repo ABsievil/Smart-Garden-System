@@ -90,7 +90,7 @@ public class RecordService {
     public ResponseEntity<ResponseObject> PROC_saveRecord(SensorData sensorData){
         try {
             LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             
             jdbcTemplate.execute(
             "CALL save_record(?, ?, ?, ?, ?, ?)",
