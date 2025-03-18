@@ -77,3 +77,19 @@ BEGIN
     );
 END;
 $$;
+
+CREATE OR REPLACE PROCEDURE control_status(
+    device_name_input VARCHAR,
+    status_input VARCHAR
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+    UPDATE device
+    SET status = (CASE 
+                    WHEN status_input = 'true' THEN TRUE
+                    WHEN status_input = 'false' THEN FALSE
+                    ELSE status
+                  END)
+    WHERE nameofdevices = device_name_input;
+END;
+$$;
