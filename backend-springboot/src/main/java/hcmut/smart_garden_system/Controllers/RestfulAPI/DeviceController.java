@@ -20,10 +20,9 @@ public class DeviceController {
     @GetMapping("/controlStatus")
     public ResponseEntity<ResponseObject> controlStatus(
         @RequestParam(value = "deviceName") String deviceName,
-        @RequestParam(value = "status") String status) {
+        @RequestParam(value = "status") Boolean status) {
         return deviceService.PROC_controlStatus(deviceName, status);
     }
-    
     
     @GetMapping("/controlPumpSpeed")
     public ResponseEntity<ResponseObject> controlPumpSpeed(

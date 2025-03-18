@@ -12,30 +12,37 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hcmut.smart_garden_system.Controllers.SensorController;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
 import hcmut.smart_garden_system.Models.SensorData;
+import hcmut.smart_garden_system.Models.SensorRequest;
 
 @Service
 public class DeviceService {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private SensorController sensorController;
 
     public DeviceService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<ResponseObject> PROC_controlStatus(String deviceName, String status) {
+    public ResponseEntity<ResponseObject> PROC_controlStatus(String deviceName, Boolean status) {
         try {
             jdbcTemplate.execute(
             "CALL control_status(?, ?)",
             (PreparedStatementCallback<Void>) ps -> {
                 ps.setString(1, deviceName);
-                ps.setString(2, status);
+                ps.setBoolean(2, status);
                 ps.execute();
                 return null;
             }
             );
+
+            SensorRequest sensorRequest = new SensorRequest(1, deviceName, status, false, 0);
+            sensorController.publishMessage(sensorRequest);
+
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Query to update PROC_controlStatus() successfully", null));
         } catch (DataAccessException e) {
