@@ -93,7 +93,7 @@ const ControlDevice = () => {
 </div>
       
 
-      {/* Chế độ Auto/Manual */}
+   
    
       </Box>
     </div>
