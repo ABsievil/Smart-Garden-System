@@ -1,5 +1,6 @@
 package hcmut.smart_garden_system.Config;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,11 @@ import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import hcmut.smart_garden_system.Models.SensorData;
 import hcmut.smart_garden_system.Services.SensorDataService;
+import hcmut.smart_garden_system.Services.RestfulAPI.RecordService;
 
 @Configuration
 public class MqttConfig {
@@ -31,6 +36,11 @@ public class MqttConfig {
     @Value("${mqtt.topicfromserver}")
     private String topicFromServer;
 
+    @Autowired
+    private RecordService recordService;
+
+    private final ObjectMapper mapper = new ObjectMapper();
+    
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
@@ -64,10 +74,19 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-            String payload = message.getPayload().toString();
-            System.out.println("Sensor received message: " + payload);
-            // Lưu message vào service để render ra view
-            SensorDataService.updateLatestData(payload);
+            try {
+                String payload = message.getPayload().toString();
+                System.out.println("Sensor received message: " + payload);
+                // Lưu message vào service để render ra view
+                SensorDataService.updateLatestData(payload);
+    
+                // SensorData latestData = mapper.readValue(payload, SensorData.class);
+                // recordService.PROC_saveRecord(latestData);
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                // Log the error
+                System.err.println("Error processing JSON: " + e.getMessage());
+                // You might want to add more sophisticated error handling here
+            }
         };
     }
 

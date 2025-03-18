@@ -104,15 +104,20 @@ public class RecordService {
                 ps.execute();
                 return null;
             }
-        );
+            );
+
+            System.out.println("Saved record to DB successfully");
+
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Query to update PROC_saveRecord() successfully", null));
         } catch (DataAccessException e) {
             // Xử lý lỗi liên quan đến truy cập dữ liệu
+            System.err.println("Error relate to DB: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
         } catch (Exception e) {
             // Xử lý các lỗi khác
+            System.err.println("Error updating PROC_saveRecord(): " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseObject("ERROR", "Error updating PROC_saveRecord(): " + e.getMessage(), null));
         }
