@@ -85,9 +85,9 @@ const ControlDevice = () => {
     <div className="control-device-content">
     <h2> Dữ liệu thiết bị </h2>
 
-      <Box sx={{ width: "100%" }}>
+      <Box className='device-content' sx={{ width: "100%" }}>
       <div className="device-grid">
-  <div className="device-card">
+    <div className="device-card">
     <h3>TEMPERATURE</h3>
     <div className="content-grid">
     <CiTempHigh  className='icon1'/>
@@ -127,7 +127,6 @@ const ControlDevice = () => {
     </div>
     <div className="pump-control">
       <span>Pump</span>
-      <span>Speed</span>
               <Slider
                 value={data.pumpSpeed}
                 onChange={handlePumpSpeedChange}

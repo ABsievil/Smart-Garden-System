@@ -1,6 +1,7 @@
 body {
     background-color: #f8fff3;
     color: #fff;
+    overflow: hidden;
   }
   
   /* .header-container {
