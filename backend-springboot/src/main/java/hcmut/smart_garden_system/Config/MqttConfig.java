@@ -80,8 +80,8 @@ public class MqttConfig {
                 // Lưu message vào service để render ra view
                 SensorDataService.updateLatestData(payload);
     
-                // SensorData latestData = mapper.readValue(payload, SensorData.class);
-                // recordService.PROC_saveRecord(latestData);
+                SensorData latestData = mapper.readValue(payload, SensorData.class);
+                recordService.PROC_saveRecord(latestData);
             } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
                 // Log the error
                 System.err.println("Error processing JSON: " + e.getMessage());
