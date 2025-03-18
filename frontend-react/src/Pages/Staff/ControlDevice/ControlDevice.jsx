@@ -17,7 +17,6 @@ const ControlDevice = () => {
     soilMoisture: 0,
     fan: false,
     led: false,
-    pump: false,
     pumpSpeed: 50,
     mode: "manual", // manual hoặc auto
   });
@@ -56,6 +55,7 @@ const ControlDevice = () => {
   const sendDeviceState = async (updatedData) => {
     setData(updatedData);
     try {
+      // const response = await api.post('/api/v1/record/getCurrentRecord/2');
       // await fetch("YOUR_API_ENDPOINT", {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
@@ -110,7 +110,7 @@ const ControlDevice = () => {
     <h3>LIGHT</h3>
     <div className="content-grid">
     <CiLight className='icon1'/>
-    <p>{data.light} Lux</p> 
+    <p>{data.light} %</p> 
     </div>
     <span> Led
     <Switch className='toggle' checked={data.led} onChange={() => toggleDevice("led")} disabled={data.mode !== "manual"} />

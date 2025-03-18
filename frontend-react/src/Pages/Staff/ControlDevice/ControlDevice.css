@@ -152,6 +152,11 @@
   border-radius: 16px;
 }
 
+.Mui-disabled .MuiSwitch-thumb {
+  background-color: #fff !important; /* Màu của nút tròn */
+  border: 1px solid #ccc !important; /* Viền cho nút tròn */
+}
+
 /* Slider */
 .MuiSlider-root {
   color: #1aae2b !important;
@@ -173,6 +178,15 @@
   background-color: #b0bec5 !important;
 }
 
+.MuiSlider-root.Mui-disabled {
+  color: #ccc !important; /* Màu của thanh slider */
+  opacity: 0.5; /* Làm mờ thanh slider */
+}
+
+.MuiSlider-thumb.Mui-disabled {
+  background-color: #fff !important; /* Màu của nút kéo */
+  border: 1px solid #ccc !important; /* Viền cho nút kéo */
+}
 /* Chế độ điều khiển */
 .device-mode {
   display: flex;
