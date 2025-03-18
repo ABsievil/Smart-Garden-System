@@ -193,8 +193,8 @@
 }
 
 .MuiSlider-thumb {
-  width: 20px !important;
-  height: 24px !important;
+  width: 25px !important;
+  height: 25px !important;
   background-color: #327034 !important;
 }
 
@@ -239,6 +239,13 @@
   font-weight: bold;
   font-size: 14px;
   padding: 2px 4px;
+  /* transform: translate(8px, -20px) !important; */
+}
+
+.MuiSlider-thumb:hover .MuiSlider-valueLabel,
+.MuiSlider-thumb.Mui-active .MuiSlider-valueLabel {
+  display: flex !important;
+  transform: translate(10px, -20px) !important;
 }
 
 .device-mode {
