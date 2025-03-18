@@ -1,7 +1,13 @@
 package hcmut.smart_garden_system.Models;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SensorRequest {
     private Integer area;
     private String deviceName;
