@@ -48,7 +48,7 @@ const Sidebar = () => {
             </NavLink>
         </li>
         <div className="logout-button" onClick={handleLogout}>
-        <NavLink className="logout-link">
+        <NavLink to="/signin" className="logout-link">
             <LogoutIcon style={{ marginRight: "5px", fontSize: "25px"  }} /> Đăng xuất
         </NavLink>
         </div>
@@ -84,7 +84,7 @@ const Sidebar = () => {
             </NavLink>
         </li>
         <div className="logout-button" onClick={handleLogout}>
-        <NavLink className="logout-link">
+        <NavLink to="/signin" className="logout-link">
             <LogoutIcon style={{ marginRight: "8px",fontSize: "25px"  }} /> Đăng xuất
         </NavLink>
         </div>

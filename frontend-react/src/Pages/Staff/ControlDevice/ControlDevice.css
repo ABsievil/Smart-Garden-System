@@ -90,8 +90,9 @@
 }
 .control-device-content .device-grid .device-card .toggle {
   position: relative;
-  width: 60px;
-  height: 40px;
+  width: 85px;
+  height: 45px;
+  border-radius: 40%;
   margin: 0 auto;
   color: #34772e;
 
@@ -132,49 +133,77 @@
 }
 
 .MuiSwitch-root {
+  width: 60px;
   transform: scale(1.2);
+  color: #b0bec5 !important;
 }
 
 .MuiSwitch-switchBase {
+  left: 10px;
+  transition: transform 0.3s;
   color: #b0bec5 !important;
 }
 
 .MuiSwitch-switchBase.Mui-checked {
+  transform: translateX(20px) !important;
   color: #4caf50 !important;
 }
 
 .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
   background-color: #4caf50 !important;
+  margin-left: 20px;
+ 
 }
 
 .MuiSwitch-track {
   background-color: #b0bec5 !important;
   border-radius: 16px;
+  height: 30px;
+  width: 30px;
+  margin-left: 20px;
 }
+
 
 .Mui-disabled .MuiSwitch-thumb {
   background-color: #fff !important; /* Màu của nút tròn */
-  border: 1px solid #ccc !important; /* Viền cho nút tròn */
+  border: 10px solid #ccc !important; /* Viền cho nút tròn */
 }
 
+.MuiSwitch-root:hover {
+  background-color: transparent !important; /* Xóa nền xám khi hover */
+}
+.MuiSwitch-switchBase:hover {
+  background-color: transparent !important; /* Xóa nền xám của nút */
+}
+.Mui-focusVisible {
+  background-color: transparent !important;
+  box-shadow: none !important; /* Xóa hoàn toàn hiệu ứng focus */
+}
+.MuiSwitch-switchBase:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.MuiTouchRipple-root {
+  display: none !important;
+}
 /* Slider */
 .MuiSlider-root {
-  color: #1aae2b !important;
-  height: 8px !important;
+  color: #4caf50 !important;
+  height: 10px !important;
 }
 
 .MuiSlider-thumb {
   width: 20px !important;
-  height: 20px !important;
-  background-color: #0fa63f !important;
+  height: 24px !important;
+  background-color: #327034 !important;
 }
 
 .MuiSlider-track {
-  height: 8px !important;
+  height: 10px !important;
 }
 
 .MuiSlider-rail {
-  height: 8px !important;
+  height: 10px !important;
   background-color: #b0bec5 !important;
 }
 
@@ -187,18 +216,78 @@
   background-color: #fff !important; /* Màu của nút kéo */
   border: 1px solid #ccc !important; /* Viền cho nút kéo */
 }
-/* Chế độ điều khiển */
+
+
+
+
+.MuiSlider-thumb:focus,
+.MuiSlider-thumb:active,
+.MuiSlider-thumb.Mui-focusVisible {
+  box-shadow: none !important;
+  background-color: #327034 !important; /* Giữ màu của nút tròn */
+}
+
+/* Xóa hiệu ứng hover */
+.MuiSlider-thumb:hover {
+  box-shadow: none !important;
+}
+
+/* Tùy chỉnh lại số hiển thị để không có khung xám */
+.MuiSlider-valueLabel {
+  background: transparent !important; /* Xóa nền xám */
+  color: #327034 !important; /* Giữ lại số hiển thị với màu tùy chỉnh */
+  font-weight: bold;
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
 .device-mode {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 40px;
+  width: 100%;
+  font-size: 20px;
+  text-indent: 5px;
+
   /* position: inherit; */
 }
 
 .device-mode span {
-  font-size: 16px;
+  font-size: 40px;
   font-weight: bold;
-  color: #1b4332;
+  color: #3c8868;
+  margin-top: 0.3%;
+}
+.device-control {
+  width: 65px !important;  /* Đảm bảo kích thước hợp lý */
+  height: 20px !important;
+  padding: 0 !important;
+  font-size: 30px !important;
+
+}
+
+.device-control .MuiSwitch-switchBase {
+  padding: 2px; 
+  margin-left:-3px;
+}
+
+.device-control .MuiSwitch-thumb {
+  width: 20px !important;
+  height: 20px !important;
+  
+}
+
+.device-control .MuiSwitch-track {
+  background-color: #ccc !important;
+  border-radius: 20px;
+}
+
+.device-control .Mui-checked + .MuiSwitch-track {
+  background-color: #4caf50 !important; 
+}
+
+.device-control .MuiSwitch-switchBase.Mui-checked {
+  transform: translateX(24px) !important;
 }
