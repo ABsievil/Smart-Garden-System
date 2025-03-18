@@ -42,13 +42,11 @@ const handleLoginSubmit = async (event) => {
 
       {role === "USER"? navigate('/control-device') : navigate('/dash-board')}
     } else {
-      console.log(res);
-      console.log(res.data.message);
-      toast.error("Login failed: Invalid credentials");
+      alert(res.data.message);
     }
   } catch (error) {
-    const res = await LoginApi(username, password);
-    toast.error("Login failed: " + (error.res?.data?.message || error.message));
+    alert(error.response.data.message);
+
   }
 };
 const loginLink =() => {
