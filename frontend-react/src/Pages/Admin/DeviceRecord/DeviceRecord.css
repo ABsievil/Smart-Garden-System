@@ -1,0 +1,204 @@
+.control-device-content {
+    background-color: #f0f8e7; /* Màu nền nhạt */
+    width: 100%;
+    height: 100vh;
+    padding: 25px;
+    border-radius: 12px;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .control-device-content h2 {
+    height: 50px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #34772e; /* Xanh lá cây */
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+  
+  .control-device-content .device-content {
+    width: 100%;
+    height: 95vh;
+  }
+  .control-device-content .device-grid {
+    width: 100%;
+    height: 80%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px 40px ;
+    padding: 20px;
+  
+  }
+  
+  .control-device-content .device-card {
+    background: white;
+    width: 100%;
+    height: 70%;
+    border-radius: 12px;
+    padding: 20px 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* display: grid;
+    grid-auto-columns: auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  
+  .device-card h3 {
+    font-size: 30px;
+    font-weight: bold;
+    height: 50px;
+    color: #34772e;
+    margin-bottom: 50px;
+    margin-left: 15px;
+    display: flex;
+    align-items: left;
+  
+  }
+  
+  .control-device-content .device-card .content-grid {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /* margin-bottom: -10px; */
+    /* margin-top: 10px; */
+    margin-left: 50px;
+   
+  }
+  .device-card p {
+    font-size: 70px;
+    font-weight: bold;
+    margin-top: 120px;
+    color: #385e22;
+  }
+  .icon1 {
+    font-size: 200px;
+    font-style: initial;
+    font-weight: bold;
+    color: #31511e;
+    /* position: */
+    /* margin-left: 100px;
+    margin-top: 50px; */
+  }
+  .control-device-content .device-grid .device-card span {
+    color: #34772e;
+    font-size: 30px;
+    font-weight: bold;
+  }
+  .control-device-content .device-grid .device-card .toggle {
+    position: relative;
+    width: 60px;
+    height: 40px;
+    margin: 0 auto;
+    color: #34772e;
+  
+  }
+  
+  .control-device-content .device-mode {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 100px;
+  }
+  
+  .control-device-content .device-mode span {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    gap: 10px;
+    margin-right: 0 0;
+    color: #34772e;
+  }
+  
+  .control-device-content .device-mode .device-control {
+    color: white;
+    border-radius: 8px;
+    width: 70px;
+    height: 30px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .control-device-content .device-card .pump-control {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    margin-top: 30px;
+    text-decoration: solid;
+  }
+  
+  .MuiSwitch-root {
+    transform: scale(1.2);
+  }
+  
+  .MuiSwitch-switchBase {
+    color: #b0bec5 !important;
+  }
+  
+  .MuiSwitch-switchBase.Mui-checked {
+    color: #4caf50 !important;
+  }
+  
+  .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+    background-color: #4caf50 !important;
+  }
+  
+  .MuiSwitch-track {
+    background-color: #b0bec5 !important;
+    border-radius: 16px;
+  }
+  
+  .Mui-disabled .MuiSwitch-thumb {
+    background-color: #fff !important; /* Màu của nút tròn */
+    border: 1px solid #ccc !important; /* Viền cho nút tròn */
+  }
+  
+  /* Slider */
+  .MuiSlider-root {
+    color: #1aae2b !important;
+    height: 8px !important;
+  }
+  
+  .MuiSlider-thumb {
+    width: 20px !important;
+    height: 20px !important;
+    background-color: #0fa63f !important;
+  }
+  
+  .MuiSlider-track {
+    height: 8px !important;
+  }
+  
+  .MuiSlider-rail {
+    height: 8px !important;
+    background-color: #b0bec5 !important;
+  }
+  
+  .MuiSlider-root.Mui-disabled {
+    color: #ccc !important; /* Màu của thanh slider */
+    opacity: 0.5; /* Làm mờ thanh slider */
+  }
+  
+  .MuiSlider-thumb.Mui-disabled {
+    background-color: #fff !important; /* Màu của nút kéo */
+    border: 1px solid #ccc !important; /* Viền cho nút kéo */
+  }
+  /* Chế độ điều khiển */
+  .device-mode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    /* position: inherit; */
+  }
+  
+  .device-mode span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1b4332;
+  }

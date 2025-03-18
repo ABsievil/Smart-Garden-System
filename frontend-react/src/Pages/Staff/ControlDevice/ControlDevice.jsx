@@ -15,9 +15,9 @@ const ControlDevice = () => {
     humidity: 0,
     light: 0,
     soilMoisture: 0,
-    fan: false,
-    led: false,
-    pumpSpeed: 50,
+    Fan1: false,
+    Led1: false,
+    Pump1: 50,
     mode: "manual", // manual hoặc auto
   });
   
@@ -52,32 +52,59 @@ const ControlDevice = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const sendDeviceState = async (updatedData) => {
+  const sendDeviceState = async (deviceName, updatedData) => {
+    if (!updatedData || updatedData[deviceName] === undefined) {
+      console.error("updatedData không hợp lệ:", updatedData);
+      return;
+    }
     setData(updatedData);
     try {
-      // const response = await api.post('/api/v1/record/getCurrentRecord/2');
-      // await fetch("YOUR_API_ENDPOINT", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(updatedData),
-      // });
+      const response = await api.get(`/api/v1/device/controlStatus?deviceName=${deviceName}&status=${updatedData[deviceName]}`);
+      
+      if (response.data.status === "OK") {
+        const res = response.data.data;
+        console.log("Device state updated: ", res);
+      }
+      else {
+        console.error("Error updating device state:", response.data.message);
+      }
     } catch (error) {
       console.error("Error updating device state:", error);
     }
   };
 
   // Toggle các thiết bị
-  const toggleDevice = (device) => {
+  const toggleDevice = (deviceName) => {
     if (data.mode === "manual") {
-      const updatedData = { ...data, [device]: !data[device] };
-      sendDeviceState(updatedData);
+      const updatedData = { ...data, [deviceName]: !data[deviceName] };
+      sendDeviceState(deviceName, updatedData);
     }
   };
+ 
+  const sendPumpSpeed = async (newPumpSpeed) => {
+    setData(updatedData);
+    try {
+      const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}`);
+      
+      if (response.data.status === "OK") {
+        console.log("Pump speed updated successfully:", response.data.data);
+      } else {
+        console.error("Error updating pump speed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật tốc độ bơm:", error);
+    }
+  };
+  
+  
 
   const handlePumpSpeedChange = (event, newValue) => {
     if (data.mode === "manual") {
-      const updatedData = { ...data, pumpSpeed: newValue };
-      sendDeviceState(updatedData);
+      setData((prevData) => ({ ...prevData, Pump1: newValue }));
+  
+      setTimeout(() => {
+        sendPumpSpeed(newValue); // Gửi API sau 1s
+      }, 1000);
     }
   };
 
@@ -94,7 +121,7 @@ const ControlDevice = () => {
     <p>{data.temperature}°C</p> </div>
    
       <span >Fan
-      <Switch className='toggle' checked={data.fan} onChange={() => toggleDevice("fan")} disabled={data.mode !== "manual"} />
+      <Switch className='toggle' checked={data.fan} onChange={() => toggleDevice("Fan1")} disabled={data.mode !== "manual"} />
       </span>
   </div>
 
@@ -113,7 +140,7 @@ const ControlDevice = () => {
     <p>{data.light} %</p> 
     </div>
     <span> Led
-    <Switch className='toggle' checked={data.led} onChange={() => toggleDevice("led")} disabled={data.mode !== "manual"} />
+    <Switch className='toggle' checked={data.led} onChange={() => toggleDevice("Led1")} disabled={data.mode !== "manual"} />
     </span>
     
   </div>
@@ -146,7 +173,14 @@ const ControlDevice = () => {
       {/* Chế độ Auto/Manual */}
       <div className="device-mode">
         <span>Auto
-        <Switch className='device-control' checked={data.mode === "manual"} onChange={() => sendDeviceState({ ...data, mode: data.mode === "auto" ? "manual" : "auto" })} />
+        <Switch 
+          className='device-control' 
+          checked={data.mode === "manual"} 
+          onChange={() => {
+            const updatedData = { ...data, mode: data.mode === "auto" ? "manual" : "auto" };
+            sendDeviceState("mode", updatedData);  // Truyền đúng tham số
+          }} 
+        />
         Manual</span>
       </div>
       </Box>
