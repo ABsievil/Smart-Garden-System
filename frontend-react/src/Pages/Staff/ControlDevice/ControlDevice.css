@@ -213,8 +213,8 @@
 }
 
 .MuiSlider-thumb.Mui-disabled {
-  background-color: #fff !important; /* Màu của nút kéo */
-  border: 1px solid #ccc !important; /* Viền cho nút kéo */
+  background-color: #a5a5a5 !important; /* Màu của nút kéo */
+  border: 1px solid #cccccc !important; /* Viền cho nút kéo */
 }
 
 
