@@ -28,7 +28,7 @@ public class DeviceController {
     @GetMapping("/controlPumpSpeed")
     public ResponseEntity<ResponseObject> controlPumpSpeed(
         @RequestParam(value = "deviceName") String deviceName,
-        @RequestParam(value = "value") String value) {
+        @RequestParam(value = "value") Integer value) {
         return deviceService.PROC_controlPumpSpeed(deviceName, value);
     }
 
