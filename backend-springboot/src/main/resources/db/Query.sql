@@ -93,3 +93,15 @@ BEGIN
     WHERE nameofdevices = device_name_input;
 END;
 $$;
+
+CREATE OR REPLACE PROCEDURE control_pump_speed(
+    device_name_input VARCHAR,
+    value_input VARCHAR
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+    UPDATE device
+    SET speed = value_input
+    WHERE nameofdevices = device_name_input;
+END;
+$$;

@@ -48,4 +48,28 @@ public class DeviceService {
                 .body(new ResponseObject("ERROR", "Error updating PROC_controlStatus(): " + e.getMessage(), null));
         }
     }
+
+    public ResponseEntity<ResponseObject> PROC_controlPumpSpeed(String deviceName, Integer value) {
+        try {
+            jdbcTemplate.execute(
+            "CALL control_pump_speed(?, ?)",
+            (PreparedStatementCallback<Void>) ps -> {
+                ps.setString(1, deviceName);
+                ps.setInt(2, value);
+                ps.execute();
+                return null;
+            }
+            );
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("OK", "Query to update PROC_controlPumpSpeed() successfully", null));
+        } catch (DataAccessException e) {
+            // Xử lý lỗi liên quan đến truy cập dữ liệu
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            // Xử lý các lỗi khác
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Error updating PROC_controlPumpSpeed(): " + e.getMessage(), null));
+        }
+    }
 }
