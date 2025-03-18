@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8090";
+const baseUrl = "https://smart-gardent-system-server.azurewebsites.net";
 
 document.addEventListener('DOMContentLoaded', () => {
     document
