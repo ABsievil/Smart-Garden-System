@@ -82,7 +82,6 @@ const ControlDevice = () => {
   };
  
   const sendPumpSpeed = async (newPumpSpeed) => {
-    setData(updatedData);
     try {
       const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}`);
       
