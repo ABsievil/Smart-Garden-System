@@ -106,7 +106,7 @@ public class RecordService {
             }
             );
 
-            System.out.println("Saved record to DB successfully");
+            // System.out.println("Saved record to DB successfully");
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Query to update PROC_saveRecord() successfully", null));

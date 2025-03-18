@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hcmut.smart_garden_system.Controllers.SensorController;
@@ -21,6 +21,8 @@ import hcmut.smart_garden_system.Models.SensorRequest;
 public class DeviceService {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    
+    @Autowired
     private SensorController sensorController;
 
     public DeviceService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
@@ -42,6 +44,7 @@ public class DeviceService {
 
             SensorRequest sensorRequest = new SensorRequest(1, deviceName, status, false, 0);
             sensorController.publishMessage(sensorRequest);
+            System.out.println("send message to sensor successfully");
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Query to update PROC_controlStatus() successfully", null));
@@ -67,6 +70,11 @@ public class DeviceService {
                 return null;
             }
             );
+
+            SensorRequest sensorRequest = new SensorRequest(1, deviceName, false, false, value);
+            sensorController.publishMessage(sensorRequest);
+            System.out.println("send message pump speed to sensor successfully");
+
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Query to update PROC_controlPumpSpeed() successfully", null));
         } catch (DataAccessException e) {
