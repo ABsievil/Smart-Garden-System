@@ -46,8 +46,8 @@ const ControlDevice = () => {
 
     fetchData();
     
-    // Setup call fetch data every 5 seconds
-    const intervalId = setInterval(fetchData, 5000);
+    // Setup call fetch data every 1 seconds
+    const intervalId = setInterval(fetchData, 1000);
     
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
