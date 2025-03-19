@@ -7,8 +7,26 @@ import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
 import api from './../../../api';
 import './ControlDevice.css';
+import { useLocation } from 'react-router-dom';
 
 const ControlDevice = () => {
+  const location = useLocation();
+  const [areaId, setAreaId] = useState("1");
+  
+  useEffect(() => {
+    // Kiểm tra URL hiện tại để xác định area
+    const params = new URLSearchParams(location.search);
+    const area = params.get("area");
+    
+    if (location.pathname === "/control-device") {
+      if (area === "2") {
+        setAreaId("2");
+      } else {
+        setAreaId("1");
+      }
+    }
+  }, [location]);
+
   const [data, setData] = useState({
     // default data
     temperature: 0,
@@ -24,11 +42,11 @@ const ControlDevice = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get('/api/v1/record/getCurrentRecord/2');
+        const response = await api.get(`/api/v1/record/getCurrentRecord/${areaId}`);
         
         if (response.data.status === "OK") {
           const sensorData = response.data.data;
-          
+          console.log("Sensor data:", sensorData);
           // Update sensor values into const [data, setData]
           setData(prevData => ({
             ...prevData,
@@ -50,7 +68,7 @@ const ControlDevice = () => {
     
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
-  }, []);
+  }, [areaId]);
 
   const sendDeviceState = async (deviceName, updatedData) => {
     if (!updatedData || updatedData[deviceName] === undefined) {
@@ -59,7 +77,7 @@ const ControlDevice = () => {
     }
     setData(updatedData);
     try {
-      const response = await api.get(`/api/v1/device/controlStatus?deviceName=${deviceName}&status=${updatedData[deviceName]}`);
+      const response = await api.get(`/api/v1/device/controlStatus?deviceName=${deviceName}&status=${updatedData[deviceName]}&area=${areaId}`);
       
       if (response.data.status === "OK") {
         const res = response.data.data;
@@ -83,7 +101,7 @@ const ControlDevice = () => {
  
   const sendPumpSpeed = async (newPumpSpeed) => {
     try {
-      const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}`);
+      const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}&area=${areaId}`);
       
       if (response.data.status === "OK") {
         console.log("Pump speed updated successfully:", response.data.data);
@@ -109,7 +127,7 @@ const ControlDevice = () => {
 
   return (
     <div className="control-device-content">
-    <h2> Dữ liệu thiết bị </h2>
+    <h2> Dữ liệu thiết bị - Khu vực {areaId} </h2>
 
       <Box className='device-content' sx={{ width: "100%" }}>
       <div className="device-grid">
@@ -177,7 +195,7 @@ const ControlDevice = () => {
           checked={data.mode === "manual"} 
           onChange={() => {
             const updatedData = { ...data, mode: data.mode === "auto" ? "manual" : "auto" };
-            sendDeviceState("mode", updatedData);  // Truyền đúng tham số
+            sendDeviceState("mode", updatedData);
           }} 
         />
         Manual</span>

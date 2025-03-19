@@ -20,15 +20,17 @@ public class DeviceController {
     @GetMapping("/controlStatus")
     public ResponseEntity<ResponseObject> controlStatus(
         @RequestParam(value = "deviceName") String deviceName,
-        @RequestParam(value = "status") Boolean status) {
-        return deviceService.PROC_controlStatus(deviceName, status);
+        @RequestParam(value = "status") Boolean status, 
+        @RequestParam(value = "area") Integer area) {
+        return deviceService.PROC_controlStatus(deviceName, status, area);
     }
     
     @GetMapping("/controlPumpSpeed")
     public ResponseEntity<ResponseObject> controlPumpSpeed(
         @RequestParam(value = "deviceName") String deviceName,
-        @RequestParam(value = "value") Integer value) {
-        return deviceService.PROC_controlPumpSpeed(deviceName, value);
+        @RequestParam(value = "value") Integer value, 
+        @RequestParam(value = "area") Integer area) {
+        return deviceService.PROC_controlPumpSpeed(deviceName, value, area);
     }
 
     // @GetMapping("/controlState")

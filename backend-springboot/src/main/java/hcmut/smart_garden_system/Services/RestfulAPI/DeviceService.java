@@ -30,7 +30,7 @@ public class DeviceService {
         this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<ResponseObject> PROC_controlStatus(String deviceName, Boolean status) {
+    public ResponseEntity<ResponseObject> PROC_controlStatus(String deviceName, Boolean status, Integer area) {
         try {
             jdbcTemplate.execute(
             "CALL control_status(?, ?)",
@@ -42,7 +42,7 @@ public class DeviceService {
             }
             );
 
-            SensorRequest sensorRequest = new SensorRequest(1, deviceName, status, false, 0);
+            SensorRequest sensorRequest = new SensorRequest(area, deviceName, status, false, 0);
             sensorController.publishMessage(sensorRequest);
             System.out.println("send message to sensor successfully");
 
@@ -59,7 +59,7 @@ public class DeviceService {
         }
     }
 
-    public ResponseEntity<ResponseObject> PROC_controlPumpSpeed(String deviceName, Integer value) {
+    public ResponseEntity<ResponseObject> PROC_controlPumpSpeed(String deviceName, Integer value, Integer area) {
         try {
             jdbcTemplate.execute(
             "CALL control_pump_speed(?, ?)",
@@ -71,7 +71,7 @@ public class DeviceService {
             }
             );
 
-            SensorRequest sensorRequest = new SensorRequest(1, deviceName, false, false, value);
+            SensorRequest sensorRequest = new SensorRequest(area, deviceName, false, false, value);
             sensorController.publishMessage(sensorRequest);
             System.out.println("send message pump speed to sensor successfully");
 
