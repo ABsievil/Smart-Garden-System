@@ -18,6 +18,13 @@ CREATE TABLE users (
     numofschedules INTEGER
 );
 
+CREATE SEQUENCE users_id_seq;
+
+ALTER TABLE users 
+ALTER COLUMN id SET DEFAULT nextval('users_id_seq');
+
+SELECT setval('users_id_seq', 2);
+
 -- Bảng OTP
 CREATE TABLE otp (
     otp VARCHAR(255),
