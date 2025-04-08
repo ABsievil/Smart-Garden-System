@@ -1,18 +1,18 @@
-CREATE OR REPLACE FUNCTION get_current_record(p_area VARCHAR)
+CREATE OR REPLACE FUNCTION get_current_record(p_area INTEGER)
 RETURNS JSON AS $$
 DECLARE
     result JSON;
 BEGIN
     SELECT json_build_object(
-			'area', r.area,
-			'temperature', r.temperature,
-			'humidity', r.humidity,
-			'light', r.light,
-			'soilMoisture', r.soilMoisture
-       		)
+        'area', r.area,
+        'temperature', r.temperature,
+        'humidity', r.humidity,
+        'light', r.light,
+        'soilMoisture', r.soil_moisture
+    )
     INTO result
     FROM record r
-	WHERE r.datetime = (SELECT MAX(datetime) FROM record WHERE area = p_area)
+    WHERE r.datetime = (SELECT MAX(datetime) FROM record WHERE area = p_area)
     AND r.area = p_area;
     
     RETURN result;
@@ -25,18 +25,18 @@ CREATE OR REPLACE PROCEDURE save_record(
     humidity_input DOUBLE PRECISION,
     light_input DOUBLE PRECISION,
     soil_moisture_input DOUBLE PRECISION,
-    timestamp_input VARCHAR
+    datetime_input VARCHAR
 )
 LANGUAGE plpgsql AS $$
 BEGIN
-    INSERT INTO record (area, temperature, humidity, light, soil_moisture, timestamp)
+    INSERT INTO record (area, temperature, humidity, light, soil_moisture, datetime)
     VALUES (
         area_input,
         temperature_input,
         humidity_input,
         light_input,
         soil_moisture_input,
-        timestamp_input::TIMESTAMP
+        datetime_input::TIMESTAMP
     );
 END;
 $$;
@@ -59,7 +59,7 @@ $$;
 
 CREATE OR REPLACE PROCEDURE control_pump_speed(
     device_name_input VARCHAR,
-    value_input VARCHAR
+    value_input INTEGER
 )
 LANGUAGE plpgsql AS $$
 BEGIN
