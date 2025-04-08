@@ -24,7 +24,7 @@ CREATE TABLE area (
 CREATE TABLE tree (
 	nameoftypetree varchar NOT NULL,
 	amount float8 NOT NULL,
-	growthtime daterange NOT NULL,
+	growthtime datetime NOT NULL,
 	season varchar NOT NULL,
 	CONSTRAINT tree_pk PRIMARY KEY (nameoftypetree)
 );
@@ -84,7 +84,7 @@ CREATE TABLE "ADMIN" (
 -- DROP TABLE device;
 
 CREATE TABLE device (
-	guaranteetime daterange NOT NULL,
+	guaranteetime date NOT NULL,
 	id varchar NOT NULL,
 	outputvoltage int4 DEFAULT 220 NOT NULL,
 	inputvoltage int4 DEFAULT 220 NOT NULL,

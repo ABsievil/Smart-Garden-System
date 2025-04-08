@@ -19,43 +19,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE add_student(
-	username_input VARCHAR, 
-	password_input VARCHAR, 
-	last_name_input VARCHAR, 
-	middle_name_input VARCHAR, 
-	first_name_input VARCHAR, 
-	email_input VARCHAR, 
-	date_of_birth_input DATE, 
-	phone_number_input VARCHAR, 
-	role_input VARCHAR,
-	student_id_input VARCHAR, 
-	school_year_input VARCHAR, 
-	faculty_input VARCHAR, 
-	page_remain_input INT
-)
-LANGUAGE plpgsql AS $$
-BEGIN
-    INSERT INTO Users (username, password, last_name, middle_name, first_name, email, date_of_birth, phone_number, role, 
-                        student_id, school_year, faculty, page_remain)
-    VALUES (
-                username_input, 
-                password_input, 
-                last_name_input, 
-                middle_name_input, 
-                first_name_input, 
-                email_input, 
-                date_of_birth_input, 
-                phone_number_input, 
-                role_input, 
-                student_id_input, 
-			    school_year_input, 
-                faculty_input, 
-                page_remain_input
-            );
-END;
-$$;
-
 CREATE OR REPLACE PROCEDURE save_record(
     area_input INT,
     temperature_input DOUBLE PRECISION,
