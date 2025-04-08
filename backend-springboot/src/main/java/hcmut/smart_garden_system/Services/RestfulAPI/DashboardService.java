@@ -3,7 +3,9 @@ package hcmut.smart_garden_system.Services.RestfulAPI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hcmut.smart_garden_system.Controllers.SensorController;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
 import hcmut.smart_garden_system.Models.SensorData;
+import hcmut.smart_garden_system.Models.DBTable.Notification;
 import hcmut.smart_garden_system.Repositories.DeviceRepository;
+import hcmut.smart_garden_system.Repositories.NotificationRepository;
 import hcmut.smart_garden_system.Repositories.RecordRepository;
 import hcmut.smart_garden_system.Repositories.ScheduleRepository;
 import hcmut.smart_garden_system.Repositories.StaffScheduleRepository;
@@ -37,6 +41,9 @@ public class DashboardService {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     public ResponseEntity<ResponseObject> getSummaryData() {
         try {
@@ -73,4 +80,29 @@ public class DashboardService {
                     .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
         }
     }
+
+    public ResponseEntity<ResponseObject> getNotifications() {
+    try {
+        List<Notification> notifications = notificationRepository.findAllNotifications();
+
+        List<Map<String, Object>> notificationData = notifications.stream().map(n -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("userId", n.getId().getUserId());   // Lấy userId từ NotificationId
+            map.put("content", n.getId().getContent());  // Lấy content từ NotificationId
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("OK", "Query to get notifications successfully", notificationData));
+
+    } catch (DataAccessException e) {
+        System.err.println("Database error: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+    } catch (Exception e) {
+        System.err.println("Unexpected error in getNotifications(): " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+    }
+}
 }

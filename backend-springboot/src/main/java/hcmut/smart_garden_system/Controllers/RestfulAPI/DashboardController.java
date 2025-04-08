@@ -32,8 +32,8 @@ public class DashboardController {
     //     return dashboardService.getSoilMoisture();
     // }
 
-    // @GetMapping("/notifications")
-    // public ResponseEntity<ResponseObject> getNotifications() {
-    //     return dashboardService.getNotifications();
-    // }
+    @GetMapping("/notifications")
+    public ResponseEntity<ResponseObject> getNotifications() {
+        return dashboardService.getNotifications();
+    }
 }
