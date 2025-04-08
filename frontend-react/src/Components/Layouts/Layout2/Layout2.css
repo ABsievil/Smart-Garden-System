@@ -1,34 +1,34 @@
 body {
-    background-color: #f8fff3;
-    color: #fff;
-    overflow: hidden;
-  }
-  
-  /* .header-container {
-    height: 121px ;
-  
-    width: 100%;
-    padding-left: 24px;
-    padding-top: 32px;
-  } */
-  
-  .sidebar-component {
-    width: 300px;
-    height: 100vh;
-  }
-  
-  .layout-app-container {
-    display: flex;
-  }
-  
-  .content-container{
-      flex: 1;  
-  }
-  
-  .component-change{
-      display: flex;
-      width: 100%;
-      margin-left: 0px;
-  }
-  
- 
+  background-color: #f0f8e7;
+  color: #fff;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  overflow:hidden;
+}
+
+.layout-app-container {
+  display: flex;
+  min-height: 100vh; /* Ensure the layout takes up the full viewport height */
+}
+
+.sidebar-component {
+  width: 300px;
+  height: 100vh;
+  background-color: #fff; /* Assuming Sidebar has a white background */
+}
+
+.content-container {
+  flex: 1;
+  background-color: #f0f8e7; /* Match the body background */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure content takes up full height */
+}
+
+.component-change {
+  display: flex;
+  width: 100%;
+  margin-left: 0;
+  flex: 1; /* Allow the component to grow and fill the space */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+}
