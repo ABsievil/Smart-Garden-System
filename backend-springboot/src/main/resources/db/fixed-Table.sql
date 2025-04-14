@@ -19,13 +19,21 @@ CREATE TABLE users (
     numofschedules INTEGER
 );
 
+--  xóa column id
+ALTER TABLE users
+DROP COLUMN id;
+DROP SEQUENCE users_id_seq;
+
+-- thêm contraint cho user_id
 CREATE SEQUENCE users_id_seq;
 
 ALTER TABLE users 
-ALTER COLUMN id SET DEFAULT nextval('users_id_seq');
+ALTER COLUMN user_id SET DEFAULT nextval('users_id_seq');
 
-SELECT setval('users_id_seq', 1);
+SELECT setval('users_id_seq', 3);
 
+ALTER TABLE users
+DROP COLUMN id;
 -- Bảng OTP
 CREATE TABLE otp (
     otp VARCHAR(255),

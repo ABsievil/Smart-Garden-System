@@ -19,8 +19,6 @@ public class PersonalInformation {
 
     private String sex;
     
-    private String id;
-
     @Column(name= "fname")
     private String fname;
 
