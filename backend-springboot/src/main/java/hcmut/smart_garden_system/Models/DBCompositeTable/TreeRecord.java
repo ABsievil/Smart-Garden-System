@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,14 +24,11 @@ public class TreeRecord {
     @EmbeddedId
     private TreeRecordId id;
 
-    @ManyToOne
-    @JoinColumns({
-        @JoinColumn(name = "tree_name", referencedColumnName = "name", insertable = false, updatable = false),
-        @JoinColumn(name = "tree_area", referencedColumnName = "area", insertable = false, updatable = false)
-    })
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tree_area", referencedColumnName = "area", insertable = false, updatable = false)
     private Tree tree;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id", insertable = false, updatable = false)
     private Record record;
 }

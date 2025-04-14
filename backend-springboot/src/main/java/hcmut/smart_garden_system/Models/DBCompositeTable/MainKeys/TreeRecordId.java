@@ -12,9 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TreeRecordId implements Serializable {
-    @Column(name = "tree_name")
-    private String treeName;
-
     @Column(name = "tree_area")
     private Integer treeArea;
 

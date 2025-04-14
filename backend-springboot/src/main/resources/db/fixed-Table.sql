@@ -72,6 +72,43 @@ CREATE TABLE tree (
     CONSTRAINT pk_tree PRIMARY KEY (name, area)
 );
 
+ALTER TABLE notification
+ADD COLUMN datetime TIMESTAMP;
+
+-- thêm contraint cho user_id
+CREATE SEQUENCE tree_area_seq;
+
+ALTER TABLE tree 
+ALTER COLUMN area SET DEFAULT nextval('tree_area_seq');
+
+SELECT setval('tree_area_seq', 3);
+
+
+ALTER TABLE tree
+DROP CONSTRAINT pk_tree CASCADE;
+
+-- Thêm khóa chính mới trên area
+ALTER TABLE tree
+ADD CONSTRAINT pk_tree PRIMARY KEY (area);
+
+
+-- Step 4: Drop the composite primary key in tree_record
+ALTER TABLE tree_record
+DROP CONSTRAINT pk_tree_record;
+
+-- Step 5: Add a new primary key on tree_area and record_id in tree_record
+ALTER TABLE tree_record
+ADD CONSTRAINT pk_tree_record PRIMARY KEY (tree_area, record_id);
+
+-- Step 6: Recreate the foreign key in tree_record to reference tree(area)
+ALTER TABLE tree_record
+ADD CONSTRAINT fk_tree_record_tree
+FOREIGN KEY (tree_area) REFERENCES tree(area);
+
+-- Step 7 (Optional): Add a unique constraint on tree_name if needed
+ALTER TABLE tree_record
+ADD CONSTRAINT unique_tree_name UNIQUE (tree_name);
+
 -- Bảng Record
 CREATE TABLE record (
     area INTEGER,
