@@ -41,6 +41,9 @@ CREATE TABLE notification (
     CONSTRAINT pk_notification PRIMARY KEY (user_id, content)
 );
 
+ALTER TABLE notification
+ADD COLUMN datetime TIMESTAMP;
+
 -- Bảng Schedule
 CREATE TABLE schedule (
     id SERIAL PRIMARY KEY, -- Thêm cột id làm khóa chính
