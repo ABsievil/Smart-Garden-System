@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../../../Components/NavBar/NavBar';
 import './StaffManager.css';
 
 const StaffManagement = () => {
@@ -12,6 +13,9 @@ const StaffManagement = () => {
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('newest'); // Mặc định là mới nhất
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const [isPaginationModalOpen, setIsPaginationModalOpen] = useState(false); // State for pagination modal
+  const staffPerPage = 12; // Number of staff per page
 
   // FakeData
   useEffect(() => {
@@ -54,8 +58,8 @@ const StaffManagement = () => {
     });
 
     setFilteredStaff(updatedStaff);
+    setCurrentPage(1); // Reset to first page when filter or sort changes
   }, [searchTerm, sortOrder, staff]);
-
 
   /*
   useEffect(() => {
@@ -84,12 +88,30 @@ const StaffManagement = () => {
   };
   */
 
-  // Hàm mở/đóng modal
+  // Pagination logic
+  const indexOfLastStaff = currentPage * staffPerPage;
+  const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
+  const currentStaff = filteredStaff.slice(indexOfFirstStaff, indexOfLastStaff);
+  const totalPages = Math.ceil(filteredStaff.length / staffPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setIsPaginationModalOpen(false); // Close modal after selecting a page
+    }
+  };
+
+  // Hàm mở/đ/close modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     if (isModalOpen) {
       setNewStaff({ name: '', memberId: '', role: '' }); // Reset form khi đóng modal
     }
+  };
+
+  // Hàm mở/đóng modal phân trang
+  const togglePaginationModal = () => {
+    setIsPaginationModalOpen(!isPaginationModalOpen);
   };
 
   // Hàm xử lý thay đổi input trong modal
@@ -124,10 +146,14 @@ const StaffManagement = () => {
 
   return (
     <div className="staff-management">
-      {/* Thanh tìm kiếm, lọc và nút thêm nhân viên */}
       <div className="header">
-        <h2>Quản lý nhân viên</h2>
-        <div className="actions">
+        <h7>Quản lý nhân viên</h7>
+        <Navbar />
+        </div>
+      {/* Thanh tìm kiếm, lọc và nút thêm nhân viên */}
+    
+        
+        <div className="actions3">
           <input
             type="text"
             placeholder="Search here..."
@@ -135,44 +161,83 @@ const StaffManagement = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <select className="sort-dropdown" value={sortOrder} onChange={handleSortChange}>
-            <option value="newest">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-          </select>
           <button className="add-button" onClick={toggleModal}>
             Thêm nhân viên
           </button>
         </div>
-      </div>
+     
 
       {/* Lưới danh sách nhân viên */}
       <div className="staff-grid">
-        {filteredStaff.map((member) => (
+        {currentStaff.map((member) => (
           <div key={member.id} className="staff-card">
             <div className="avatar"></div>
-            <h3>{member.name}</h3>
-            <p className="member-id">{member.memberId}</p>
-            <p>{member.role}</p>
+            <h11>{member.name}</h11>
+            <h12 className="member-id">{member.memberId}</h12>
+            <h12>{member.role}</h12>
           </div>
         ))}
       </div>
 
-      {/* Phân trang (giả lập) */}
-      <div className="pagination">
-        <span>Showing 1-5 from 100 data</span>
-        <div className="pagination-buttons">
-          <button>1</button>
-          <button>2</button>
-          <button>3</button>
-        </div>
+      {/* Phân trang với modal */}
+      <div className="pagination" >
+        <span style={{ backGroundColor: "transparent" }}>
+          SHOWING {indexOfFirstStaff + 1}-{Math.min(indexOfLastStaff, filteredStaff.length)} OF {filteredStaff.length} DATA
+        </span>
+        <button className="pagination-modal-button" onClick={togglePaginationModal}>
+          Page {currentPage} ▼
+        </button>
       </div>
+
+      {/* Modal phân trang */}
+      {isPaginationModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Chọn trang</h3>
+            <div className="pagination-controls">
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </button>
+              {Array.from({ length: Math.min(totalPages, 3) }, (_, index) => {
+                const startPage = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+                const page = startPage + index;
+                return (
+                  <button
+                    key={page}
+                    className={`page-button ${currentPage === page ? 'active' : ''}`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &gt;
+              </button>
+            </div>
+            <div className="modal-actions">
+              <button className="cancel-button" onClick={togglePaginationModal}>
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal thêm nhân viên */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="modal-overlay1">
+          <div className="modal1">
             <h3>Thêm nhân viên</h3>
-            <div className="modal-content">
+            <div className="modal-content1">
               <label>Tên nhân viên</label>
               <input
                 type="text"
@@ -198,7 +263,7 @@ const StaffManagement = () => {
                 placeholder="Nhập chức vụ"
               />
             </div>
-            <div className="modal-actions">
+            <div className="modal-actions1">
               <button className="cancel-button" onClick={toggleModal}>
                 Hủy
               </button>

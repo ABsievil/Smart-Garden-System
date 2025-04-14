@@ -7,6 +7,7 @@ import DeviceRecord from "../Pages/Admin/DeviceRecord/DeviceRecord";
 import Scheduler from "../Pages/Admin/Scheduler/Scheduler";
 import StaffManager from "../Pages/Admin/StaffManager/StaffManager";
 import TreeManager from "../Pages/Admin/TreeManager/TreeManager";
+import UserProfile from "../Pages/Admin/UserProfile/UserProfile";
 import ForgetPassword from "../Pages/Login/ForgetPassword/ForgetPassword";
 import SignIn from "../Pages/Login/Signin/Login";
 import ControlDevice from "../Pages/Staff/ControlDevice/ControlDevice";
@@ -82,6 +83,10 @@ export const routes = [
             path: "/scheduler-view",
             element: <ViewScheduler/>,
         },
+        {
+          path: "/user-profile",
+          element: <UserProfile/>,
+      },
     ],
     },
 

@@ -2,6 +2,7 @@ import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineE
 import React, { useEffect, useRef, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import { FaExclamationTriangle, FaLeaf, FaMicrochip, FaPrint, FaUsers } from 'react-icons/fa';
+import Navbar from '../../../Components/NavBar/NavBar';
 import './Dashboard.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
@@ -175,7 +176,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+    
+     
+      < div className="header">
       <h6>Dashboard</h6>
+      <Navbar />
+     </div>
       {/* Phần Tổng quan */}
       <div className="summary-cards">
         <div className="card">
@@ -282,11 +288,11 @@ const Dashboard = () => {
             ))}
           </tbody>
         </table>
-        <div className="pagination">
+        <div className="pagination1">
           <button
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 0}
-            className="pagination-button"
+            className="pagination-button1"
           >
             ◄
           </button>
@@ -294,7 +300,7 @@ const Dashboard = () => {
             <button
               key={index}
               onClick={() => handlePageChange(index)}
-              className={`pagination-button ${page === index ? 'active' : ''}`}
+              className={`pagination-button1 ${page === index ? 'active' : ''}`}
             >
               {index + 1}
             </button>
@@ -302,7 +308,7 @@ const Dashboard = () => {
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages - 1}
-            className="pagination-button"
+            className="pagination-button1"
           >
             ►
           </button>

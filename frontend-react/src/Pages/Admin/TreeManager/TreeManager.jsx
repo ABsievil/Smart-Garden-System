@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../../../Components/NavBar/NavBar';
 import './TreeManager.css';
-
 const TreeManager = () => {
   const [plants, setPlants] = useState([]);
   const [filteredPlants, setFilteredPlants] = useState([]);
@@ -155,10 +155,13 @@ const TreeManager = () => {
 
   return (
     <div className="plant-list">
+      <div className="header">
       <h7>Danh sách cây trồng</h7>
+      <Navbar/>
+      </div>
       <div className="header">
         
-        <div className="actions">
+        <div className="actions2">
           <input
             type="text"
             placeholder="Search here..."
@@ -166,16 +169,10 @@ const TreeManager = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <select 
-              value={sortOrder} 
-              onChange={handleSortChange}
-              className="sort-dropdown" 
-          >
-            <option value="newest">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-          </select>
+          
+       
           <button className="add-button" onClick={() => toggleModal('add')}>
-            Thêm cây
+           + Thêm cây (Khu vực)
           </button>
         </div>
       </div>
@@ -203,7 +200,12 @@ const TreeManager = () => {
               <td>{plant.quantity}</td>
               <td>
                 <div className="action-menu" style={{ position: 'relative' }}>
-                  <button onClick={() => toggleMenu(plant.id)}>⋯</button>
+                <button
+                  className="menu-toggle"
+                  onClick={() => toggleMenu(plant.id)}
+                >
+                  ⋯
+                </button>
                   {openMenuId === plant.id && (
                     <div className="action-menu-content">
                       <button className="edit" onClick={() => handleEditPlant(plant)}>

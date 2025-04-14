@@ -1,0 +1,243 @@
+.scheduler-container {
+    background-color: #f0f8e7; /* Light green background */
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    padding: 25px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+  }
+  
+  h13 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #34772e; /* Dark green for the title */
+    margin: 0;
+  }
+  
+  h14 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #34772e; /* Dark green for the title */
+    margin: 0;
+    padding-right: 30%;
+  }
+  
+  .calendar-container {
+    background-color: #fff; /* White background for calendar */
+    width: 100%;
+    padding: 25px;
+    height: 100%;
+    border-radius: 12px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+  }
+  
+  .calendar-container .scheduler-header {
+    display: flex;
+    flex-direction: row; /* Fixed typo from 'comlumn' to 'row' */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    height: 50px;
+    gap: 10px;
+    
+  }
+  
+  .select-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; /* Light gray background */
+    border: 1px solid #34772e; /* Dark green border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 0;
+    height: 40px;
+    width: 500px;
+  }
+  
+  .scheduler-header select {
+    padding: 8px 24px 8px 12px; /* Adjusted padding for arrow space */
+    border: none; /* Remove default border */
+    background: transparent; /* Transparent background */
+    font-size: 14px;
+    color: #34772e; /* Dark green text */
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px; /* Match container border radius */
+  }
+  
+  .scheduler-header select:focus {
+    outline: none; /* Remove default focus outline */
+  }
+  
+  /* Custom dropdown arrow */
+  .select-button {
+    position: relative;
+  }
+  
+  .select-button::after {
+    content: '▼'; /* Downward arrow */
+    position: absolute;
+    right: 12px;
+    color: #34772e; /* Dark green arrow */
+    font-size: 12px;
+    pointer-events: none; /* Prevent arrow from interfering with clicks */
+  }
+  
+  .scheduler-header button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px; /* Match dropdown button style */
+    font-size: 14px;
+    height: 40px;
+  }
+  
+  .scheduler-header button:hover {
+    background-color: #219653;
+  }
+        
+  .scheduler-header .notification-button {
+    background-color: #9dd3a9; /* Light gray background */
+  }
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 50px;
+    margin-top: -30px;
+  }
+  
+  .day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 4px;
+    height: 0px;
+    color: #2c5038;
+    margin-bottom: -30px;
+  }
+  
+  .day {
+    padding:20px;
+    border: 1px solid #ddd;
+    min-height: 80px;
+    position: relative;
+    background-color: #fff;
+    color: #2c3e50;
+    height: 125px;
+    border-radius: 40px;
+    margin-bottom: -30px;
+  }
+   
+  .day.event {
+    border: 2px solid #e74c3c;
+  }
+  
+  .day-number {
+    font-weight: bold;
+  }
+  
+  .event-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -20px;
+  }
+  
+  .holiday {
+    color: #e67e22;
+    font-size: 12px;
+  }
+  
+  .modal3 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content3 {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    position: relative;
+  }
+  
+  .modal-content3 h3 {
+    margin-top: 0;
+    color: #27ae60;
+  }
+  
+  .modal-content3 label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #2c3e50;
+  }
+  
+  .modal-content3 input, .modal-content3 select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .modal-buttons3 {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .modal-buttons3 button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .modal-buttons3 button:first-child {
+    background-color: #fff;
+    color: #2c3e50;
+    border: 1px solid #ccc;
+  }
+  
+  .modal-buttons3 button:last-child {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+  }
+  
+  .modal-buttons3 button:last-child:hover {
+    background-color: #219653;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #2c3e50;
+  }

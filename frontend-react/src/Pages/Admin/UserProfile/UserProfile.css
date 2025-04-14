@@ -1,202 +1,259 @@
-    .profile {
-        padding: 20px;
-        background-color: #f5f5f5;
-        min-height: 100vh;
-    }
-    
-    .profile h2 {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 20px;
-    }
-    
-    .profile-container {
-        display: flex;
-        gap: 40px;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .avatar-section {
-        text-align: center;
-        flex: 1;
-    }
-    
-    .avatar {
-        width: 150px;
-        height: 150px;
-        background-color: #4CAF50;
-        border-radius: 50%;
-        margin: 0 auto 20px;
-    }
-    
-    .avatar-section h3 {
-        margin: 0;
-        font-size: 20px;
-        color: #333;
-    }
-    
-    .avatar-section p {
-        margin: 5px 0 20px;
-        font-size: 16px;
-        color: #555;
-    }
-    
-    .actions {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .edit-button,
-    .password-button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    
-    .edit-button:hover,
-    .password-button:hover {
-        background-color: #45a049;
-    }
-    
-    .info-section {
-        flex: 2;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .info-item .icon {
-        width: 30px;
-        height: 30px;
-        background-color: #FFD700;
-        border-radius: 50%;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .info-item .dob-icon::before {
-        content: '📍'; /* Biểu tượng vị trí cho Ngày sinh */
-        font-size: 16px;
-    }
-    
-    .info-item .phone-icon::before {
-        content: '📞'; /* Biểu tượng điện thoại */
-        font-size: 16px;
-    }
-    
-    .info-item .email-icon::before {
-        content: '✉️'; /* Biểu tượng email */
-        font-size: 16px;
-    }
-    
-    .info-item .gender-icon::before {
-        content: '♂️'; /* Biểu tượng giới tính (có thể thay đổi tùy theo giá trị) */
-        font-size: 16px;
-    }
-    
-    .info-item p {
-        margin: 0;
-        font-size: 16px;
-        color: #555;
-    }
-    
-    /* Modal styles */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .modal {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        width: 400px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    
-    .modal h3 {
-        margin: 0 0 20px;
-        font-size: 18px;
-        color: #333;
-    }
-    
-    .modal-content {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .modal-content label {
-        font-size: 14px;
-        color: #333;
-    }
-    
-    .modal-content input {
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        width: 100%;
-    }
-    
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
-    .cancel-button {
-        background-color: #ccc;
-        color: #333;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    .cancel-button:hover {
-        background-color: #bbb;
-    }
-    
-    .save-button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    .save-button:hover {
-        background-color: #45a049;
-    }
-    
-    .loading {
-        text-align: center;
-        font-size: 18px;
-        color: #333;
-        padding: 20px;
-    }
+.body { 
+    background-color: #fff; /* White background as in Image 2 */
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    padding: 25px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+.user-profile {
+    background-color: #f0f8e7; /* Light green background */
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    padding: 25px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box; 
+}
+.profile {
+    background-color: #fff; /* White background */
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    padding: 25px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    position: relative; /* For positioning the dropdown */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h13 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #34772e; /* Dark green for the title */
+    margin: 0;
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: transparent; /* No background */
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+}
+
+.avatar-section {
+    text-align: center; /* Center the avatar and text */
+    flex: 1;
+}
+
+.avatar {
+    width: 100px; /* Circular avatar */
+    height: 100px;
+    background-color: #4CAF50; /* Green color */
+    border-radius: 50%; /* Circular shape */
+    margin: 0 auto 10px; /* Centered with margin below */
+}
+
+.avatar-section h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.avatar-section p {
+    margin: 5px 0 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+.dropdown-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: row; /* Single row as in Image 2 */
+    justify-content: space-between; /* Space items evenly */
+    gap: 20px;
+    flex-wrap: wrap; /* Wrap if needed */
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-item .icon {
+    width: 30px;
+    height: 30px;
+    background-color: #FFD700; /* Yellow icon background */
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-item .dob-icon::before {
+    content: '📍'; /* Location icon */
+    font-size: 16px;
+}
+
+.info-item .phone-icon::before {
+    content: '📞'; /* Phone icon */
+    font-size: 16px;
+}
+
+.info-item .email-icon::before {
+    content: '✉️'; /* Email icon */
+    font-size: 16px;
+}
+
+.info-item .gender-icon::before {
+    content: '♂️'; /* Gender icon */
+    font-size: 16px;
+}
+
+.info-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.modal h3 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content label {
+    font-size: 14px;
+    color: #333;
+}
+
+.modal-content input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-button {
+    background-color: #ccc;
+    color: #333;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #bbb;
+}
+
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    padding: 20px;
+}
