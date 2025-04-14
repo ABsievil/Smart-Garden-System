@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
 import hcmut.smart_garden_system.Services.RestfulAPI.DashboardService;
 import hcmut.smart_garden_system.Services.RestfulAPI.DeviceService;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.NotificationRequestDTO;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.BroadcastNotificationDTO;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.SendNotificationToUserDTO;
 
 @RestController
 @RequestMapping("/api/v1/dashboard")
@@ -33,8 +38,24 @@ public class DashboardController {
         return dashboardService.getHumidityData(areaId);
     }
 
-    @GetMapping("/notifications")
-    public ResponseEntity<ResponseObject> getNotifications() {
-        return dashboardService.getNotifications();
+    @GetMapping("/notifications/user/{userId}")
+    public ResponseEntity<ResponseObject> getNotificationsByUserId(@PathVariable Integer userId) {
+        return dashboardService.getNotificationsByUserId(userId);
     }
+
+    @PostMapping("/notifications/to-admin")
+    public ResponseEntity<ResponseObject> sendNotificationToAdmin(@RequestBody NotificationRequestDTO request) {
+        return dashboardService.sendNotificationToAdmin(request);
+    }
+
+    @PostMapping("/notifications/broadcast")
+    public ResponseEntity<ResponseObject> sendNotificationToAllUsers(@RequestBody BroadcastNotificationDTO request) {
+        return dashboardService.sendNotificationToAllUsers(request);
+    }
+
+    @PostMapping("/notifications/to-user")
+    public ResponseEntity<ResponseObject> sendNotificationToUser(@RequestBody SendNotificationToUserDTO request) {
+        return dashboardService.sendNotificationToUser(request);
+    }
+
 }

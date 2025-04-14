@@ -9,6 +9,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle; // Import TextStyle
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays; // Import Arrays
 import java.util.Collections; // Import Collections
@@ -19,12 +20,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.Locale; // Import Locale
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,12 +35,18 @@ import hcmut.smart_garden_system.Controllers.SensorController;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
 import hcmut.smart_garden_system.Models.SensorData;
 import hcmut.smart_garden_system.Models.DBTable.Notification;
+import hcmut.smart_garden_system.Models.DBTable.MainKeys.NotificationId; // Import NotificationId
+import hcmut.smart_garden_system.Models.User;
 import hcmut.smart_garden_system.Repositories.DeviceRepository;
 import hcmut.smart_garden_system.Repositories.NotificationRepository;
 import hcmut.smart_garden_system.Repositories.RecordRepository;
 import hcmut.smart_garden_system.Repositories.ScheduleRepository;
 import hcmut.smart_garden_system.Repositories.StaffScheduleRepository;
 import hcmut.smart_garden_system.Repositories.TreeRepository;
+import hcmut.smart_garden_system.Repositories.UserRepository; // Import UserRepository
+import hcmut.smart_garden_system.DTOs.RestfulAPI.NotificationRequestDTO;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.BroadcastNotificationDTO;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.SendNotificationToUserDTO; // Import mới
 
 @Service
 public class DashboardService {
@@ -55,6 +64,9 @@ public class DashboardService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private UserRepository userRepository; // Inject UserRepository
 
     public ResponseEntity<ResponseObject> getSummaryData() {
         try {
@@ -307,28 +319,160 @@ public class DashboardService {
         }
     }
 
-    public ResponseEntity<ResponseObject> getNotifications() {
-        try {
-            List<Notification> notifications = notificationRepository.findAllNotifications();
+    // Get notifications for a specific user
+    public ResponseEntity<ResponseObject> getNotificationsByUserId(Integer userId) {
+        try { 
+            List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId);
+            int totalNotifications = notifications.size();
 
-            List<Map<String, Object>> notificationData = notifications.stream().map(n -> {
+            // Chỉ lấy content và datetime cho mỗi notification
+            List<Map<String, Object>> notificationList = notifications.stream().map(n -> {
                 Map<String, Object> map = new LinkedHashMap<>();
-                map.put("userId", n.getId().getUserId());   // Lấy userId từ NotificationId
-                map.put("content", n.getId().getContent());  // Lấy content từ NotificationId
+                map.put("content", n.getId().getContent());
+                map.put("datetime", n.getDatetime());
                 return map;
             }).collect(Collectors.toList());
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("OK", "Query to get notifications successfully", notificationData));
+            // Tạo Map kết quả trả về
+            Map<String, Object> responseData = new LinkedHashMap<>();
+            responseData.put("totalNotifications", totalNotifications);
+            responseData.put("userId", userId); 
+            responseData.put("notifications", notificationList); 
 
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Query notifications for user " + userId + " successfully", responseData));
         } catch (DataAccessException e) {
-            System.err.println("Database error: " + e.getMessage());
+            System.err.println("Database error in getNotificationsByUserId(): " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
         } catch (Exception e) {
-            System.err.println("Unexpected error in getNotifications(): " + e.getMessage());
+            System.err.println("Unexpected error in getNotificationsByUserId(): " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Unexpected error in getNotificationsByUserId(): " + e.getMessage(), null));
+        }
+    }
+
+    // Send notification from a user to the admin
+    public ResponseEntity<ResponseObject> sendNotificationToAdmin(NotificationRequestDTO request) {
+        try {
+            // 1. Kiểm tra xem người gửi có tồn tại không
+            if (!userRepository.existsByUserId(request.getSenderUserId())) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("ERROR", "Sender user with ID " + request.getSenderUserId() + " not found", null));
+            }
+
+            // 2. Tìm admin
+            Optional<User> adminOptional = userRepository.findAdmin();
+            if (adminOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("ERROR", "Admin user not found", null));
+            }
+            User admin = adminOptional.get();
+
+            // 3. Tạo và lưu thông báo cho admin
+            NotificationId notificationId = new NotificationId(admin.getUserId(), request.getContent());
+            Notification notification = new Notification();
+            notification.setId(notificationId);
+            notification.setDatetime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+            notificationRepository.save(notification);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject("OK", "Notification sent to admin successfully", null));
+
+        } catch (DataIntegrityViolationException e) {
+             // Xử lý trường hợp trùng khóa chính (user_id, content)
+             return ResponseEntity.status(HttpStatus.CONFLICT)
+                     .body(new ResponseObject("ERROR", "Notification with this content already exists for the admin", null));
+        } catch (DataAccessException e) {
+            System.err.println("Database error in sendNotificationToAdmin(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in sendNotificationToAdmin(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error in sendNotificationToAdmin(): " + e.getMessage(), null));
+        }
+    }
+
+    // Send notification to all users with role 'USER'
+    public ResponseEntity<ResponseObject> sendNotificationToAllUsers(BroadcastNotificationDTO request) {
+        try {
+            // 1. Lấy danh sách tất cả user có role 'USER'
+            List<User> users = userRepository.findAllUsersByRoleUser();
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "No users with role USER found to send notification to.", null));
+            }
+
+            // 2. Tạo danh sách các thông báo cần lưu
+            List<Notification> notificationsToSave = new ArrayList<>();
+            LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            for (User user : users) {
+                NotificationId notificationId = new NotificationId(user.getUserId(), request.getContent());
+                Notification notification = new Notification();
+                notification.setId(notificationId);
+                notification.setDatetime(now);
+                notificationsToSave.add(notification);
+            }
+
+            // 3. Lưu tất cả thông báo (batch save)
+            notificationRepository.saveAll(notificationsToSave);
+
+             return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject("OK", "Notification sent to all users successfully", null));
+
+        } catch (DataAccessException e) {
+            System.err.println("Database error in sendNotificationToAllUsers(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in sendNotificationToAllUsers(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error in sendNotificationToAllUsers(): " + e.getMessage(), null));
+        }
+    }
+
+    // Send notification to a specific user by userId
+    public ResponseEntity<ResponseObject> sendNotificationToUser(SendNotificationToUserDTO request) {
+        try {
+            // 1. Kiểm tra xem người nhận có tồn tại không
+            if (!userRepository.existsByUserId(request.getTargetUserId())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                   .body(new ResponseObject("ERROR", "Target user with ID " + request.getTargetUserId() + " not found", null));
+            }
+
+            // 2. Tạo và lưu thông báo
+            NotificationId notificationId = new NotificationId(request.getTargetUserId(), request.getContent());
+            Notification notification = new Notification();
+            notification.setId(notificationId);
+            notification.setDatetime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)); // Set thời gian hiện tại
+
+            notificationRepository.save(notification);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject("OK", "Notification sent to user " + request.getTargetUserId() + " successfully", null));
+
+        } catch (DataIntegrityViolationException e) {
+            // Xử lý trường hợp trùng khóa chính (user_id, content)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResponseObject("ERROR", "Notification with this content already exists for user " + request.getTargetUserId(), null));
+        } catch (DataAccessException e) {
+            System.err.println("Database error in sendNotificationToUser(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in sendNotificationToUser(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error in sendNotificationToUser(): " + e.getMessage(), null));
         }
     }
 }
