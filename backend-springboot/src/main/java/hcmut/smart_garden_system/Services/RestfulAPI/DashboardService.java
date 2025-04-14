@@ -82,27 +82,27 @@ public class DashboardService {
     }
 
     public ResponseEntity<ResponseObject> getNotifications() {
-    try {
-        List<Notification> notifications = notificationRepository.findAllNotifications();
+        try {
+            List<Notification> notifications = notificationRepository.findAllNotifications();
 
-        List<Map<String, Object>> notificationData = notifications.stream().map(n -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("userId", n.getId().getUserId());   // Lấy userId từ NotificationId
-            map.put("content", n.getId().getContent());  // Lấy content từ NotificationId
-            return map;
-        }).collect(Collectors.toList());
+            List<Map<String, Object>> notificationData = notifications.stream().map(n -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("userId", n.getId().getUserId());   // Lấy userId từ NotificationId
+                map.put("content", n.getId().getContent());  // Lấy content từ NotificationId
+                return map;
+            }).collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject("OK", "Query to get notifications successfully", notificationData));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Query to get notifications successfully", notificationData));
 
-    } catch (DataAccessException e) {
-        System.err.println("Database error: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
-    } catch (Exception e) {
-        System.err.println("Unexpected error in getNotifications(): " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+        } catch (DataAccessException e) {
+            System.err.println("Database error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in getNotifications(): " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+        }
     }
-}
 }
