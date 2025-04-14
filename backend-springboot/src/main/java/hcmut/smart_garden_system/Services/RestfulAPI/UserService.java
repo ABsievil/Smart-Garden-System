@@ -6,6 +6,7 @@ import hcmut.smart_garden_system.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public ResponseEntity<ResponseObject> getUserProfile(String username) {
         try {
@@ -36,6 +40,57 @@ public class UserService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "Failed to get user profile: " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> changePassword(String username, String oldPassword, String newPassword) {
+        try {
+            User user = userRepository.findByUsername(username);
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("NOT_FOUND", "User not found with username: " + username, null));
+            }
+
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseObject("FAILED", "Incorrect old password", null));
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Password changed successfully", null));
+
+        } catch (Exception e) {
+            System.err.println("Error changing password for username " + username + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Failed to change password: " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> resetPassword(String username, String newPassword) {
+        try {
+            User user = userRepository.findByUsername(username);
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("NOT_FOUND", "User not found with username: " + username, null));
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Password reset successfully", null));
+
+        } catch (Exception e) {
+            System.err.println("Error resetting password for username " + username + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Failed to reset password: " + e.getMessage(), null));
         }
     }
 }
