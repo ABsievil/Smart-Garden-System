@@ -36,6 +36,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name= "user_id")
+    private Integer userId;
+
     @Embedded
     private PersonalInformation information;
 }

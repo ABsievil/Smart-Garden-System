@@ -5,6 +5,7 @@ CREATE TABLE users (
     password VARCHAR NOT NULL,
     role VARCHAR(50) NOT NULL,
     user_id INTEGER,
+    id VARCHAR,
     date_of_birth DATE,
     ssn VARCHAR(255),
     email VARCHAR(255) NOT NULL,
@@ -23,7 +24,7 @@ CREATE SEQUENCE users_id_seq;
 ALTER TABLE users 
 ALTER COLUMN id SET DEFAULT nextval('users_id_seq');
 
-SELECT setval('users_id_seq', 2);
+SELECT setval('users_id_seq', 1);
 
 -- Bảng OTP
 CREATE TABLE otp (

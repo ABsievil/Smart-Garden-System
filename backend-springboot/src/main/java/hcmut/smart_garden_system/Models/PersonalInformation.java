@@ -18,7 +18,7 @@ public class PersonalInformation {
     private String ssn;
 
     private String sex;
-
+    
     private String id;
 
     @Column(name= "fname")
@@ -27,7 +27,7 @@ public class PersonalInformation {
     @Column(name= "lname")
     private String lname;
 
-    @Column(name= "dob")
+    @Column(name= "date_of_birth")
     private Date date;
 
     private Integer salary;
@@ -36,6 +36,8 @@ public class PersonalInformation {
 
     private Integer numofschedules;
 
-    @Column(name= "phonenumber")
+    @Column(name= "phone_number")
     private String phoneNumber;
+
+    private String address;
 }
