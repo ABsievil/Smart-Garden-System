@@ -41,6 +41,8 @@ CREATE TABLE otp (
     get_OTP VARCHAR(255),
     CONSTRAINT pk_otp PRIMARY KEY (otp, user_id)
 );
+ALTER TABLE otp
+DROP COLUMN get_OTP;
 
 -- Bảng Notification
 CREATE TABLE notification (
