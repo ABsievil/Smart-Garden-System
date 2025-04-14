@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BsMoisture } from "react-icons/bs";
 import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
+import Navbar from "../../../Components/NavBar/NavBar";
 import api from './../../../api';
 import './DeviceRecord.css';
 
@@ -54,8 +55,10 @@ const ControlDevice = () => {
  
   return (
     <div className="control-device-content">
+      <div className="header">
     <h2> Dữ liệu thiết bị </h2>
-
+    <Navbar/>
+    </div>
       <Box className='device-content' sx={{ width: "100%" }}>
       <div className="device-grid">
     <div className="device-card">
