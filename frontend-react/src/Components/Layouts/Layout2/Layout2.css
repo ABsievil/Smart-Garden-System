@@ -19,9 +19,9 @@ body {
 
 .content-container {
   flex: 1;
-  background-color: #f0f8e7; /* Match the body background */
   display: flex;
   flex-direction: column;
+  background-color: #f0f8e7; /* Match the body background */
   min-height: 100vh; /* Ensure content takes up full height */
 }
 
@@ -31,4 +31,6 @@ body {
   margin-left: 0;
   flex: 1; /* Allow the component to grow and fill the space */
   overflow-y: auto; /* Allow scrolling if content overflows */
+ 
 }
+
