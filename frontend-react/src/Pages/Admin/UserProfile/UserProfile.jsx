@@ -20,18 +20,36 @@ const UserProfile = () => {
         confirmPassword: '',
     });
 
-    // Mock data
     useEffect(() => {
-        const mockProfile = {
-            name: 'Nguyen Van A',
-            role: 'Farmer',
-            dob: 'Ho Chi Minh, Viet Nam',
-            phone: '+123456 6789 0',
-            email: 'Historia@email.com',
-            gender: 'Male',
+        const fetchProfile = async () => {
+            /*
+            try {
+                const response = await api.get('/api/v1/user/profile');
+                if (response.data.status === "OK") {
+                    const profileData = response.data.data;
+                    setProfile(profileData);
+                    setEditProfile(profileData);
+                } else {
+                    console.error("Error fetching profile:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+            */
+            // Fake data since API call is commented out
+            const mockProfile = {
+                name: 'Nguyen Van A',
+                role: 'Farmer',
+                dob: 'Ho Chi Minh, Viet Nam',
+                phone: '+123456 6789 0',
+                email: 'Historia@email.com',
+                gender: 'Male',
+            };
+            setProfile(mockProfile);
+            setEditProfile(mockProfile);
         };
-        setProfile(mockProfile);
-        setEditProfile(mockProfile);
+
+        fetchProfile();
     }, []);
 
     const toggleDropdown = () => {
@@ -65,70 +83,112 @@ const UserProfile = () => {
     };
 
     const handleSaveProfile = () => {
+        /*
+        const updateProfile = async () => {
+            try {
+                const response = await api.put('/api/v1/user/updateProfile', editProfile);
+                if (response.data.status === "OK") {
+                    setProfile({ ...editProfile });
+                    console.log("Profile updated successfully:", response.data.data);
+                } else {
+                    console.error("Error updating profile:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error updating profile:", error);
+            }
+        };
+        updateProfile();
+        */
         setProfile({ ...editProfile });
         toggleEditModal();
     };
 
     const handleChangePassword = () => {
-        if (passwordData.newPassword === passwordData.confirmPassword) {
-            console.log('Đổi mật khẩu thành công:', passwordData);
-            togglePasswordModal();
-        } else {
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
             alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+            return;
         }
+
+        /*
+        const changePassword = async () => {
+            try {
+                const response = await api.put('/api/v1/user/changePassword', {
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword,
+                });
+                if (response.data.status === "OK") {
+                    console.log("Password changed successfully:", response.data.data);
+                } else {
+                    console.error("Error changing password:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error changing password:", error);
+            }
+        };
+        changePassword();
+        */
+        console.log('Đổi mật khẩu thành công:', passwordData);
+        togglePasswordModal();
     };
 
     if (!profile) {
-        return <div className="loading">Đang tải dữ liệu...</div>;
+        return <div className="usr-loading">Đang tải dữ liệu...</div>;
     }
 
     return (
-        <div className="user-profile">
-        <div className="header">
-        <h13>Thông tin cá nhân</h13>
-        <Navbar />
-    </div>
-        <div className="profile">
-            
-            <button className="dropdown-button" onClick={toggleDropdown}>...</button>
-            {isDropdownOpen && (
-                <div className="dropdown-menu">
-                    <div className="dropdown-item" onClick={toggleEditModal}>Chỉnh sửa thông tin</div>
-                    <div className="dropdown-item" onClick={togglePasswordModal}>Đổi mật khẩu</div>
+        <div className="usr-profile">
+            <div className="header">
+                <h13>Thông tin cá nhân</h13>
+                    <Navbar />
+                
+            </div>
+            <div className="usr-profile-container">
+                <div className="usr-decor">
+                    {/* <div className="usr-decor-oval"></div>
+                    <div className="usr-decor-circle"></div> */}
                 </div>
-            )}
-            <div className="profile-container">
-                <div className="avatar-section">
-                    <div className="avatar"></div>
-                    <h3>{profile.name}</h3>
-                    <p>{profile.role}</p>
-                </div>
-                <div className="info-section">
-                    <div className="info-item">
-                        <span className="icon dob-icon"></span>
-                        <p>{profile.dob}</p>
+                <div className="usr-content">
+                    <div className="usr-avatar-section">
+                        <div className="usr-avatar-wrapper">
+                            <div className="usr-avatar"></div>
+                            <button className="usr-dropdown-button" onClick={toggleDropdown}>...</button>
+                            {isDropdownOpen && (
+                                <div className="usr-dropdown-menu">
+                                    <div className="usr-dropdown-item" onClick={toggleEditModal}>Chỉnh sửa thông tin</div>
+                                    <div className="usr-dropdown-item" onClick={togglePasswordModal}>Đổi mật khẩu</div>
+                                </div>
+                            )}
+                        </div>
+                        <h16>{profile.name}</h16>
+                        <div className="usr-role">{profile.role}</div>
                     </div>
-                    <div className="info-item">
-                        <span className="icon phone-icon"></span>
-                        <p>{profile.phone}</p>
-                    </div>
-                    <div className="info-item">
-                        <span className="icon email-icon"></span>
-                        <p>{profile.email}</p>
-                    </div>
-                    <div className="info-item">
-                        <span className="icon gender-icon"></span>
-                        <p>{profile.gender}</p>
+                    <div className="usr-info-section">
+                        <div className="usr-info-item">
+                            <span className="usr-icon usr-dob-icon"></span>
+                            <span>{profile.dob}</span>
+                        </div>
+                        <div className="usr-info-item">
+                            <span className="usr-icon usr-phone-icon"></span>
+                            <span>{profile.phone}</span>
+                        </div>
+                        <div className="usr-info-item">
+                            <span className="usr-icon usr-email-icon"></span>
+                            <span>{profile.email}</span>
+                        </div>
+                        <div className="usr-info-item">
+                            <span className="usr-icon usr-gender-icon"></span>
+                            <span>{profile.gender}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            </div>
+
             {/* Modal chỉnh sửa thông tin */}
             {isEditModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <h3>Chỉnh sửa thông tin</h3>
-                        <div className="modal-content">
+                <div className="usr-modal-overlay">
+                    <div className="usr-modal">
+                        <h16>Chỉnh sửa thông tin</h16>
+                        <div className="usr-modal-content">
                             <label>Họ tên</label>
                             <input
                                 type="text"
@@ -137,13 +197,13 @@ const UserProfile = () => {
                                 onChange={handleEditInputChange}
                                 placeholder="Nhập họ tên"
                             />
-                            <label>Ngày sinh</label>
+                            <label>Địa chỉ</label>
                             <input
                                 type="text"
                                 name="dob"
                                 value={editProfile.dob}
                                 onChange={handleEditInputChange}
-                                placeholder="Nhập ngày sinh"
+                                placeholder="Nhập địa chỉ"
                             />
                             <label>Số điện thoại</label>
                             <input
@@ -170,9 +230,9 @@ const UserProfile = () => {
                                 placeholder="Nhập giới tính"
                             />
                         </div>
-                        <div className="modal-actions">
-                            <button className="cancel-button" onClick={toggleEditModal}>Hủy</button>
-                            <button className="save-button" onClick={handleSaveProfile}>Lưu</button>
+                        <div className="usr-modal-actions">
+                            <button className="usr-cancel-button" onClick={toggleEditModal}>Hủy</button>
+                            <button className="usr-save-button" onClick={handleSaveProfile}>Lưu</button>
                         </div>
                     </div>
                 </div>
@@ -180,10 +240,10 @@ const UserProfile = () => {
 
             {/* Modal đổi mật khẩu */}
             {isPasswordModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <h3>Đổi mật khẩu</h3>
-                        <div className="modal-content">
+                <div className="usr-modal-overlay">
+                    <div className="usr-modal">
+                        <h16>Đổi mật khẩu</h16>
+                        <div className="usr-modal-content">
                             <label>Mật khẩu hiện tại</label>
                             <input
                                 type="password"
@@ -209,9 +269,9 @@ const UserProfile = () => {
                                 placeholder="Xác nhận mật khẩu mới"
                             />
                         </div>
-                        <div className="modal-actions">
-                            <button className="cancel-button" onClick={togglePasswordModal}>Hủy</button>
-                            <button className="save-button" onClick={handleChangePassword}>Lưu</button>
+                        <div className="usr-modal-actions">
+                            <button className="usr-cancel-button" onClick={togglePasswordModal}>Hủy</button>
+                            <button className="usr-save-button" onClick={handleChangePassword}>Lưu</button>
                         </div>
                     </div>
                 </div>
