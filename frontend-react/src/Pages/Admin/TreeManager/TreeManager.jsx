@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
 import './TreeManager.css';
+
 const TreeManager = () => {
   const [plants, setPlants] = useState([]);
   const [filteredPlants, setFilteredPlants] = useState([]);
@@ -15,7 +16,6 @@ const TreeManager = () => {
     quantity: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null); // Track which menu is open
   const plantsPerPage = 5;
@@ -33,7 +33,7 @@ const TreeManager = () => {
     setFilteredPlants(mockPlants);
   }, []);
 
-  // Handle search and sort
+  // Handle search
   useEffect(() => {
     let updatedPlants = [...plants];
 
@@ -44,30 +44,25 @@ const TreeManager = () => {
       );
     }
 
-    // Sort by creation date
-    updatedPlants.sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-
     setFilteredPlants(updatedPlants);
-  }, [searchTerm, sortOrder, plants]);
+  }, [searchTerm, plants]);
 
-  // API integration for fetching plants with sorting (commented)
+  // Commented API fetch logic
   /*
   useEffect(() => {
     const fetchPlants = async () => {
       try {
-        const response = await axios.get(`/api/plants?sort=${sortOrder}`);
-        setPlants(response.data);
-        setFilteredPlants(response.data);
-      } catch (err) {
-        console.error('Error fetching plants:', err);
+        const response = await api.get(`/api/v1/plant/getAllPlants`);
+        if (response.data.status === "OK") {
+          setPlants(response.data.data);
+          setFilteredPlants(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching plants:', error);
       }
     };
     fetchPlants();
-  }, [sortOrder]);
+  }, []);
   */
 
   // Pagination logic
@@ -125,11 +120,58 @@ const TreeManager = () => {
       setPlants(plants.map((plant) => (plant.id === currentPlantId ? updatedPlant : plant)));
     }
     toggleModal();
+
+    // Commented API save logic
+    /*
+    try {
+      if (modalMode === 'add') {
+        const response = await api.post('/api/v1/plant/addPlant', {
+          name: newPlant.name,
+          humidity: newPlant.humidity,
+          season: newPlant.season,
+          growthTime: newPlant.growthTime,
+          quantity: newPlant.quantity,
+        });
+        if (response.data.status === "OK") {
+          setPlants([...plants, response.data.data]);
+        }
+      } else {
+        const response = await api.put(`/api/v1/plant/updatePlant/${currentPlantId}`, {
+          name: newPlant.name,
+          humidity: newPlant.humidity,
+          season: newPlant.season,
+          growthTime: newPlant.growthTime,
+          quantity: newPlant.quantity,
+        });
+        if (response.data.status === "OK") {
+          setPlants(plants.map((plant) =>
+            plant.id === currentPlantId ? response.data.data : plant
+          ));
+        }
+      }
+      toggleModal();
+    } catch (error) {
+      console.error("Error saving plant:", error);
+    }
+    */
   };
 
   const handleDeletePlant = (id) => {
     setPlants(plants.filter((plant) => plant.id !== id));
     setOpenMenuId(null); // Close the menu after deleting
+
+    // Commented API delete logic
+    /*
+    try {
+      const response = await api.delete(`/api/v1/plant/deletePlant/${id}`);
+      if (response.data.status === "OK") {
+        setPlants(plants.filter((plant) => plant.id !== id));
+        setOpenMenuId(null); // Close the menu after deleting
+      }
+    } catch (error) {
+      console.error("Error deleting plant:", error);
+    }
+    */
   };
 
   const handleEditPlant = (plant) => {
@@ -139,10 +181,6 @@ const TreeManager = () => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
   };
 
   const handlePageChange = (page) => {
