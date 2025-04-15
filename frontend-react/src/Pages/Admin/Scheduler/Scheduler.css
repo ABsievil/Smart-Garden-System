@@ -300,6 +300,14 @@ h14 {
   font-size: 16px;
   padding: 10px;
 }
+.sch-close-btn:hover,
+.sch-close-btn:focus,
+.sch-close-btn:active {
+    color: #555;
+    background: none;
+    outline: none;
+    box-shadow: none;
+}
 
 .sch-task-list {
   margin-top: 20px;
