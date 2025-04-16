@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<ResponseObject> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
         return userService.resetPassword(
-                resetPasswordDTO.getUsername(),
+                resetPasswordDTO.getEmail(),
                 resetPasswordDTO.getNewPassword()
         );
     }
