@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
-// import './TreeView.css';
+import api from '../../../api'; // Kết nối API thật
+
+// Format thời gian từ backend
+const formatDateTime = (dateTime) => {
+  if (!dateTime) return '';
+  const date = new Date(dateTime);
+  return date.toLocaleString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
 
 const TreeView = () => {
   const [plants, setPlants] = useState([]);
@@ -9,52 +22,45 @@ const TreeView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const plantsPerPage = 5;
 
-  // Fake data
+  // Gọi API lấy danh sách cây
   useEffect(() => {
-    const mockPlants = [
-      { id: 1, name: "Samanta William", humidity: "#123456789", season: "March 25, 2021", growthTime: "March 25, 2021", quantity: 20 },
-      { id: 2, name: "Samanta William", humidity: "#123456789", season: "March 25, 2021", growthTime: "March 25, 2021", quantity: 20 },
-      { id: 3, name: "Samanta William", humidity: "#123456789", season: "March 25, 2021", growthTime: "March 25, 2021", quantity: 20 },
-      { id: 4, name: "Samanta William", humidity: "#123456789", season: "March 25, 2021", growthTime: "March 25, 2021", quantity: 20 },
-      { id: 5, name: "Samanta William", humidity: "#123456789", season: "March 25, 2021", growthTime: "March 25, 2021", quantity: 20 },
-    ];
-    setPlants(mockPlants);
-    setFilteredPlants(mockPlants);
+    const fetchPlants = async () => {
+      try {
+        const response = await api.get('/api/v1/trees');
+        if (response.data.status === 'OK') {
+          const fetchedPlants = response.data.data.plants.map(plant => ({
+            id: plant.area, // map lại ID cho phù hợp
+            name: plant.name,
+            humidity: plant.soldMoistureRecommend,
+            season: plant.season,
+            growthTime: plant.growthTime,
+            quantity: plant.amount
+          }));
+          setPlants(fetchedPlants);
+          setFilteredPlants(fetchedPlants);
+        } else {
+          console.error('Lỗi khi lấy danh sách cây:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Lỗi API:', error.response?.data?.message || error.message);
+      }
+    };
+
+    fetchPlants();
   }, []);
 
-  // Handle search
+  // Tìm kiếm
   useEffect(() => {
     let updatedPlants = [...plants];
-
-    // Search by name
     if (searchTerm) {
       updatedPlants = updatedPlants.filter((plant) =>
         plant.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     setFilteredPlants(updatedPlants);
   }, [searchTerm, plants]);
 
-  // Commented API fetch logic
-  /*
-  useEffect(() => {
-    const fetchPlants = async () => {
-      try {
-        const response = await api.get(`/api/v1/plant/getAllPlants`);
-        if (response.data.status === "OK") {
-          setPlants(response.data.data);
-          setFilteredPlants(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching plants:', error);
-      }
-    };
-    fetchPlants();
-  }, []);
-  */
-
-  // Pagination logic
+  // Phân trang
   const indexOfLastPlant = currentPage * plantsPerPage;
   const indexOfFirstPlant = indexOfLastPlant - plantsPerPage;
   const currentPlants = filteredPlants.slice(indexOfFirstPlant, indexOfLastPlant);
@@ -65,7 +71,9 @@ const TreeView = () => {
   };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -104,14 +112,16 @@ const TreeView = () => {
               </td>
               <td>{plant.humidity}</td>
               <td>{plant.season}</td>
-              <td>{plant.growthTime}</td>
+              <td>{formatDateTime(plant.growthTime)}</td>
               <td>{plant.quantity}</td>
             </tr>
           ))}
         </tbody>
       </table>
       <div className="pagination">
-        <span>SHOWING {indexOfFirstPlant + 1}-{Math.min(indexOfLastPlant, filteredPlants.length)} OF {filteredPlants.length} DATA</span>
+        <span>
+          SHOWING {indexOfFirstPlant + 1}-{Math.min(indexOfLastPlant, filteredPlants.length)} OF {filteredPlants.length} DATA
+        </span>
         <div className="pagination-controls">
           <button
             className="page-button"
@@ -120,13 +130,13 @@ const TreeView = () => {
           >
             &lt;
           </button>
-          {[1, 2, 3].map((page) => (
+          {[...Array(totalPages).keys()].map((page) => (
             <button
-              key={page}
-              className={`page-button ${currentPage === page ? 'active' : ''}`}
-              onClick={() => handlePageChange(page)}
+              key={`page-${page + 1}`}
+              className={`page-button ${currentPage === page + 1 ? 'active' : ''}`}
+              onClick={() => handlePageChange(page + 1)}
             >
-              {page}
+              {page + 1}
             </button>
           ))}
           <button
