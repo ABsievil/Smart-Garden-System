@@ -30,10 +30,6 @@ public class PersonalInformation {
 
     private Integer salary;
 
-    private Integer numsofdevice;
-
-    private Integer numofschedules;
-
     @Column(name= "phone_number")
     private String phoneNumber;
 

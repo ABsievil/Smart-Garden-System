@@ -43,6 +43,11 @@ SELECT setval('users_id_seq', 3);
 
 ALTER TABLE users
 DROP COLUMN id;
+
+ALTER TABLE users
+DROP COLUMN numsofdevice,
+DROP COLUMN numofschedules;
+
 -- Bảng OTP
 CREATE TABLE otp (
     otp VARCHAR(255),
