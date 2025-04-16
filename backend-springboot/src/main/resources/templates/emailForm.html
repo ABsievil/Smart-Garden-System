@@ -70,8 +70,9 @@
                 if(data.status=="OK"){
                     alert('Email đã được gửi thành công!');
                 }
-                else if(data.status=="ERROR"){
-                    alert('Có lỗi xảy ra khi gửi email!');
+                else {
+                    console.log(data);
+                    alert('Có lỗi xảy ra khi gửi email:' + data.message);
                 }
             })
             .catch(error => {
