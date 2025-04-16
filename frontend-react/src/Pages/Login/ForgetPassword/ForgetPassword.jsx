@@ -119,6 +119,7 @@ const ForgetPassword = () => {
       if (response.data.status === "OK") {
         setSuccessMessage("Đổi mật khẩu thành công!");
         setShowPasswordPopup(false); // Close password change popup on success
+        localStorage.removeItem("resetPasswordEmail"); // Clear email from localStorage
         setTimeout(() => {
           navigate("/signin"); // Redirect to login page
         }, 1000);
