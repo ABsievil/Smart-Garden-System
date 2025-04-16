@@ -24,6 +24,9 @@ public class Device {
     @Column(name = "device_id")
     private Integer deviceId;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "area")
     private Integer area;
 

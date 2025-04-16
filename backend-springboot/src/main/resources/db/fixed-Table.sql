@@ -166,6 +166,8 @@ CREATE TABLE device (
     speed INTEGER
 );
 
+ALTER TABLE otp ADD COLUMN name VARCHAR(255);
+
 -- Bảng quan hệ giữa User và Schedule
 CREATE TABLE user_schedule (
     username VARCHAR(255),
