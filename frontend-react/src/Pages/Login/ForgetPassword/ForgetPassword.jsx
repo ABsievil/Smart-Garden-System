@@ -31,10 +31,14 @@ const ForgetPassword = () => {
   };
 
   const handleSendEmail = async () => {
+
     if (!email) {
       setErrorMessage("Vui lòng nhập email.");
       return;
     }
+
+    // Lưu email vào localStorage ngay khi user gửi yêu cầu OTP
+    localStorage.setItem("resetPasswordEmail", email);
 
     try {
       const response = await api.get("/api/v1/Email/sendEmail", {
@@ -98,14 +102,17 @@ const ForgetPassword = () => {
       return;
     }
 
-    if (!username) {
-      setErrorMessage("Không thể xác định người dùng. Vui lòng thử lại từ đầu.");
-      return;
-    }
+    // user email instead of username
+    // if (!username) {
+    //   setErrorMessage("Không thể xác định người dùng. Vui lòng thử lại từ đầu.");
+    //   return;
+    // }
 
     try {
+      const storedEmail = localStorage.getItem("resetPasswordEmail");
+
       const response = await api.post("/api/v1/users/reset-password", {
-        username,
+        email: storedEmail,
         newPassword,
       });
 
