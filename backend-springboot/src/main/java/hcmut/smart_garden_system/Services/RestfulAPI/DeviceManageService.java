@@ -32,7 +32,7 @@ public class DeviceManageService {
 
             for (Device device : devices) {
                 Map<String, Object> deviceData = new LinkedHashMap<>();
-                deviceData.put("name", device.getNameOfDevices());
+                deviceData.put("name", device.getName());
                 deviceData.put("area", String.valueOf(device.getArea())); // Chuyển Integer sang String nếu cần
                 deviceData.put("state", device.getState() ? "ACTIVE" : "BROKEN"); // Chuyển Boolean sang String
                 deviceData.put("status", device.getStatus() ? "ON" : "OFF"); // Chuyển Boolean sang String
