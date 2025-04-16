@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     // Kiểm tra user tồn tại bằng userId (INTEGER)
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userId = :userId")
     boolean existsByUserId(@Param("userId") Integer userId);
+
+    // Tìm user có userId lớn nhất
+    Optional<User> findTopByOrderByUserIdDesc();
 } 
