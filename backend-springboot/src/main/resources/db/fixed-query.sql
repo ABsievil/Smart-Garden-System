@@ -85,7 +85,7 @@ BEGIN
     END IF;
 
     -- Nếu email tồn tại, thêm OTP
-    INSERT INTO OTP (email, otp_code)
+    INSERT INTO OTP (email, otp)
     VALUES (email_input, otp_code_input);
 END;
 $$;
@@ -108,7 +108,7 @@ DECLARE
     result JSON;
 BEGIN
     SELECT json_build_object(
-			'otp_code', otp_code
+			'otp', otp
        		)
     INTO result
     FROM OTP
