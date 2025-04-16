@@ -71,23 +71,23 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<ResponseObject> resetPassword(String username, String newPassword) {
+    public ResponseEntity<ResponseObject> resetPassword(String email, String newPassword) {
         try {
-            User user = userRepository.findByUsername(username);
+            User user = userRepository.findByEmail(email);
 
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseObject("NOT_FOUND", "User not found with username: " + username, null));
+                        .body(new ResponseObject("NOT_FOUND", "User not found with email: " + email, null));
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("OK", "Password reset successfully", null));
+                    .body(new ResponseObject("OK", "Password reset successfully for user with email: " + email, null));
 
         } catch (Exception e) {
-            System.err.println("Error resetting password for username " + username + ": " + e.getMessage());
+            System.err.println("Error resetting password for email " + email + ": " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "Failed to reset password: " + e.getMessage(), null));

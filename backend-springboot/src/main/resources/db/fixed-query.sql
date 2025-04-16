@@ -75,16 +75,25 @@ CREATE OR REPLACE PROCEDURE add_otp_by_email(email_input VARCHAR, otp_code_input
 LANGUAGE plpgsql AS $$ 
 DECLARE
     user_exists BOOLEAN;
+    otp_exists BOOLEAN; -- Thêm biến để kiểm tra OTP tồn tại
 BEGIN
     -- Kiểm tra xem email có tồn tại trong bảng users không
     SELECT EXISTS (SELECT 1 FROM users WHERE email = email_input) INTO user_exists;
 
-    -- Nếu email không tồn tại, báo lỗi
+    -- Nếu email không tồn tại trong bảng users, báo lỗi
     IF NOT user_exists THEN
-        RAISE EXCEPTION 'Email not found: %', email_input;
+        RAISE EXCEPTION 'Email not found in users table: %', email_input;
     END IF;
 
-    -- Nếu email tồn tại, thêm OTP
+    -- Kiểm tra xem email đã tồn tại trong bảng OTP chưa
+    SELECT EXISTS (SELECT 1 FROM OTP WHERE email = email_input) INTO otp_exists;
+
+    -- Nếu email đã tồn tại trong bảng OTP, xóa bản ghi cũ
+    IF otp_exists THEN
+        DELETE FROM OTP WHERE email = email_input;
+    END IF;
+
+    -- Thêm OTP mới
     INSERT INTO OTP (email, otp)
     VALUES (email_input, otp_code_input);
 END;
