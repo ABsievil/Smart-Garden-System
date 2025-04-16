@@ -43,5 +43,5 @@ public class PersonalInformation {
     private String jobName;
 
     @Column(name= "job_area")
-    private String jobArea;
+    private Integer jobArea;
 }
