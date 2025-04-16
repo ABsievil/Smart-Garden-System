@@ -1,23 +1,96 @@
+
+/* General Dashboard Styles */
 .dashboard {
-  background-color: #f0f8e7; /* Màu nền nhạt */
-  width: 100%;
-  min-height: calc(100vh - 32px); /* Adjust height to fit within Layout2, accounting for padding */
-  padding: 16px; /* Reduced padding to avoid overflow */
-  border-radius: 12px;
-  font-family: 'Roboto', sans-serif;
-  margin-left: 30px;
-  padding: 25px;
-  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+  background-color: #f0f8e7; /* Light green background */
+ width: 100%;
+ min-height: calc(100vh - 32px);
+ padding: 25px;
+ border-radius: 12px;
+ margin-left: 20px;
+ margin-top: 20px;
+ font-family: 'Roboto', sans-serif;
+ box-sizing: border-box;
 }
 
-.dashboard h6 {
-  height: 50px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #34772e; /* Xanh lá cây */
-  margin-top: 20px;
-  margin-left: 20px;
+/* Header Styles */
+.header {
+height: 80px;
+width: 100%;
+display: flex;
+justify-content:center;
+align-items: center;
+margin-bottom: 20px;
+gap: 1px;
 }
+
+.header h6 {
+ font-size: 28px;
+ font-weight: bold;
+ color: #34772e; /* Dark green for the title */
+ margin: 0;
+ width: 20%;
+}
+
+.header-right {
+display: flex;
+align-items: center;
+justify-content: end;
+height: 100%;
+width: 80%;
+}
+
+/* Garden Dropdown Styles */
+.garden-dropdown {
+position: relative;
+width: 300px;
+}
+
+.garden-button {
+background-color: transparent; /* Dark green to match the design */
+color: #34772e; /* White text */
+padding: 8px 30%;;
+border: 2px solid #34772e;
+border-radius: 20px; /* Rounded corners */
+font-size: 17px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.garden-button:hover {
+background-color: #576456; /* Slightly darker green on hover */
+}
+
+.garden-dropdown-menu {
+position: absolute;
+top: 40px;
+right: 0;
+background-color: #fff;
+border: 1px solid #ddd;
+border-radius: 4px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+z-index: 1000;
+min-width: 150px;
+height: auto;
+}
+
+.garden-dropdown-item {
+padding: 10px 20px;
+font-size: 14px;
+color: #333;
+cursor: pointer;
+border-bottom: 1px solid #ddd;
+}
+
+.garden-dropdown-item:last-child {
+border-bottom: none;
+}
+
+.garden-dropdown-item:hover {
+background-color: #f0f0f0;
+}
+
 
 .summary-cards {
   display: flex;

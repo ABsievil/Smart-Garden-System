@@ -32,31 +32,35 @@ const Navbar = ({ namePage }) => {
     setHasNewNotification(true); // Simulate new notifications
   }, []);
 
-  // API integration for fetching notifications (commented)
+  // Commented API fetch logic for notifications
   /*
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/api/notifications');
-        setNotifications(response.data);
-        setHasNewNotification(response.data.some(notification => !notification.read));
-      } catch (err) {
-        console.error('Error fetching notifications:', err);
+        const response = await api.get('/api/v1/notifications/getAllNotifications');
+        if (response.data.status === "OK") {
+          setNotifications(response.data.data);
+          setHasNewNotification(response.data.data.some(notification => !notification.read));
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
       }
     };
     fetchNotifications();
   }, []);
   */
 
-  // API integration for fetching user info (commented)
+  // Commented API fetch logic for user info
   /*
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/api/user');
-        setUser(response.data);
-      } catch (err) {
-        console.error('Error fetching user info:', err);
+        const response = await api.get('/api/v1/user/getUserInfo');
+        if (response.data.status === "OK") {
+          setUser(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
       }
     };
     fetchUser();

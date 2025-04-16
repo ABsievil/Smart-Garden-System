@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
 import './Scheduler.css';
 
@@ -7,10 +7,14 @@ const Scheduler = () => {
   const [year, setYear] = useState(2025);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showNotifModal, setShowNotifModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedDayEvents, setSelectedDayEvents] = useState([]);
+  const [employees, setEmployees] = useState([]); // State to store fetched employees
   const [taskData, setTaskData] = useState({
     content: '',
     area: 'A',
-    employee: 'Tony',
+    employee: '', // Will be set dynamically after fetching employees
     date: 'Wednesday, 1th January'
   });
   const [notifData, setNotifData] = useState({
@@ -22,53 +26,59 @@ const Scheduler = () => {
     { date: new Date(2025, 0, 6), employee: 'Tony', area: 'A', content: 'Task 2' },
     { date: new Date(2025, 0, 10), employee: 'Karen', area: 'B', content: 'Task 3' },
     { date: new Date(2025, 0, 15), employee: 'Tony', area: 'A', content: 'Task 4' },
-    { date: new Date(2025, 0, 18), employee: 'Tony', area: 'A', content: 'Task 5' },
-    { date: new Date(2025, 0, 24), employee: 'Tony', area: 'A', content: 'Task 6' },
-    { date: new Date(2025, 0, 29), employee: 'Johnny', area: 'C', content: 'Task 7' },
-  ]);
-  const [holidays, setHolidays] = useState([
-    { date: new Date(2025, 0, 1), name: 'New Year' },
-    { date: new Date(2025, 0, 29), name: 'Johnny' },
+    { date: new Date(2025, 0, 15), employee: 'Karen', area: 'B', content: 'Task 5' },
+    { date: new Date(2025, 0, 15), employee: 'Johnny', area: 'C', content: 'Task 6' },
+    { date: new Date(2025, 0, 18), employee: 'Tony', area: 'A', content: 'Task 7' },
+    { date: new Date(2025, 0, 24), employee: 'Tony', area: 'A', content: 'Task 8' },
+    { date: new Date(2025, 0, 29), employee: 'Johnny', area: 'C', content: 'Task 9' },
   ]);
 
-  // API function to fetch events (commented out)
-  // const fetchEvents = async () => {
-  //   try {
-  //     const response = await fetch('/api/events', {
-  //       method: 'GET',
-  //       headers: { 'Content-Type': 'application/json' }
-  //     });
-  //     const data = await response.json();
-  //     setEvents(data.map(event => ({
-  //       ...event,
-  //       date: new Date(event.date)
-  //     })));
-  //   } catch (error) {
-  //     console.error('Error fetching events:', error);
-  //   }
-  // };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      /*
+      try {
+        const response = await api.get('/api/v1/scheduler/getEvents');
+        if (response.data.status === "OK") {
+          const eventData = response.data.data;
+          setEvents(eventData.map(event => ({
+            ...event,
+            date: new Date(event.date)
+          })));
+        } else {
+          console.error("Error fetching events:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+      */
+    };
 
-  // API function to fetch holidays (commented out)
-  // const fetchHolidays = async () => {
-  //   try {
-  //     const response = await fetch('/api/holidays', {
-  //       method: 'GET',
-  //       headers: { 'Content-Type': 'application/json' }
-  //     });
-  //     const data = await response.json();
-  //     setHolidays(data.map(holiday => ({
-  //       ...holiday,
-  //       date: new Date(holiday.date)
-  //     })));
-  //   } catch (error) {
-  //     console.error('Error fetching holidays:', error);
-  //   }
-  // };
+    const fetchEmployees = async () => {
+      /*
+      try {
+        const response = await api.get('/api/v1/employees/getAll');
+        if (response.data.status === "OK") {
+          const employeeData = response.data.data;
+          setEmployees(employeeData.map(employee => employee.name));
+          if (employeeData.length > 0) {
+            setTaskData(prev => ({ ...prev, employee: employeeData[0].name }));
+          }
+        } else {
+          console.error("Error fetching employees:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+      */
+      // Fake data for employees since the API call is commented out
+      const fakeEmployees = ['Tony', 'Karen', 'Johnny', 'Alice', 'Bob'];
+      setEmployees(fakeEmployees);
+      setTaskData(prev => ({ ...prev, employee: fakeEmployees[0] }));
+    };
 
-  // useEffect(() => {
-  //   fetchEvents();
-  //   fetchHolidays();
-  // }, []);
+    fetchEvents();
+    fetchEmployees();
+  }, []);
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -94,45 +104,49 @@ const Scheduler = () => {
     };
     setEvents([...events, newEvent]);
     setShowTaskModal(false);
-    setTaskData({ content: '', area: 'A', employee: 'Tony', date: 'Wednesday, 1th January' });
+    setTaskData({ content: '', area: 'A', employee: employees[0] || '', date: 'Wednesday, 1th January' });
 
-    // API function to send task to employee (commented out)
-    // const sendTaskToEmployee = async () => {
-    //   try {
-    //     await fetch('/api/assign-task', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         employeeId: taskData.employee,
-    //         task: taskData.content,
-    //         date: newEvent.date,
-    //         area: taskData.area
-    //       })
-    //     });
-    //   } catch (error) {
-    //     console.error('Error sending task:', error);
-    //   }
-    // };
-    // sendTaskToEmployee();
+    /*
+    const sendTaskToEmployee = async () => {
+      try {
+        const response = await api.post('/api/v1/scheduler/assignTask', {
+          employeeId: taskData.employee,
+          task: taskData.content,
+          date: newEvent.date,
+          area: taskData.area
+        });
+        if (response.data.status === "OK") {
+          console.log("Task assigned successfully:", response.data.data);
+        } else {
+          console.error("Error assigning task:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error assigning task:", error);
+      }
+    };
+    sendTaskToEmployee();
+    */
   };
 
   const handleNotifSubmit = () => {
-    // API function to send notification to all employees in the area (commented out)
-    // const sendNotificationToArea = async () => {
-    //   try {
-    //     await fetch('/api/send-notification', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         area: notifData.area,
-    //         content: notifData.content
-    //       })
-    //     });
-    //   } catch (error) {
-    //     console.error('Error sending notification:', error);
-    //   }
-    // };
-    // sendNotificationToArea();
+    /*
+    const sendNotificationToArea = async () => {
+      try {
+        const response = await api.post('/api/v1/scheduler/sendNotification', {
+          area: notifData.area,
+          content: notifData.content
+        });
+        if (response.data.status === "OK") {
+          console.log("Notification sent successfully:", response.data.data);
+        } else {
+          console.error("Error sending notification:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
+    };
+    sendNotificationToArea();
+    */
 
     setShowNotifModal(false);
     setNotifData({ content: '', area: 'A' });
@@ -146,20 +160,27 @@ const Scheduler = () => {
     return new Date(year, month, 1).getDay();
   };
 
+  const handleDayClick = (dayEvents) => {
+    setSelectedDayEvents(dayEvents);
+    setShowEventModal(true);
+  };
+
+  const handleDotClick = (event, e) => {
+    e.stopPropagation();
+    setSelectedEvent(event);
+  };
+
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(month, year);
     const firstDay = getFirstDayOfMonth(month, year);
     const days = [];
 
-    // Adjust for Monday as the first day of the week
     const adjustedFirstDay = (firstDay === 0 ? 6 : firstDay - 1);
 
-    // Add empty slots for days before the 1st
     for (let i = 0; i < adjustedFirstDay; i++) {
-      days.push(<div className="day" key={`empty-${i}`}></div>);
+      days.push(<div className="sch-day" key={`empty-${i}`}></div>);
     }
 
-    // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDate = new Date(year, month, day);
       const dayEvents = events.filter(event =>
@@ -167,26 +188,30 @@ const Scheduler = () => {
         event.date.getMonth() === month &&
         event.date.getFullYear() === year
       );
-      const dayHoliday = holidays.find(holiday =>
-        holiday.date.getDate() === day &&
-        holiday.date.getMonth() === month &&
-        holiday.date.getFullYear() === year
-      );
 
       days.push(
         <div
-          className={`day ${dayEvents.length > 0 ? 'event' : ''}`}
+          className={`sch-day ${dayEvents.length > 0 ? 'sch-event' : ''}`}
           key={day}
+          onClick={() => handleDayClick(dayEvents)}
         >
-          <div className="day-number">{day}</div>
-          {dayEvents.map((event, index) => (
-            <span
-              key={index}
-              className="event-dot"
-              style={{ backgroundColor: event.area === 'A' ? '#27ae60' : event.area === 'B' ? '#e74c3c' : '#f1c40f' }}
-            ></span>
-          ))}
-          {dayHoliday && <div className="holiday">{dayHoliday.name}</div>}
+          <div className="sch-day-number">{day}</div>
+          <div className="sch-event-dots">
+            {dayEvents.map((event, index) => (
+              <div className="sch-event-dot-wrapper" key={index}>
+                <span
+                  className="sch-event-dot"
+                  style={{ backgroundColor: event.area === 'A' ? '#27ae60' : event.area === 'B' ? '#e74c3c' : '#f1c40f' }}
+                  onClick={(e) => handleDotClick(event, e)}
+                ></span>
+                <div className="sch-event-tooltip">
+                  <p><strong>Task:</strong> {event.content}</p>
+                  <p><strong>Employee:</strong> {event.employee}</p>
+                  <p><strong>Area:</strong> {event.area}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -195,49 +220,49 @@ const Scheduler = () => {
   };
 
   return (
-    <div className="scheduler-container">
+    <div className="sch-container">
       <div className="header">
-      <h13>Events</h13>
-      <Navbar />
+        <h13>Events</h13>
+        <Navbar />
       </div>
       
-      <div className="calendar-container">
-      <div className="scheduler-header">
-      <h14>Calendar</h14>
-        <div className="select-button">
-          <select value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
-            {months.map((m, index) => (
-              <option key={m} value={index}>{m}</option>
-            ))}
-          </select>
+      <div className="sch-calendar-container">
+        <div className="sch-scheduler-header">
+          <h14>Calendar</h14>
+          <div className="sch-select-button">
+            <select value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
+              {months.map((m, index) => (
+                <option key={m} value={index}>{m}</option>
+              ))}
+            </select>
           </div>
-          <div className="select-button">
-          <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
-            {years.map(y => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
-        </div>
-        <div classname="notification-button">
-          <button onClick={handleAddNotification}  >+ New Notification</button>
-         
-        </div>
-        <div>
-        <button onClick={handleAddTask}>+ New Plan</button>
+          <div className="sch-select-button">
+            <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}>
+              {years.map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
           </div>
-      </div>
+          <div className="sch-notification-button">
+            <button onClick={handleAddNotification}>+ New Notification</button>
+          </div>
+          <div>
+            <button onClick={handleAddTask}>+ New Plan</button>
+          </div>
+        </div>
       
-      <div className="calendar">
-        {daysOfWeek.map(day => (
-          <div className="day-header" key={day}>{day}</div>
-        ))}
-        {renderCalendar()}
+        <div className="sch-calendar">
+          {daysOfWeek.map(day => (
+            <div className="sch-day-header" key={day}>{day}</div>
+          ))}
+          {renderCalendar()}
+        </div>
       </div>
-      </div>
+
       {showTaskModal && (
-        <div className="modal3">
-          <div className="modal-content3">
-            <button className="close-btn" onClick={() => setShowTaskModal(false)}>✖</button>
+        <div className="sch-modal">
+          <div className="sch-modal-content">
+            <button className="sch-close-btn" onClick={() => setShowTaskModal(false)}>✖</button>
             <h3>Thêm công việc</h3>
             <label>Nội dung</label>
             <input
@@ -259,9 +284,13 @@ const Scheduler = () => {
               value={taskData.employee}
               onChange={(e) => setTaskData({ ...taskData, employee: e.target.value })}
             >
-              <option value="Tony">Tony</option>
-              <option value="Karen">Karen</option>
-              <option value="Johnny">Johnny</option>
+              {employees.length > 0 ? (
+                employees.map((employee, index) => (
+                  <option key={index} value={employee}>{employee}</option>
+                ))
+              ) : (
+                <option value="">No employees available</option>
+              )}
             </select>
             <label>Ngày thực hiện</label>
             <select
@@ -279,7 +308,7 @@ const Scheduler = () => {
                 );
               })}
             </select>
-            <div className="modal-buttons3">
+            <div className="sch-modal-buttons">
               <button onClick={() => setShowTaskModal(false)}>Hủy</button>
               <button onClick={handleTaskSubmit}>Thêm</button>
             </div>
@@ -288,9 +317,9 @@ const Scheduler = () => {
       )}
 
       {showNotifModal && (
-        <div className="modal3">
-          <div className="modal-content3">
-            <button className="close-btn" onClick={() => setShowNotifModal(false)}>✖</button>
+        <div className="sch-modal">
+          <div className="sch-modal-content">
+            <button className="sch-close-btn" onClick={() => setShowNotifModal(false)}>✖</button>
             <h3>Thêm thông báo</h3>
             <label>Nội dung</label>
             <input
@@ -307,10 +336,47 @@ const Scheduler = () => {
               <option value="B">B</option>
               <option value="C">C</option>
             </select>
-            <div className="modal-buttons3">
+            <div className="sch-modal-buttons">
               <button onClick={() => setShowNotifModal(false)}>Hủy</button>
               <button onClick={handleNotifSubmit}>Thêm</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showEventModal && (
+        <div className="sch-modal">
+          <div className="sch-modal-content">
+            <button className="sch-close-btn" onClick={() => setShowEventModal(false)}>✖</button>
+            <h3>Scheduled Tasks</h3>
+            {selectedEvent ? (
+              <div className="sch-task-details">
+                <p><strong>Task:</strong> {selectedEvent.content}</p>
+                <p><strong>Employee:</strong> {selectedEvent.employee}</p>
+                <p><strong>Area:</strong> {selectedEvent.area}</p>
+                <div className="sch-modal-buttons">
+                  <button onClick={() => setSelectedEvent(null)}>Back to All Tasks</button>
+                  <button onClick={() => setShowEventModal(false)}>Close</button>
+                </div>
+              </div>
+            ) : (
+              <div className="sch-task-list">
+                {selectedDayEvents.length > 0 ? (
+                  selectedDayEvents.map((event, index) => (
+                    <div key={index} className="sch-task-item">
+                      <p><strong>Task:</strong> {event.content}</p>
+                      <p><strong>Employee:</strong> {event.employee}</p>
+                      <p><strong>Area:</strong> {event.area}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="sch-no-tasks">No tasks scheduled for this day.</p>
+                )}
+                <div className="sch-modal-buttons">
+                  <button onClick={() => setShowEventModal(false)}>Close</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

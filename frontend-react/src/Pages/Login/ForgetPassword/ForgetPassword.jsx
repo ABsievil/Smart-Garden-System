@@ -3,40 +3,57 @@ import { useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 
 const ForgetPassword = () => {
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [animationClass, setAnimationClass] = useState("fade-in");
+  const [showOtpPopup, setShowOtpPopup] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     setAnimationClass("slide-in");
   }, []);
 
-  const handleConfirm = () => {
-    if (!otp) {
-      setMessage("Vui lòng nhập OTP.");
+  const handleSendEmail = () => {
+    if (!email) {
+      setMessage("Vui lòng nhập email.");
       return;
     }
 
     /*
-    fetch("API_ENDPOINT_HERE", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ otp }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setMessage("Xác nhận OTP thành công!");
-          navigate("/reset-password");
+    api.post("api/forgot-password", { email })
+      .then((response) => {
+        if (response.data.status === "OK") {
+          setMessage("OTP đã được gửi đến email của bạn.");
+          setShowOtpPopup(true);
         } else {
-          setMessage("OTP không hợp lệ. Vui lòng thử lại.");
+          setMessage(response.data.message || "Không thể gửi OTP. Vui lòng thử lại.");
         }
       })
       .catch((error) => {
-        setMessage("Lỗi hệ thống, vui lòng thử lại sau.");
+        setMessage(error.response?.data?.message || "Lỗi hệ thống, vui lòng thử lại sau.");
+      });
+    */
+  };
+
+  const handleConfirmOtp = () => {
+    if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+      setMessage("Vui lòng nhập OTP gồm 6 số.");
+      return;
+    }
+
+    /*
+    api.post("api/verify-otp", { email, otp })
+      .then((response) => {
+        if (response.data.status === "OK") {
+          setMessage("Xác nhận OTP thành công!");
+          navigate("/reset-password");
+        } else {
+          setMessage(response.data.message || "OTP không hợp lệ. Vui lòng thử lại.");
+        }
+      })
+      .catch((error) => {
+        setMessage(error.response?.data?.message || "Lỗi hệ thống, vui lòng thử lại sau.");
       });
     */
   };
@@ -44,20 +61,20 @@ const ForgetPassword = () => {
   return (
     <div className={`forget-password-container ${animationClass}`}>
       <div className="forget-password-box">
-        <h1>Forget Password</h1>
-        <p>Please enter the OTP sent to your email to reset your password.</p>
+        <h15>Forgot Password</h15>
+        <p>Please enter your email to receive an OTP.</p>
 
         <div className="input-box-otp">
           <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
+            type="email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
-        <button className="confirm-button" onClick={handleConfirm}>
-          CONFIRM
+        <button className="confirm-button" onClick={handleSendEmail}>
+          SEND OTP
         </button>
 
         {message && <p className="message">{message}</p>}
@@ -66,6 +83,31 @@ const ForgetPassword = () => {
           Back to Login
         </div>
       </div>
+
+      {showOtpPopup && (
+        <div className="otp-popup">
+          <div className="otp-popup-content">
+            <h2>Enter OTP</h2>
+            <p>Enter the 6-digit OTP sent to your email.</p>
+            <input
+              type="text"
+              placeholder="Enter 6-digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              maxLength={6}
+            />
+            <button className="confirm-button" onClick={handleConfirmOtp}>
+              CONFIRM OTP
+            </button>
+            <button
+              className="back-button"
+              onClick={() => setShowOtpPopup(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="bottom-clip rotating"></div>
     </div>

@@ -15,12 +15,11 @@ const DeviceManager = () => {
     state: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null); // Track which menu is open
   const devicesPerPage = 5;
 
-  // Fake data
+  // Fake data (used since no API is available)
   useEffect(() => {
     const mockDevices = [
       { id: 1, name: "Samanta William", deviceId: "#123456789", status: "Active", state: "On", createdAt: "2021-03-25T10:00:00Z" },
@@ -33,7 +32,7 @@ const DeviceManager = () => {
     setFilteredDevices(mockDevices);
   }, []);
 
-  // Handle search and sort
+  // Handle search
   useEffect(() => {
     let updatedDevices = [...devices];
 
@@ -44,30 +43,26 @@ const DeviceManager = () => {
       );
     }
 
-    // Sort by creation date
-    updatedDevices.sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-
     setFilteredDevices(updatedDevices);
-  }, [searchTerm, sortOrder, devices]);
+  }, [searchTerm, devices]);
 
-  // API integration for fetching devices with sorting (commented)
+  // Commented API fetch logic
   /*
   useEffect(() => {
-    const fetchDevices = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/devices?sort=${sortOrder}`);
-        setDevices(response.data);
-        setFilteredDevices(response.data);
-      } catch (err) {
-        console.error('Error fetching devices:', err);
+        const response = await api.get(`/api/v1/device/getAllDevices`);
+        if (response.data.status === "OK") {
+          setDevices(response.data.data);
+          setFilteredDevices(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching devices:", error);
       }
     };
-    fetchDevices();
-  }, [sortOrder]);
+
+    fetchData();
+  }, []);
   */
 
   // Pagination logic
@@ -99,6 +94,7 @@ const DeviceManager = () => {
   };
 
   const handleSaveDevice = () => {
+    // Local state update (used since no API is available)
     if (modalMode === 'add') {
       const newId = devices.length + 1;
       const addedDevice = {
@@ -122,11 +118,57 @@ const DeviceManager = () => {
       setDevices(devices.map((device) => (device.id === currentDeviceId ? updatedDevice : device)));
     }
     toggleModal();
+
+    // Commented API save logic
+    /*
+    try {
+      if (modalMode === 'add') {
+        const response = await api.post('/api/v1/device/addDevice', {
+          name: newDevice.name,
+          deviceId: newDevice.deviceId,
+          status: newDevice.status,
+          state: newDevice.state,
+        });
+        if (response.data.status === "OK") {
+          setDevices([...devices, response.data.data]);
+        }
+      } else {
+        const response = await api.put(`/api/v1/device/updateDevice/${currentDeviceId}`, {
+          name: newDevice.name,
+          deviceId: newDevice.deviceId,
+          status: newDevice.status,
+          state: newDevice.state,
+        });
+        if (response.data.status === "OK") {
+          setDevices(devices.map((device) =>
+            device.id === currentDeviceId ? response.data.data : device
+          ));
+        }
+      }
+      toggleModal();
+    } catch (error) {
+      console.error("Error saving device:", error);
+    }
+    */
   };
 
   const handleDeleteDevice = (id) => {
+    // Local state update (used since no API is available)
     setDevices(devices.filter((device) => device.id !== id));
     setOpenMenuId(null); // Close the menu after deleting
+
+    // Commented API delete logic
+    /*
+    try {
+      const response = await api.delete(`/api/v1/device/deleteDevice/${id}`);
+      if (response.data.status === "OK") {
+        setDevices(devices.filter((device) => device.id !== id));
+        setOpenMenuId(null); // Close the menu after deleting
+      }
+    } catch (error) {
+      console.error("Error deleting device:", error);
+    }
+    */
   };
 
   const handleEditDevice = (device) => {
@@ -136,10 +178,6 @@ const DeviceManager = () => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
   };
 
   const handlePageChange = (page) => {

@@ -1,19 +1,32 @@
 .control-device-content {
-    background-color: #f0f8e7; /* Màu nền nhạt */
-    width: 100%;
-    height: 100vh;
-    padding: 25px;
-    border-radius: 12px;
-    font-family: 'Roboto', sans-serif;
+  background-color: #f0f8e7; /* Light green background */
+  width: 100%;
+  height: 100vh;
+  padding: 25px;
+  border-radius: 12px;
+  
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+  overflow-y: hidden;
   }
   
-  .control-device-content h2 {
-    height: 50px;
+  .header {
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 1px;
+    }
+
+  .header h2 {
     font-size: 28px;
     font-weight: bold;
-    color: #34772e; /* Xanh lá cây */
-    margin-top: 20px;
-    margin-left: 20px;
+    color: #34772e; /* Dark green for the title */
+    margin: 0;
+    width: 20%;
   }
   
   .control-device-content .device-content {
@@ -201,4 +214,33 @@
     font-size: 16px;
     font-weight: bold;
     color: #1b4332;
+  }
+
+  .view-more-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    height: 5%;
+    width: 20%;
+  }
+  
+  .view-more-button {
+    background-color: #B6CEA6;
+    color: #34772e;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .view-more-button:hover {
+    background-color: #2a5d25;
   }

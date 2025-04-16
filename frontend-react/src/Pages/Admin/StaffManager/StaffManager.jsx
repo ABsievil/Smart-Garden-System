@@ -12,7 +12,6 @@ const StaffManagement = () => {
     role: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('newest'); // Mặc định là mới nhất
   const [currentPage, setCurrentPage] = useState(1); // State for current page
   const [isPaginationModalOpen, setIsPaginationModalOpen] = useState(false); // State for pagination modal
   const staffPerPage = 12; // Number of staff per page
@@ -37,7 +36,7 @@ const StaffManagement = () => {
     setFilteredStaff(mockStaff);
   }, []);
 
-  // Xử lý tìm kiếm và lọc khi searchTerm hoặc sortOrder thay đổi
+  // Xử lý tìm kiếm
   useEffect(() => {
     let updatedStaff = [...staff];
 
@@ -50,40 +49,40 @@ const StaffManagement = () => {
       );
     }
 
-    // Sắp xếp theo ngày thêm vào
-    updatedStaff.sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-
     setFilteredStaff(updatedStaff);
-    setCurrentPage(1); // Reset to first page when filter or sort changes
-  }, [searchTerm, sortOrder, staff]);
+    setCurrentPage(1); // Reset to first page when filter changes
+  }, [searchTerm, staff]);
 
+  // Commented API fetch logic
   /*
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        // Gọi API để lấy danh sách nhân viên
-        const response = await axios.get('/api/staff');
-        setStaff(response.data);
-      } catch (err) {
-        console.error('Lỗi khi lấy danh sách nhân viên:', err);
+        const response = await api.get('/api/v1/staff/getAllStaff');
+        if (response.data.status === "OK") {
+          setStaff(response.data.data);
+          setFilteredStaff(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching staff:', error);
       }
     };
     fetchStaff();
   }, []);
+  */
 
-  // Hàm thêm nhân viên mới qua API
+  // Commented API add logic
+  /*
   const addStaff = async () => {
     try {
-      const response = await axios.post('/api/staff', newStaff);
-      setStaff([...staff, response.data]);
-      setIsModalOpen(false);
-      setNewStaff({ name: '', memberId: '', role: '' });
-    } catch (err) {
-      console.error('Lỗi khi thêm nhân viên:', err);
+      const response = await api.post('/api/v1/staff/addStaff', newStaff);
+      if (response.data.status === "OK") {
+        setStaff([...staff, response.data.data]);
+        setIsModalOpen(false);
+        setNewStaff({ name: '', memberId: '', role: '' });
+      }
+    } catch (error) {
+      console.error('Error adding staff:', error);
     }
   };
   */
@@ -101,7 +100,7 @@ const StaffManagement = () => {
     }
   };
 
-  // Hàm mở/đ/close modal
+  // Hàm mở/đóng modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     if (isModalOpen) {
@@ -132,16 +131,25 @@ const StaffManagement = () => {
     };
     setStaff([...staff, addedStaff]);
     toggleModal();
+
+    // Commented API add logic
+    /*
+    try {
+      const response = await api.post('/api/v1/staff/addStaff', newStaff);
+      if (response.data.status === "OK") {
+        setStaff([...staff, response.data.data]);
+        setIsModalOpen(false);
+        setNewStaff({ name: '', memberId: '', role: '' });
+      }
+    } catch (error) {
+      console.error('Error adding staff:', error);
+    }
+    */
   };
 
   // Hàm xử lý tìm kiếm
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  // Hàm xử lý lọc
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
   };
 
   return (
@@ -150,8 +158,7 @@ const StaffManagement = () => {
         <h7>Quản lý nhân viên</h7>
         <Navbar />
         </div>
-      {/* Thanh tìm kiếm, lọc và nút thêm nhân viên */}
-    
+      {/* Thanh tìm kiếm và nút thêm nhân viên */}
         
         <div className="actions3">
           <input
@@ -180,57 +187,36 @@ const StaffManagement = () => {
       </div>
 
       {/* Phân trang với modal */}
-      <div className="pagination" >
-        <span style={{ backGroundColor: "transparent" }}>
+      <div className="pagination" style={{ backGroundColor: "transparent" }} >
+        <span style={{ backGroundColor: "transparent", width: "100%" }}>
           SHOWING {indexOfFirstStaff + 1}-{Math.min(indexOfLastStaff, filteredStaff.length)} OF {filteredStaff.length} DATA
         </span>
-        <button className="pagination-modal-button" onClick={togglePaginationModal}>
-          Page {currentPage} ▼
-        </button>
-      </div>
-
-      {/* Modal phân trang */}
-      {isPaginationModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Chọn trang</h3>
-            <div className="pagination-controls">
-              <button
-                className="page-button"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                &lt;
-              </button>
-              {Array.from({ length: Math.min(totalPages, 3) }, (_, index) => {
-                const startPage = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
-                const page = startPage + index;
-                return (
-                  <button
-                    key={page}
-                    className={`page-button ${currentPage === page ? 'active' : ''}`}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
-              <button
-                className="page-button"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                &gt;
-              </button>
-            </div>
-            <div className="modal-actions">
-              <button className="cancel-button" onClick={togglePaginationModal}>
-                Đóng
-              </button>
-            </div>
-          </div>
+        <div className="pagination-controls">
+          <button
+            className="page-button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {[1, 2, 3].map((page) => (
+            <button
+              key={page}
+              className={`page-button ${currentPage === page ? 'active' : ''}`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            className="page-button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
         </div>
-      )}
+        </div>
 
       {/* Modal thêm nhân viên */}
       {isModalOpen && (
