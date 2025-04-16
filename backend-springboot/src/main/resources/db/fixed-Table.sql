@@ -168,6 +168,11 @@ CREATE TABLE device (
 
 ALTER TABLE otp ADD COLUMN name VARCHAR(255);
 
+ALTER TABLE device DROP COLUMN nameofdevices;
+
+ALTER TABLE device
+ALTER COLUMN name SET NOT NULL;
+
 -- Bảng quan hệ giữa User và Schedule
 CREATE TABLE user_schedule (
     username VARCHAR(255),

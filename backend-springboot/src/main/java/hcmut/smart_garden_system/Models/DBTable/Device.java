@@ -24,7 +24,7 @@ public class Device {
     @Column(name = "device_id")
     private Integer deviceId;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "area")
@@ -47,9 +47,6 @@ public class Device {
 
     @Column(name = "status")
     private Boolean status;
-
-    @Column(name = "nameofdevices", nullable = false)
-    private String nameOfDevices;
 
     @Column(name = "speed")
     private Integer speed;
