@@ -58,4 +58,14 @@ public class DashboardController {
         return dashboardService.sendNotificationToUser(request);
     }
 
+    // @GetMapping("/reports")
+    // public ResponseEntity<ResponseObject> getReports() {
+    //     return dashboardService.getReports();
+    // }
+
+    @GetMapping("/areas")
+    public ResponseEntity<ResponseObject> getAllAreas() {
+        return dashboardService.getAllAreas();
+    }
+
 }
