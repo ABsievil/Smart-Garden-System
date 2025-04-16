@@ -38,4 +38,10 @@ public class PersonalInformation {
     private String phoneNumber;
 
     private String address;
+
+    @Column(name= "job_name")
+    private String jobName;
+
+    @Column(name= "job_area")
+    private String jobArea;
 }

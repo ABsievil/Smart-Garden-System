@@ -19,6 +19,15 @@ CREATE TABLE users (
     numofschedules INTEGER
 );
 
+ALTER TABLE users
+ADD COLUMN job_name VARCHAR(255);
+
+ALTER TABLE users
+ADD COLUMN job_area VARCHAR(255);
+
+ALTER TABLE users
+ALTER COLUMN job_area TYPE INTEGER USING job_area::INTEGER;
+
 --  xóa column id
 ALTER TABLE users
 DROP COLUMN id;
