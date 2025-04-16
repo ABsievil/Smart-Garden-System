@@ -44,6 +44,24 @@ CREATE TABLE otp (
 ALTER TABLE otp
 DROP COLUMN get_OTP;
 
+
+-- Drop the primary key constraint first
+ALTER TABLE otp DROP CONSTRAINT pk_otp;
+
+-- Remove the user_id column
+ALTER TABLE otp DROP COLUMN user_id;
+
+-- Add the email column
+ALTER TABLE otp ADD COLUMN email VARCHAR(255) NOT NULL;
+
+-- Create a new primary key on otp and email
+ALTER TABLE otp ADD CONSTRAINT pk_otp PRIMARY KEY (otp, email);
+
+-- Add a foreign key constraint to ensure the email exists in the users table
+ALTER TABLE otp ADD CONSTRAINT fk_otp_user_email 
+FOREIGN KEY (email) REFERENCES users(email);
+
+
 -- Bảng Notification
 CREATE TABLE notification (
     user_id INTEGER,
