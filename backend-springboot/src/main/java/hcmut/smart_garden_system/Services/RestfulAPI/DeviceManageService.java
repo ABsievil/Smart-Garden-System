@@ -4,6 +4,7 @@ package hcmut.smart_garden_system.Services.RestfulAPI;
 // import hcmut.smart_garden_system.DTOs.DeviceDTO;
 // import hcmut.smart_garden_system.DTOs.DeviceListResponseDTO;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
+import hcmut.smart_garden_system.DTOs.AddDeviceRequestDTO;
 import hcmut.smart_garden_system.Models.DBTable.Device;
 import hcmut.smart_garden_system.Repositories.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap; // Sử dụng LinkedHashMap để giữ thứ tự chèn
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 // Bỏ import Collectors nếu không dùng stream nữa
 // import java.util.stream.Collectors;
 
@@ -62,15 +65,68 @@ public class DeviceManageService {
         }
     }
 
-    // Bỏ phương thức mapDeviceToDTO nếu không dùng nữa
-    /*
-    private DeviceDTO mapDeviceToDTO(Device device) {
-        DeviceDTO dto = new DeviceDTO();
-        dto.setName(device.getNameOfDevices()); // Sử dụng nameOfDevices theo model
-        dto.setArea(String.valueOf(device.getArea())); // Chuyển Integer sang String
-        dto.setState(device.getState() ? "ON" : "OFF"); // Chuyển Boolean sang String
-        dto.setStatus(device.getStatus() ? "OK" : "ERROR"); // Chuyển Boolean sang String
-        return dto;
+    @Transactional
+    public ResponseEntity<ResponseObject> addDevice(AddDeviceRequestDTO requestDTO) {
+        try {
+            // Optional: Check if device with the same name already exists
+            // if (deviceRepository.findByName(requestDTO.getName()).isPresent()) {
+            //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            //             .body(new ResponseObject("FAILED", "Device name already exists", null));
+            // }
+
+            // Find the last device ID and increment
+            Optional<Device> lastDeviceOpt = deviceRepository.findTopByOrderByDeviceIdDesc();
+            int nextDeviceId = lastDeviceOpt.map(device -> device.getDeviceId() + 1).orElse(1);
+
+            // Convert String state and status to Boolean
+            Boolean stateValue;
+            if ("ACTIVE".equalsIgnoreCase(requestDTO.getState())) {
+                stateValue = true;
+            } else if ("BROKEN".equalsIgnoreCase(requestDTO.getState())) {
+                stateValue = false;
+            } else {
+                // Handle invalid or null state - defaulting to BROKEN (false)
+                stateValue = false;
+            }
+
+            Boolean statusValue;
+            if ("ON".equalsIgnoreCase(requestDTO.getStatus())) {
+                statusValue = true;
+            } else if ("OFF".equalsIgnoreCase(requestDTO.getStatus())) {
+                statusValue = false;
+            } else {
+                // Handle invalid or null status - defaulting to OFF (false)
+                statusValue = false;
+            }
+
+            Device newDevice = Device.builder()
+                    .deviceId(nextDeviceId)
+                    .name(requestDTO.getName())
+                    .area(requestDTO.getArea())
+                    .warranty(requestDTO.getWarranty())
+                    .drive(requestDTO.getDrive())
+                    .inputVoltage(requestDTO.getInputVoltage())
+                    .outputVoltage(requestDTO.getOutputVoltage())
+                    .state(stateValue) // Use converted boolean value
+                    .status(statusValue) // Use converted boolean value
+                    .speed(requestDTO.getSpeed())
+                    .build();
+
+            Device savedDevice = deviceRepository.save(newDevice);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ResponseObject("OK", "Device added successfully", savedDevice));
+
+        } catch (DataAccessException e) {
+            System.err.println("Database error in addDevice(): " + e.getMessage());
+            e.printStackTrace(); // It's good practice to log the stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in addDevice(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+        }
     }
-    */
 }
