@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import { FaExclamationTriangle, FaLeaf, FaMicrochip, FaPrint, FaUsers } from 'react-icons/fa';
 import Navbar from '../../../Components/NavBar/NavBar';
+import api from './../../../api'; // Import the API module
 import './Dashboard.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
@@ -29,31 +30,30 @@ const Dashboard = () => {
     // Fetch the list of gardens
     const fetchGardens = async () => {
       try {
-        // const response = await api.get('/api/v1/dashboard/areas'); // Matches DashboardController.java
-        // if (response.data.status === 'OK') {
-        //   // Handle potential duplicates by reducing to unique areas based on 'area' ID
-        //   // Note: This is a precaution; the sample response shows unique areas, but the backend uses Tree entities which might duplicate areas.
-        //   const uniqueGardens = response.data.data.reduce((acc, area) => {
-        //     if (!acc.find(g => g.id === area.area)) {
-        //       acc.push({ id: area.area, name: area.name });
-        //     }
-        //     return acc;
-        //   }, []);
-        //   setGardens(uniqueGardens);
-        //   if (uniqueGardens.length > 0) {
-        //     setSelectedGarden(uniqueGardens[0]);
-        //   }
-        // } else {
-        //   console.error('Lỗi khi lấy danh sách khu vực:', response.data.message);
-        // }
+        const response = await api.get('/api/v1/dashboard/areas');
+        if (response.data.status === 'OK') {
+          const uniqueGardens = response.data.data.reduce((acc, area) => {
+            if (!acc.find(g => g.id === area.area)) {
+              acc.push({ id: area.area, name: area.name });
+            }
+            return acc;
+          }, []);
+          setGardens(uniqueGardens);
+          if (uniqueGardens.length > 0) {
+            setSelectedGarden(uniqueGardens[0]);
+          }
+        } else {
+          console.error('Lỗi khi lấy danh sách khu vực:', response.data.message);
+          // Fallback to mock data
           setGardens([
             { id: 1, name: 'Khu vực 1' },
             { id: 2, name: 'Khu vực 2' },
           ]);
           setSelectedGarden({ id: 1, name: 'Khu vực 1' });
-        // }
+        }
       } catch (error) {
         console.error("Error fetching gardens:", error);
+        // Fallback to mock data
         setGardens([
           { id: 1, name: 'Khu vực 1' },
           { id: 2, name: 'Khu vực 2' },
@@ -104,11 +104,17 @@ const Dashboard = () => {
 
     const fetchSummaryData = async () => {
       try {
-        // const response = await api.get(`/api/v1/devices/summary/${areaId}`);
-        // if (response.data.status === "OK") {
-        //   setSummaryData(response.data.data);
-        // } else {
-        //   console.error("Error fetching summary data:", response.data.message);
+        const response = await api.get('/api/v1/dashboard/summary');
+        if (response.data.status === "OK") {
+          setSummaryData({
+            totalPlants: response.data.data.plants,
+            totalTasks: response.data.data.staff,
+            totalWarnings: response.data.data.events,
+            totalSensors: response.data.data.devices,
+          });
+        } else {
+          console.error("Error fetching summary data:", response.data.message);
+          // Fallback to mock data
           setSummaryData(
             areaId === 1
               ? {
@@ -124,9 +130,10 @@ const Dashboard = () => {
                   totalSensors: 4,
                 }
           );
-        // }
+        }
       } catch (error) {
         console.error("Error fetching summary data:", error);
+        // Fallback to mock data
         setSummaryData(
           areaId === 1
             ? {
@@ -146,92 +153,62 @@ const Dashboard = () => {
     };
 
     const fetchLineChartData = async () => {
-      const today = new Date('2025-04-15');
-      const endDateLast30 = today.toISOString().split('T')[0]; // 2025-04-15
-      const startDateLast30 = new Date(today);
-      startDateLast30.setDate(today.getDate() - 30);
-      const startDateLast30Str = startDateLast30.toISOString().split('T')[0]; // 2025-03-16
-
-      const endDatePrev30 = new Date(startDateLast30);
-      endDatePrev30.setDate(endDatePrev30.getDate() - 1);
-      const endDatePrev30Str = endDatePrev30.toISOString().split('T')[0]; // 2025-03-15
-      const startDatePrev30 = new Date(endDatePrev30);
-      startDatePrev30.setDate(startDatePrev30.getDate() - 30);
-      const startDatePrev30Str = startDatePrev30.toISOString().split('T')[0]; // 2025-02-13
-
       try {
-        // const response = await api.get(`/api/v1/devices/temperature/${areaId}`, {
-        //   params: {
-        //     startDateLast: startDateLast30Str,
-        //     endDateLast: endDateLast30,
-        //     startDatePrev: startDatePrev30Str,
-        //     endDatePrev: endDatePrev30Str,
-        //   },
-        // });
-
-        // if (response.data.status === "OK") {
-        //   const temperatureData = response.data.data || {};
-        //   const allDates = getLastNDays(30);
-        //   const sampledDates = allDates.filter((_, index) => index % 5 === 0 || index === allDates.length - 1);
-
-        //   const previousMonthData = Array.isArray(temperatureData.previousMonth) && temperatureData.previousMonth.length === 30
-        //     ? temperatureData.previousMonth.filter((_, index) => index % 5 === 0 || index === 29)
-        //     : generateMockData(sampledDates.length, 60, 70);
-
-        //   const currentMonthData = Array.isArray(temperatureData.currentMonth) && temperatureData.currentMonth.length === 30
-        //     ? temperatureData.currentMonth.filter((_, index) => index % 5 === 0 || index === 29)
-        //     : generateMockData(sampledDates.length, 30, 35);
-
-        //   setLineChartData({
-        //     labels: sampledDates,
-        //     datasets: [
-        //       {
-        //         label: 'Nhiệt độ 30 ngày trước đó',
-        //         data: previousMonthData,
-        //         borderColor: '#F4A261',
-        //         backgroundColor: 'rgba(244, 162, 97, 0.2)',
-        //         fill: true,
-        //       },
-        //       {
-        //         label: 'Nhiệt độ 30 ngày gần nhất',
-        //         data: currentMonthData,
-        //         borderColor: '#FF6F61',
-        //         backgroundColor: 'rgba(255, 111, 97, 0.2)',
-        //         fill: true,
-        //       },
-        //     ],
-        //   });
-        // } else {
-        //   console.error("Error fetching temperature data:", response.data.message);
-        //   throw new Error("Failed to fetch temperature data");
-        // }
-        const allDates = getLastNDays(30);
-        const sampledDates = allDates.filter((_, index) => index % 5 === 0 || index === allDates.length - 1);
-        setLineChartData({
-          labels: sampledDates,
-          datasets: [
-            {
-              label: 'Nhiệt độ 30 ngày trước đó',
-              data: areaId === 1
-                ? generateMockData(sampledDates.length, 60, 70)
-                : generateMockData(sampledDates.length, 55, 65), // Cooler for Khu vực 2
-              borderColor: '#F4A261',
-              backgroundColor: 'rgba(244, 162, 97, 0.2)',
-              fill: true,
-            },
-            {
-              label: 'Nhiệt độ 30 ngày gần nhất',
-              data: areaId === 1
-                ? generateMockData(sampledDates.length, 30, 35)
-                : generateMockData(sampledDates.length, 28, 33), // Cooler for Khu vực 2
-              borderColor: '#FF6F61',
-              backgroundColor: 'rgba(255, 111, 97, 0.2)',
-              fill: true,
-            },
-          ],
-        });
+        const response = await api.get(`/api/v1/dashboard/temperature/${areaId}`);
+        if (response.data.status === "OK") {
+          const temperatureData = response.data.data;
+          const sampledDates = temperatureData.dates.map(day => `${day}/04`); // Assuming April 2025
+          setLineChartData({
+            labels: sampledDates,
+            datasets: [
+              {
+                label: 'Nhiệt độ tháng trước',
+                data: temperatureData.lastMonth,
+                borderColor: '#F4A261',
+                backgroundColor: 'rgba(244, 162, 97, 0.2)',
+                fill: true,
+              },
+              {
+                label: 'Nhiệt độ tháng này',
+                data: temperatureData.thisMonth,
+                borderColor: '#FF6F61',
+                backgroundColor: 'rgba(255, 111, 97, 0.2)',
+                fill: true,
+              },
+            ],
+          });
+        } else {
+          console.error("Error fetching temperature data:", response.data.message);
+          // Fallback to mock data
+          const allDates = getLastNDays(30);
+          const sampledDates = allDates.filter((_, index) => index % 5 === 0 || index === allDates.length - 1);
+          setLineChartData({
+            labels: sampledDates,
+            datasets: [
+              {
+                label: 'Nhiệt độ 30 ngày trước đó',
+                data: areaId === 1
+                  ? generateMockData(sampledDates.length, 60, 70)
+                  : generateMockData(sampledDates.length, 55, 65),
+                borderColor: '#F4A261',
+                backgroundColor: 'rgba(244, 162, 97, 0.2)',
+                fill: true,
+              },
+              {
+                label: 'Nhiệt độ 30 ngày gần nhất',
+                data: areaId === 1
+                  ? generateMockData(sampledDates.length, 30, 35)
+                  : generateMockData(sampledDates.length, 28, 33),
+                borderColor: '#FF6F61',
+                backgroundColor: 'rgba(255, 111, 97, 0.2)',
+                fill: true,
+              },
+            ],
+          });
+        }
       } catch (error) {
         console.error("Error fetching temperature data:", error);
+        // Fallback to mock data
         const allDates = getLastNDays(30);
         const sampledDates = allDates.filter((_, index) => index % 5 === 0 || index === allDates.length - 1);
         setLineChartData({
@@ -261,71 +238,52 @@ const Dashboard = () => {
     };
 
     const fetchBarChartData = async () => {
-      const today = new Date('2025-04-15');
-      const endDateLast7 = today.toISOString().split('T')[0]; // 2025-04-15
-      const startDateLast7 = new Date(today);
-      startDateLast7.setDate(today.getDate() - 6);
-      const startDateLast7Str = startDateLast7.toISOString().split('T')[0]; // 2025-04-09
-
       try {
-        // const response = await api.get(`/api/v1/devices/humidity/${areaId}`, {
-        //   params: {
-        //     startDate: startDateLast7Str,
-        //     endDate: endDateLast7,
-        //   },
-        // });
-
-        // if (response.data.status === "OK") {
-        //   const humidityData = response.data.data || {};
-        //   const labels = getLast7DaysWithDayNames();
-        //   const soilHumidityData = Array.isArray(humidityData.soilHumidity) && humidityData.soilHumidity.length === 7
-        //     ? humidityData.soilHumidity
-        //     : generateMockData(7, 40, 70);
-        //   const airHumidityData = Array.isArray(humidityData.airHumidity) && humidityData.airHumidity.length === 7
-        //     ? humidityData.airHumidity
-        //     : generateMockData(7, 10, 30);
-
-        //   setBarChartData({
-        //     labels,
-        //     datasets: [
-        //       {
-        //         label: 'Độ ẩm đất',
-        //         data: soilHumidityData,
-        //         backgroundColor: '#FF6F61',
-        //       },
-        //       {
-        //         label: 'Độ ẩm không khí',
-        //         data: airHumidityData,
-        //         backgroundColor: '#F4A261',
-        //       },
-        //     ],
-        //   });
-        // } else {
-        //   console.error("Error fetching humidity data:", response.data.message);
-        //   throw new Error("Failed to fetch humidity data");
-        // }
-        const labels = getLast7DaysWithDayNames();
-        setBarChartData({
-          labels,
-          datasets: [
-            {
-              label: 'Độ ẩm đất',
-              data: areaId === 1
-                ? generateMockData(7, 40, 70)
-                : generateMockData(7, 50, 80), // Higher soil humidity for Khu vực 2
-              backgroundColor: '#FF6F61',
-            },
-            {
-              label: 'Độ ẩm không khí',
-              data: areaId === 1
-                ? generateMockData(7, 10, 30)
-                : generateMockData(7, 15, 35), // Slightly higher air humidity for Khu vực 2
-              backgroundColor: '#F4A261',
-            },
-          ],
-        });
+        const response = await api.get(`/api/v1/dashboard/humidity/${areaId}`);
+        if (response.data.status === "OK") {
+          const humidityData = response.data.data;
+          setBarChartData({
+            labels: humidityData.daysOfWeek,
+            datasets: [
+              {
+                label: 'Độ ẩm đất',
+                data: humidityData.soilMoisture,
+                backgroundColor: '#FF6F61',
+              },
+              {
+                label: 'Độ ẩm không khí',
+                data: humidityData.airHumidity,
+                backgroundColor: '#F4A261',
+              },
+            ],
+          });
+        } else {
+          console.error("Error fetching humidity data:", response.data.message);
+          // Fallback to mock data
+          const labels = getLast7DaysWithDayNames();
+          setBarChartData({
+            labels,
+            datasets: [
+              {
+                label: 'Độ ẩm đất',
+                data: areaId === 1
+                  ? generateMockData(7, 40, 70)
+                  : generateMockData(7, 50, 80),
+                backgroundColor: '#FF6F61',
+              },
+              {
+                label: 'Độ ẩm không khí',
+                data: areaId === 1
+                  ? generateMockData(7, 10, 30)
+                  : generateMockData(7, 15, 35),
+                backgroundColor: '#F4A261',
+              },
+            ],
+          });
+        }
       } catch (error) {
         console.error("Error fetching humidity data:", error);
+        // Fallback to mock data
         const labels = getLast7DaysWithDayNames();
         setBarChartData({
           labels,
@@ -350,61 +308,38 @@ const Dashboard = () => {
     };
 
     const fetchTableData = async () => {
-      const today = new Date('2025-04-15');
-      let startDate, endDate;
-      if (monthFilter === 'Tháng') {
-        endDate = today.toISOString().split('T')[0]; // 2025-04-15
-        startDate = new Date(today);
-        startDate.setDate(today.getDate() - 30);
-        startDate = startDate.toISOString().split('T')[0]; // 2025-03-16
-      } else {
-        endDate = today.toISOString().split('T')[0]; // 2025-04-15
-        startDate = new Date(today);
-        startDate.setDate(today.getDate() - 90);
-        startDate = startDate.toISOString().split('T')[0]; // 2025-01-16
-      }
-
       try {
-        // const response = await api.get(`/api/v1/devices/statistics/averages/${areaId}`, {
-        //   params: {
-        //     startDate,
-        //     endDate,
-        //   },
-        // });
-        // if (response.data.status === "OK") {
-        //   setTableData(response.data.data);
-        // } else {
-        //   console.error("Error fetching statistics data:", response.data.message);
-          setTableData(
-            areaId === 1
-              ? [
-                  { id: 1, name: 'Bộ đo thông tin 1', temp: 30, airHumidity: 73, soilHumidity: 80, light: 8000, month: 'Tháng 1' },
-                  { id: 2, name: 'Bộ đo thông tin 2', temp: 31, airHumidity: 70, soilHumidity: 78, light: 8200, month: 'Tháng 2' },
-                  { id: 3, name: 'Bộ đo thông tin 3', temp: 29, airHumidity: 75, soilHumidity: 82, light: 7900, month: 'Tháng 3' },
-                  { id: 4, name: 'Bộ đo thông tin 4', temp: 32, airHumidity: 72, soilHumidity: 79, light: 8100, month: 'Tháng 4' },
-                  { id: 5, name: 'Bộ đo thông tin 5', temp: 30, airHumidity: 74, soilHumidity: 81, light: 8050, month: 'Tháng 5' },
-                  { id: 6, name: 'Bộ đo thông tin 6', temp: 28, airHumidity: 76, soilHumidity: 83, light: 7800, month: 'Tháng 6' },
-                  { id: 7, name: 'Bộ đo thông tin 7', temp: 33, airHumidity: 71, soilHumidity: 77, light: 8300, month: 'Tháng 7' },
-                  { id: 8, name: 'Bộ đo thông tin 8', temp: 31, airHumidity: 73, soilHumidity: 80, light: 8000, month: 'Tháng 8' },
-                  { id: 9, name: 'Bộ đo thông tin 9', temp: 29, airHumidity: 75, soilHumidity: 82, light: 7900, month: 'Tháng 9' },
-                  { id: 10, name: 'Bộ đo thông tin 10', temp: 32, airHumidity: 72, soilHumidity: 79, light: 8100, month: 'Tháng 10' },
-                ]
-              : [
-                  { id: 11, name: 'Bộ đo thông tin 11', temp: 28, airHumidity: 78, soilHumidity: 85, light: 7500, month: 'Tháng 1' },
-                  { id: 12, name: 'Bộ đo thông tin 12', temp: 29, airHumidity: 76, soilHumidity: 83, light: 7600, month: 'Tháng 2' },
-                  { id: 13, name: 'Bộ đo thông tin 13', temp: 27, airHumidity: 80, soilHumidity: 87, light: 7400, month: 'Tháng 3' },
-                  { id: 14, name: 'Bộ đo thông tin 14', temp: 30, airHumidity: 77, soilHumidity: 84, light: 7550, month: 'Tháng 4' },
-                  { id: 15, name: 'Bộ đo thông tin 15', temp: 28, airHumidity: 79, soilHumidity: 86, light: 7450, month: 'Tháng 5' },
-                  { id: 16, name: 'Bộ đo thông tin 16', temp: 26, airHumidity: 81, soilHumidity: 88, light: 7300, month: 'Tháng 6' },
-                  { id: 17, name: 'Bộ đo thông tin 17', temp: 31, airHumidity: 75, soilHumidity: 82, light: 7700, month: 'Tháng 7' },
-                  { id: 18, name: 'Bộ đo thông tin 18', temp: 29, airHumidity: 78, soilHumidity: 85, light: 7500, month: 'Tháng 8' },
-                  { id: 19, name: 'Bộ đo thông tin 19', temp: 27, airHumidity: 80, soilHumidity: 87, light: 7400, month: 'Tháng 9' },
-                  { id: 20, name: 'Bộ đo thông tin 20', temp: 30, airHumidity: 77, soilHumidity: 84, light: 7550, month: 'Tháng 10' },
-                ]
-          );
-        // }
+        // Use mock data directly, no API call
+        setTableData(
+          areaId === 1
+            ? [
+                { id: 1, name: 'Bộ đo thông tin 1', temp: 30, airHumidity: 73, soilHumidity: 80, light: 8000, month: 'Tháng 1' },
+                { id: 2, name: 'Bộ đo thông tin 2', temp: 31, airHumidity: 70, soilHumidity: 78, light: 8200, month: 'Tháng 2' },
+                { id: 3, name: 'Bộ đo thông tin 3', temp: 29, airHumidity: 75, soilHumidity: 82, light: 7900, month: 'Tháng 3' },
+                { id: 4, name: 'Bộ đo thông tin 4', temp: 32, airHumidity: 72, soilHumidity: 79, light: 8100, month: 'Tháng 4' },
+                { id: 5, name: 'Bộ đo thông tin 5', temp: 30, airHumidity: 74, soilHumidity: 81, light: 8050, month: 'Tháng 5' },
+                { id: 6, name: 'Bộ đo thông tin 6', temp: 28, airHumidity: 76, soilHumidity: 83, light: 7800, month: 'Tháng 6' },
+                { id: 7, name: 'Bộ đo thông tin 7', temp: 33, airHumidity: 71, soilHumidity: 77, light: 8300, month: 'Tháng 7' },
+                { id: 8, name: 'Bộ đo thông tin 8', temp: 31, airHumidity: 73, soilHumidity: 80, light: 8000, month: 'Tháng 8' },
+                { id: 9, name: 'Bộ đo thông tin 9', temp: 29, airHumidity: 75, soilHumidity: 82, light: 7900, month: 'Tháng 9' },
+                { id: 10, name: 'Bộ đo thông tin 10', temp: 32, airHumidity: 72, soilHumidity: 79, light: 8100, month: 'Tháng 10' },
+              ]
+            : [
+                { id: 11, name: 'Bộ đo thông tin 11', temp: 28, airHumidity: 78, soilHumidity: 85, light: 7500, month: 'Tháng 1' },
+                { id: 12, name: 'Bộ đo thông tin 12', temp: 29, airHumidity: 76, soilHumidity: 83, light: 7600, month: 'Tháng 2' },
+                { id: 13, name: 'Bộ đo thông tin 13', temp: 27, airHumidity: 80, soilHumidity: 87, light: 7400, month: 'Tháng 3' },
+                { id: 14, name: 'Bộ đo thông tin 14', temp: 30, airHumidity: 77, soilHumidity: 84, light: 7550, month: 'Tháng 4' },
+                { id: 15, name: 'Bộ đo thông tin 15', temp: 28, airHumidity: 79, soilHumidity: 86, light: 7450, month: 'Tháng 5' },
+                { id: 16, name: 'Bộ đo thông tin 16', temp: 26, airHumidity: 81, soilHumidity: 88, light: 7300, month: 'Tháng 6' },
+                { id: 17, name: 'Bộ đo thông tin 17', temp: 31, airHumidity: 75, soilHumidity: 82, light: 7700, month: 'Tháng 7' },
+                { id: 18, name: 'Bộ đo thông tin 18', temp: 29, airHumidity: 78, soilHumidity: 85, light: 7500, month: 'Tháng 8' },
+                { id: 19, name: 'Bộ đo thông tin 19', temp: 27, airHumidity: 80, soilHumidity: 87, light: 7400, month: 'Tháng 9' },
+                { id: 20, name: 'Bộ đo thông tin 20', temp: 30, airHumidity: 77, soilHumidity: 84, light: 7550, month: 'Tháng 10' },
+              ]
+        );
       } catch (error) {
-        console.error("Error fetching statistics data:", error);
+        console.error("Error setting table data:", error);
+        // Fallback to mock data
         setTableData(
           areaId === 1
             ? [
@@ -498,7 +433,8 @@ const Dashboard = () => {
 
     let detailedData = [];
     try {
-      // const response = await api.get(`/api/v1/devices/statistics/detailed/${areaId}`, {
+      // Placeholder for a new endpoint to fetch detailed historical data
+      // const response = await api.get(`/api/v1/record/getHistoricalRecords/${areaId}`, {
       //   params: {
       //     deviceId: row.id,
       //     startDate,
@@ -510,23 +446,25 @@ const Dashboard = () => {
       // } else {
       //   console.error("Error fetching detailed data:", response.data.message);
       // }
+      // Fallback to mock data since no endpoint exists
       detailedData = Array.from({ length: monthFilter === 'Tháng' ? 30 : 90 }, (_, index) => ({
         timestamp: new Date(today.getTime() - (index * 24 * 60 * 60 * 1000)).toISOString(),
         temp: areaId === 1
           ? Math.floor(Math.random() * (35 - 28 + 1)) + 28
-          : Math.floor(Math.random() * (33 - 26 + 1)) + 26, // Cooler for Khu vực 2
+          : Math.floor(Math.random() * (33 - 26 + 1)) + 26,
         airHumidity: areaId === 1
           ? Math.floor(Math.random() * (80 - 70 + 1)) + 70
-          : Math.floor(Math.random() * (85 - 75 + 1)) + 75, // Higher for Khu vực 2
+          : Math.floor(Math.random() * (85 - 75 + 1)) + 75,
         soilHumidity: areaId === 1
           ? Math.floor(Math.random() * (85 - 75 + 1)) + 75
-          : Math.floor(Math.random() * (90 - 80 + 1)) + 80, // Higher for Khu vực 2
+          : Math.floor(Math.random() * (90 - 80 + 1)) + 80,
         light: areaId === 1
           ? Math.floor(Math.random() * (8500 - 7500 + 1)) + 7500
-          : Math.floor(Math.random() * (8000 - 7000 + 1)) + 7000, // Slightly lower for Khu vực 2
+          : Math.floor(Math.random() * (8000 - 7000 + 1)) + 7000,
       }));
     } catch (error) {
       console.error("Error fetching detailed data:", error);
+      // Fallback to mock data
       detailedData = Array.from({ length: monthFilter === 'Tháng' ? 30 : 90 }, (_, index) => ({
         timestamp: new Date(today.getTime() - (index * 24 * 60 * 60 * 1000)).toISOString(),
         temp: areaId === 1
@@ -650,7 +588,7 @@ const Dashboard = () => {
         <div className="header-right">
           <div className="garden-dropdown">
             <button onClick={toggleGardenDropdown} className="garden-button">
-              {selectedGarden.name} ▼
+              {selectedGarden ? selectedGarden.name : 'Chọn khu vực'} ▼
             </button>
             {showGardenDropdown && (
               <div className="garden-dropdown-menu">
@@ -666,9 +604,8 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-          
         </div>
-        <Navbar classname="navbar"/>
+        <Navbar className="navbar"/>
       </div>
       {/* Phần Tổng quan */}
       <div className="summary-cards">
