@@ -511,131 +511,131 @@ public class DashboardService {
     }
 
     // --- Phương thức mới để lấy báo cáo tổng hợp --- //
-    // public ResponseEntity<ResponseObject> getReports() {
-    //     try {
-    //         List<Object[]> monthlyAveragesRaw = recordRepository.findMonthlyAverages();
-    //         // Tạm thời bỏ qua quý và năm
-    //         // List<Object[]> quarterlyAveragesRaw = recordRepository.findQuarterlyAverages();
-    //         // List<Object[]> yearlyAveragesRaw = recordRepository.findYearlyAverages();
+    public ResponseEntity<ResponseObject> getReports() {
+        try {
+            List<Object[]> monthlyAveragesRaw = recordRepository.findMonthlyAverages();
+            // Tạm thời bỏ qua quý và năm
+            List<Object[]> quarterlyAveragesRaw = recordRepository.findQuarterlyAverages();
+            List<Object[]> yearlyAveragesRaw = recordRepository.findYearlyAverages();
 
-    //         List<Map<String, Object>> allReports = new ArrayList<>();
+            List<Map<String, Object>> allReports = new ArrayList<>();
 
-    //         // Xử lý báo cáo tháng
-    //         for (Object[] row : monthlyAveragesRaw) {
-    //             Map<String, Object> reportData = processReportRow(row, "month");
-    //             if (reportData != null) {
-    //                 allReports.add(reportData);
-    //             }
-    //         }
+            // Xử lý báo cáo tháng
+            for (Object[] row : monthlyAveragesRaw) {
+                Map<String, Object> reportData = processReportRow(row, "month");
+                if (reportData != null) {
+                    allReports.add(reportData);
+                }
+            }
 
-    //         // Tạm thời bỏ qua xử lý quý
-    //         // for (Object[] row : quarterlyAveragesRaw) {
-    //         //     Map<String, Object> reportData = processReportRow(row, "quarter");
-    //         //     if (reportData != null) {
-    //         //         allReports.add(reportData);
-    //         //     }
-    //         // }
+            // Tạm thời bỏ qua xử lý quý
+            for (Object[] row : quarterlyAveragesRaw) {
+                Map<String, Object> reportData = processReportRow(row, "quarter");
+                if (reportData != null) {
+                    allReports.add(reportData);
+                }
+            }
 
-    //         // Tạm thời bỏ qua xử lý năm
-    //         // for (Object[] row : yearlyAveragesRaw) {
-    //         //     Map<String, Object> reportData = processReportRow(row, "year");
-    //         //     if (reportData != null) {
-    //         //         allReports.add(reportData);
-    //         //     }
-    //         // }
+            // Tạm thời bỏ qua xử lý năm
+            for (Object[] row : yearlyAveragesRaw) {
+                Map<String, Object> reportData = processReportRow(row, "year");
+                if (reportData != null) {
+                    allReports.add(reportData);
+                }
+            }
 
-    //         return ResponseEntity.status(HttpStatus.OK)
-    //                 .body(new ResponseObject("OK", "Query monthly reports successfully", allReports)); // Cập nhật message
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Query monthly reports successfully", allReports)); // Cập nhật message
 
-    //     } catch (DataAccessException e) {
-    //         System.err.println("Database error in getReports(): " + e.getMessage());
-    //         e.printStackTrace();
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //                 .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
-    //     } catch (Exception e) {
-    //         System.err.println("Unexpected error in getReports(): " + e.getMessage());
-    //         e.printStackTrace();
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //                 .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
-    //     }
-    // }
+        } catch (DataAccessException e) {
+            System.err.println("Database error in getReports(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            System.err.println("Unexpected error in getReports(): " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
+        }
+    }
 
-    // // Helper method để xử lý và định dạng một dòng kết quả báo cáo
-    // private Map<String, Object> processReportRow(Object[] row, String type) {
-    //     try {
-    //         Map<String, Object> reportData = new LinkedHashMap<>();
-    //         String reportName;
-    //         int yearIndex = 0;
-    //         int periodIndex = 1; // Month or Quarter
-    //         int tempIndex, humidityIndex, lightIndex, soilMoistureIndex;
+    // Helper method để xử lý và định dạng một dòng kết quả báo cáo
+    private Map<String, Object> processReportRow(Object[] row, String type) {
+        try {
+            Map<String, Object> reportData = new LinkedHashMap<>();
+            String reportName;
+            int yearIndex = 0;
+            int periodIndex = 1; // Month or Quarter
+            int tempIndex, humidityIndex, lightIndex, soilMoistureIndex;
 
-    //         // Xác định chỉ số cột dựa trên loại báo cáo
-    //         if ("year".equals(type)) {
-    //              // Đối với năm, không có chỉ số 'period'
-    //              tempIndex = 1;
-    //              humidityIndex = 2;
-    //              lightIndex = 3;
-    //              soilMoistureIndex = 4;
-    //         } else {
-    //              tempIndex = 2;
-    //              humidityIndex = 3;
-    //              lightIndex = 4;
-    //              soilMoistureIndex = 5;
-    //         }
+            // Xác định chỉ số cột dựa trên loại báo cáo
+            if ("year".equals(type)) {
+                 // Đối với năm, không có chỉ số 'period'
+                 tempIndex = 1;
+                 humidityIndex = 2;
+                 lightIndex = 3;
+                 soilMoistureIndex = 4;
+            } else {
+                 tempIndex = 2;
+                 humidityIndex = 3;
+                 lightIndex = 4;
+                 soilMoistureIndex = 5;
+            }
 
-    //         // Lấy năm (luôn là cột đầu tiên)
-    //         Integer year = ((Number) row[yearIndex]).intValue();
+            // Lấy năm (luôn là cột đầu tiên)
+            Integer year = ((Number) row[yearIndex]).intValue();
 
-    //         // Tạo reportName
-    //         if ("month".equals(type)) {
-    //             Integer month = ((Number) row[periodIndex]).intValue();
-    //             reportName = String.format("báo cáo tháng %02d/%d", month, year);
-    //         } else if ("quarter".equals(type)) {
-    //             Integer quarter = ((Number) row[periodIndex]).intValue();
-    //             reportName = String.format("báo cáo quý %02d/%d", quarter, year);
-    //         } else { // year
-    //             reportName = String.format("báo cáo năm %d", year);
-    //         }
+            // Tạo reportName
+            if ("month".equals(type)) {
+                Integer month = ((Number) row[periodIndex]).intValue();
+                reportName = String.format("báo cáo tháng %02d/%d", month, year);
+            } else if ("quarter".equals(type)) {
+                Integer quarter = ((Number) row[periodIndex]).intValue();
+                reportName = String.format("báo cáo quý %02d/%d", quarter, year);
+            } else { // year
+                reportName = String.format("báo cáo năm %d", year);
+            }
 
-    //         // Lấy và làm tròn giá trị trung bình
-    //         Double avgTemp = parseAndRoundAverage(row[tempIndex]);
-    //         Double avgHumidity = parseAndRoundAverage(row[humidityIndex]);
-    //         Double avgLight = parseAndRoundAverage(row[lightIndex]);
-    //         Double avgSoilMoisture = parseAndRoundAverage(row[soilMoistureIndex]);
+            // Lấy và làm tròn giá trị trung bình
+            Double avgTemp = parseAndRoundAverage(row[tempIndex]);
+            Double avgHumidity = parseAndRoundAverage(row[humidityIndex]);
+            Double avgLight = parseAndRoundAverage(row[lightIndex]);
+            Double avgSoilMoisture = parseAndRoundAverage(row[soilMoistureIndex]);
 
-    //         // Đưa vào map
-    //         reportData.put("reportName", reportName);
-    //         reportData.put("temperature", avgTemp);
-    //         reportData.put("humidity", avgHumidity);
-    //         reportData.put("light", avgLight);
-    //         reportData.put("soil_moisture", avgSoilMoisture);
+            // Đưa vào map
+            reportData.put("reportName", reportName);
+            reportData.put("temperature", avgTemp);
+            reportData.put("humidity", avgHumidity);
+            reportData.put("light", avgLight);
+            reportData.put("soil_moisture", avgSoilMoisture);
 
-    //         return reportData;
-    //     } catch (Exception e) {
-    //         // Ghi log lỗi xử lý dòng cụ thể nếu cần
-    //         System.err.println("Error processing report row: " + Arrays.toString(row) + " - Type: " + type + " - Error: " + e.getMessage());
-    //         return null; // Bỏ qua dòng bị lỗi
-    //     }
-    // }
+            return reportData;
+        } catch (Exception e) {
+            // Ghi log lỗi xử lý dòng cụ thể nếu cần
+            System.err.println("Error processing report row: " + Arrays.toString(row) + " - Type: " + type + " - Error: " + e.getMessage());
+            return null; // Bỏ qua dòng bị lỗi
+        }
+    }
 
-    // // Helper method để chuyển đổi và làm tròn giá trị trung bình
-    // private Double parseAndRoundAverage(Object value) {
-    //     if (value == null) {
-    //         return null;
-    //     }
-    //     double avgValue;
-    //     if (value instanceof Double) {
-    //         avgValue = (Double) value;
-    //     } else if (value instanceof BigDecimal) {
-    //         avgValue = ((BigDecimal) value).doubleValue();
-    //     } else if (value instanceof Number) {
-    //         avgValue = ((Number) value).doubleValue();
-    //     } else {
-    //         return null; // Không thể chuyển đổi
-    //     }
-    //     // Làm tròn đến 1 chữ số thập phân
-    //     return Double.parseDouble(String.format(Locale.US, "%.1f", avgValue));
-    // }
+    // Helper method để chuyển đổi và làm tròn giá trị trung bình
+    private Double parseAndRoundAverage(Object value) {
+        if (value == null) {
+            return null;
+        }
+        double avgValue;
+        if (value instanceof Double) {
+            avgValue = (Double) value;
+        } else if (value instanceof BigDecimal) {
+            avgValue = ((BigDecimal) value).doubleValue();
+        } else if (value instanceof Number) {
+            avgValue = ((Number) value).doubleValue();
+        } else {
+            return null; // Không thể chuyển đổi
+        }
+        // Làm tròn đến 1 chữ số thập phân
+        return Double.parseDouble(String.format(Locale.US, "%.1f", avgValue));
+    }
 
     // --- Phương thức mới để lấy danh sách tất cả các Area --- //
     public ResponseEntity<ResponseObject> getAllAreas() {

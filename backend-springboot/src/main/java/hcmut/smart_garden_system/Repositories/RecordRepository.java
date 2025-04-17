@@ -36,39 +36,39 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     Long countAllEvents();
 
     // Query tính trung bình hàng tháng
-    // @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
-    //                "       EXTRACT(MONTH FROM datetime) AS report_month, " +
-    //                "       AVG(temperature) AS avg_temp, " +
-    //                "       AVG(humidity) AS avg_humidity, " +
-    //                "       AVG(light) AS avg_light, " +
-    //                "       AVG(soil_moisture) AS avg_soil_moisture " +
-    //                "FROM record " +
-    //                "GROUP BY report_year, report_month " +
-    //                "ORDER BY report_year, report_month", nativeQuery = true)
-    // List<Object[]> findMonthlyAverages();
+    @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
+                   "       EXTRACT(MONTH FROM datetime) AS report_month, " +
+                   "       AVG(temperature) AS avg_temp, " +
+                   "       AVG(humidity) AS avg_humidity, " +
+                   "       AVG(light) AS avg_light, " +
+                   "       AVG(soil_moisture) AS avg_soil_moisture " +
+                   "FROM record " +
+                   "GROUP BY report_year, report_month " +
+                   "ORDER BY report_year, report_month", nativeQuery = true)
+    List<Object[]> findMonthlyAverages();
 
     // // Query tính trung bình hàng quý
-    // @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
-    //                "       EXTRACT(QUARTER FROM datetime) AS report_quarter, " +
-    //                "       AVG(temperature) AS avg_temp, " +
-    //                "       AVG(humidity) AS avg_humidity, " +
-    //                "       AVG(light) AS avg_light, " +
-    //                "       AVG(soil_moisture) AS avg_soil_moisture " +
-    //                "FROM record " +
-    //                "GROUP BY report_year, report_quarter " +
-    //                "ORDER BY report_year, report_quarter", nativeQuery = true)
-    // List<Object[]> findQuarterlyAverages();
+    @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
+                   "       EXTRACT(QUARTER FROM datetime) AS report_quarter, " +
+                   "       AVG(temperature) AS avg_temp, " +
+                   "       AVG(humidity) AS avg_humidity, " +
+                   "       AVG(light) AS avg_light, " +
+                   "       AVG(soil_moisture) AS avg_soil_moisture " +
+                   "FROM record " +
+                   "GROUP BY report_year, report_quarter " +
+                   "ORDER BY report_year, report_quarter", nativeQuery = true)
+    List<Object[]> findQuarterlyAverages();
 
     // // Query tính trung bình hàng năm
-    // @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
-    //                "       AVG(temperature) AS avg_temp, " +
-    //                "       AVG(humidity) AS avg_humidity, " +
-    //                "       AVG(light) AS avg_light, " +
-    //                "       AVG(soil_moisture) AS avg_soil_moisture " +
-    //                "FROM record " +
-    //                "GROUP BY report_year " +
-    //                "ORDER BY report_year", nativeQuery = true)
-    // List<Object[]> findYearlyAverages();
+    @Query(value = "SELECT EXTRACT(YEAR FROM datetime) AS report_year, " +
+                   "       AVG(temperature) AS avg_temp, " +
+                   "       AVG(humidity) AS avg_humidity, " +
+                   "       AVG(light) AS avg_light, " +
+                   "       AVG(soil_moisture) AS avg_soil_moisture " +
+                   "FROM record " +
+                   "GROUP BY report_year " +
+                   "ORDER BY report_year", nativeQuery = true)
+    List<Object[]> findYearlyAverages();
 
     // Phương thức mới để lấy 50 bản ghi gần đây nhất
     List<Record> findTop50ByOrderByDatetimeDesc();
