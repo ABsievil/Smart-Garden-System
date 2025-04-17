@@ -6,6 +6,7 @@ import { RiWaterPercentLine } from "react-icons/ri";
 import Navbar from "../../../Components/NavBar/NavBar";
 import api from './../../../api'; // Import the API module
 import './DeviceRecord.css';
+import axios from 'axios'; // Thêm import axios
 
 const DeviceRecord = () => {
   const [data, setData] = useState({
@@ -117,82 +118,78 @@ const DeviceRecord = () => {
   };
 
   const handleViewMore = async () => {
-    // Since the backend does not provide a historical data endpoint, we use mock data for the report
-    // Alternatively, implement a new backend endpoint to fetch historical records
-    const areaId = selectedGarden.id;
-    const now = new Date('2025-04-15T12:00:00'); // Current time for mock data
-    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago
+    try {
+      // Gọi API để lấy 50 bản ghi gần nhất sử dụng instance api
+      const response = await api.get(`/api/v1/record/getRecentRecords`);
 
-    // Generate mock data for the last 3 hours (every 15 minutes)
-    const reportData = [];
-    for (let time = threeHoursAgo; time <= now; time.setMinutes(time.getMinutes() + 15)) {
-      reportData.push({
-        timestamp: new Date(time).toISOString(),
-        temperature: areaId === 1
-          ? (32 + Math.random() * 1).toFixed(2)
-          : (29 + Math.random() * 1).toFixed(2),
-        humidity: areaId === 1
-          ? Math.floor(83 + Math.random() * 4)
-          : Math.floor(88 + Math.random() * 4),
-        light: areaId === 1
-          ? Math.floor(58 + Math.random() * 4)
-          : Math.floor(53 + Math.random() * 4),
-        soilMoisture: areaId === 1
-          ? Math.floor(58 + Math.random() * 4)
-          : Math.floor(63 + Math.random() * 4),
-      });
+      if (response.data.status === 'OK' && response.data.data && response.data.data.length > 0) {
+        const reportData = response.data.data;
+        const selectedGardenName = selectedGarden ? selectedGarden.name : 'Tất cả khu vực'; // Lấy tên khu vực nếu có
+
+        // Lấy thời gian của bản ghi đầu tiên và cuối cùng
+        const firstRecordTime = new Date(reportData[reportData.length - 1].datetime).toLocaleString();
+        const lastRecordTime = new Date(reportData[0].datetime).toLocaleString();
+
+        // Generate report content using fetched data
+        const reportContent = `
+          <h3>Báo cáo ${reportData.length} dữ liệu gần nhất</h3>
+          <p>Thời gian: Từ ${firstRecordTime} đến ${lastRecordTime}</p>
+          <table border="1" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Nhiệt độ (°C)</th>
+                <th>Độ ẩm không khí (%)</th>
+                <th>Độ ẩm đất (%)</th>
+                <th>Ánh sáng (Lux)</th>
+                <th>Khu vực</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${reportData.map(record => `
+                <tr>
+                  <td>${new Date(record.datetime).toLocaleString()}</td>
+                  <td>${record.temperature !== null ? record.temperature.toFixed(2) : 'N/A'}</td>
+                  <td>${record.humidity !== null ? record.humidity.toFixed(0) : 'N/A'}</td>
+                  <td>${record.soilMoisture !== null ? record.soilMoisture.toFixed(0) : 'N/A'}</td>
+                  <td>${record.light !== null ? record.light.toFixed(0) : 'N/A'}</td>
+                   <td>${record.area}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+
+        // Open and print the report
+        const reportWindow = window.open('', '_blank');
+        reportWindow.document.write(`
+          <html>
+            <head>
+              <title>Báo cáo dữ liệu gần nhất</title>
+              <style>
+                body { font-family: 'Roboto', sans-serif; padding: 20px; }
+                h3 { color: #34772e; }
+                p { font-size: 16px; color: #333; }
+                table { margin-top: 20px; }
+                th, td { padding: 8px; text-align: center; border: 1px solid #ddd; }
+                th { background-color: #f0f8e7; }
+              </style>
+            </head>
+            <body>
+              ${reportContent}
+            </body>
+          </html>
+        `);
+        reportWindow.document.close();
+        reportWindow.print();
+      } else {
+        alert('Không có dữ liệu gần đây để hiển thị.');
+        console.log("Không có dữ liệu hoặc lỗi API:", response.data);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu báo cáo:", error);
+      alert('Đã xảy ra lỗi khi tạo báo cáo. Vui lòng thử lại.');
     }
-
-    // Generate report
-    const reportContent = `
-      <h3>Báo cáo dữ liệu tổng hơp gần nhất</h3>
-      <p>Khu vực: ${selectedGarden.name}</p>
-      <p>Thời gian: Từ ${threeHoursAgo.toLocaleString()} đến ${now.toLocaleString()}</p>
-      <table border="1" style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Nhiệt độ (°C)</th>
-            <th>Độ ẩm không khí (%)</th>
-            <th>Độ ẩm đất (%)</th>
-            <th>Ánh sáng (Lux)</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${reportData.map(record => `
-            <tr>
-              <td>${new Date(record.timestamp).toLocaleString()}</td>
-              <td>${record.temperature}</td>
-              <td>${record.humidity}</td>
-              <td>${record.soilMoisture}</td>
-              <td>${record.light}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-
-    const reportWindow = window.open('', '_blank');
-    reportWindow.document.write(`
-      <html>
-        <head>
-          <title>Báo cáo dữ liệu 3 giờ</title>
-          <style>
-            body { font-family: 'Roboto', sans-serif; padding: 20px; }
-            h3 { color: #34772e; }
-            p { font-size: 16px; color: #333; }
-            table { margin-top: 20px; }
-            th, td { padding: 8px; text-align: center; border: 1px solid #ddd; }
-            th { background-color: #f0f8e7; }
-          </style>
-        </head>
-        <body>
-          ${reportContent}
-        </body>
-      </html>
-    `);
-    reportWindow.document.close();
-    reportWindow.print();
   };
 
   return (
@@ -258,7 +255,7 @@ const DeviceRecord = () => {
           </div>
           <div className="view-more-container">
             <button onClick={handleViewMore} className="view-more-button">
-              VIEW MORE
+              VIEW RECENT RECORDS
             </button>
           </div>
         </Box>
