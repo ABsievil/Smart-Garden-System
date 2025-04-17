@@ -176,11 +176,11 @@ const Navbar = ({ namePage }) => {
           </div>
         </Toolbar>
       </AppBar>
-      {error && (
+      {/* {error && (
         <div style={{ position: 'absolute', top: '60px', right: '20px', backgroundColor: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '5px' }}>
           {error}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
