@@ -1,70 +1,78 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
+import api from '../../../api';
 import './ScheduleViewing.css';
 
+// Utility to parse backend date string "yyyy-MM-dd'T'HH:mm:ss" into a Date object
+const parseDateFromBackend = (dateStr) => {
+  return new Date(`${dateStr}Z`);
+};
+
+// Utility to map area (integer) to display name
+const getAreaDisplayName = (area) => {
+  return `Area ${area}`;
+};
+
 const ScheduleViewing = () => {
-  const [month, setMonth] = useState(3); // April (0-based index, set to current month)
-  const [year, setYear] = useState(2025); // Current year
+  const [month, setMonth] = useState(3);
+  const [year, setYear] = useState(2025);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDayEvents, setSelectedDayEvents] = useState([]);
   const [notifData, setNotifData] = useState({ content: '' });
   const [weeklyTasks, setWeeklyTasks] = useState([]);
-  const [events, setEvents] = useState([
-    { date: new Date(2025, 3, 10), employee: 'Tony', area: 'A', content: 'Gieo hạt vườn đỏ' },
-    { date: new Date(2025, 3, 15), employee: 'Tony', area: 'A', content: 'Đón vườn' },
-    { date: new Date(2025, 3, 15), employee: 'Tony', area: 'A', content: 'Xem xét thiết bị' },
-    { date: new Date(2025, 3, 18), employee: 'Tony', area: 'A', content: 'Thu hoạch vườn B' },
-  ]);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Current user info (fixed for this user)
   const currentUser = 'Tony';
-  const fixedArea = 'A';
+  const currentUserId = 1; // Should be fetched dynamically in a real app
+  const fixedArea = 1;
 
   useEffect(() => {
-    // Commented API fetch logic for events (filtered by user and area)
-    /*
     const fetchEvents = async () => {
       try {
-        const response = await api.get(`/api/v1/scheduler/getEvents?userId=${currentUser}&area=${fixedArea}`);
+        const response = await api.get(`/api/v1/schedule/user/${currentUserId}`);
         if (response.data.status === "OK") {
-          const eventData = response.data.data;
-          setEvents(eventData.map(event => ({
-            ...event,
-            date: new Date(event.date)
-          })));
+          const eventData = response.data.data.eventList;
+          const parsedEvents = eventData.map(event => ({
+            id: event.id,
+            date: parseDateFromBackend(event.dateTime),
+            employee: currentUser,
+            area: event.area,
+            content: event.content,
+          }));
+
+          const filteredEvents = parsedEvents.filter(event => event.area === fixedArea);
+          setEvents(filteredEvents);
+
+          const currentDate = new Date(2025, 3, 15);
+          const endOfWeek = new Date(currentDate);
+          endOfWeek.setDate(currentDate.getDate() + 7);
+
+          const tasksInWeek = filteredEvents.filter(event => {
+            const eventDate = new Date(event.date);
+            return eventDate >= currentDate && eventDate <= endOfWeek;
+          });
+          setWeeklyTasks(tasksInWeek);
+
+          setError(null);
         } else {
           console.error("Error fetching events:", response.data.message);
+          setError("Error fetching events: " + response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching events:", error.response?.data?.message || error.message);
+        setError("Error fetching events: " + (error.response?.data?.message || error.message));
       }
     };
+
     fetchEvents();
-    */
-
-    // Filter events for the current user and area (already done in fake data)
-    const filteredEvents = events.filter(
-      event => event.employee === currentUser && event.area === fixedArea
-    );
-    setEvents(filteredEvents);
-
-    // Calculate weekly tasks (from current date to next 7 days)
-    const currentDate = new Date(2025, 3, 15); // Fixed to April 15, 2025 as per system date
-    const endOfWeek = new Date(currentDate);
-    endOfWeek.setDate(currentDate.getDate() + 7);
-
-    const tasksInWeek = filteredEvents.filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate >= currentDate && eventDate <= endOfWeek;
-    });
-    setWeeklyTasks(tasksInWeek);
   }, []);
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'July', 'August', 'September', 'October', 'November', 'December',
   ];
   const years = [2025, 2026, 2027];
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -73,29 +81,41 @@ const ScheduleViewing = () => {
     setShowNotifModal(true);
   };
 
-  const handleNotifSubmit = () => {
-    // Commented API logic for sending notification to admin
-    /*
-    const sendNotificationToAdmin = async () => {
-      try {
-        const response = await api.post('/api/v1/notifications/sendToAdmin', {
-          userId: currentUser,
-          content: notifData.content
-        });
-        if (response.data.status === "OK") {
-          console.log("Notification sent successfully:", response.data.data);
-        } else {
-          console.error("Error sending notification:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error sending notification:", error);
-      }
-    };
-    sendNotificationToAdmin();
-    */
+  const handleNotifSubmit = async () => {
+    // Validate input
+    if (!notifData.content.trim()) {
+      setError("Notification content cannot be empty");
+      return;
+    }
 
-    setShowNotifModal(false);
-    setNotifData({ content: '' });
+    try {
+      console.log("ID:" + notifData.content.trim());
+      const response = await api.post('/api/v1/dashboard/notifications/to-admin', {
+        senderUserId: currentUserId, // Match backend DTO field name
+        content: notifData.content.trim(),
+      });
+    
+      if (response.data.status === "OK") {
+        setShowNotifModal(false);
+        setNotifData({ content: '' });
+        setError(null);
+      } else {
+        console.error("Error sending notifications:", response.data.message);
+        setError("Failed to send notification: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error sending notification:", error.response?.data?.message || error.message);
+      const errorMessage = error.response?.data?.message || error.message;
+      if (error.response?.status === 409) {
+        setError("This notification has already been sent to the admin.");
+      } else if (error.response?.status === 400) {
+        setError("Invalid user ID. Please check your account.");
+      } else if (error.response?.status === 404) {
+        setError("Admin not found. Please contact support.");
+      } else {
+        setError("Error sending notification: " + errorMessage);
+      }
+    }
   };
 
   const getDaysInMonth = (month, year) => {
@@ -147,7 +167,7 @@ const ScheduleViewing = () => {
               <div className="sch-event-dot-wrapper" key={index}>
                 <span
                   className="sch-event-dot"
-                  style={{ backgroundColor: '#27ae60' }} // Fixed color for area A
+                  style={{ backgroundColor: '#27ae60' }}
                   onClick={(e) => handleDotClick(event, e)}
                 ></span>
                 <div className="sch-event-tooltip">
@@ -173,7 +193,6 @@ const ScheduleViewing = () => {
     return date.toLocaleDateString('en-US', options);
   };
 
-  // Define colors for task items (cycling through the colors as in the design)
   const taskColors = ['#27ae60', '#e74c3c', '#f1c40f', '#34772e'];
 
   return (
@@ -182,6 +201,7 @@ const ScheduleViewing = () => {
         <h13>Events</h13>
         <Navbar />
       </div>
+      {error && <div className="error-message">{error}</div>}
       
       <div style={{ display: 'flex', gap: '20px' }}>
         <div className="sch-calendar-container" style={{ width: '70%' }}>
@@ -226,7 +246,7 @@ const ScheduleViewing = () => {
               >
                 <p className="sch-task-name">{task.content}</p>
                 <p className="sch-task-date">{getTaskDate(new Date(task.date))}</p>
-                <p className="sch-task-area">Khu {task.area}</p>
+                <p className="sch-task-area">{getAreaDisplayName(task.area)}</p>
               </div>
             ))
           ) : (
