@@ -71,6 +71,8 @@ ALTER COLUMN area SET DEFAULT nextval('tree_area_seq');
 
 SELECT setval('tree_area_seq', 1);
 
+ALTER TABLE tree
+ADD COLUMN sold_moisture_recommend DOUBLE PRECISION;
 
 -- Bảng Record
 CREATE TABLE record (
