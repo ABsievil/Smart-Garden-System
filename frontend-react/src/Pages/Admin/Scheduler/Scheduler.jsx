@@ -1,91 +1,143 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
+import api from '../../../api';
 import './Scheduler.css';
 
+// Utility to format Date object to "yyyy-MM-dd'T'HH:mm:ss"
+const formatDateForBackend = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};
+
+// Utility to parse backend date string "yyyy-MM-dd'T'HH:mm:ss" into a Date object
+const parseDateFromBackend = (dateStr) => {
+  return new Date(`${dateStr}Z`);
+};
+
+// Utility to map area (integer) to color
+const getAreaColor = (area) => {
+  switch (area) {
+    case 1:
+      return '#27ae60'; // Green (previously area "A")
+    case 2:
+      return '#e74c3c'; // Red (previously area "B")
+    case 3:
+      return '#f1c40f'; // Yellow (previously area "C")
+    default:
+      return '#cccccc'; // Gray for undefined areas
+  }
+};
+
+// Utility to map area (integer) to display name
+const getAreaDisplayName = (area) => {
+  return `Area ${area}`;
+};
+
 const Scheduler = () => {
-  const [month, setMonth] = useState(0); // January (0-based index)
+  const [month, setMonth] = useState(0);
   const [year, setYear] = useState(2025);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDayEvents, setSelectedDayEvents] = useState([]);
-  const [employees, setEmployees] = useState([]); // State to store fetched employees
+  const [employees, setEmployees] = useState([]);
   const [taskData, setTaskData] = useState({
     content: '',
-    area: 'A',
-    employee: '', // Will be set dynamically after fetching employees
-    date: 'Wednesday, 1th January'
+    area: 1, // Default to integer 1
+    employee: '',
+    employeeId: null,
+    day: 1,
   });
   const [notifData, setNotifData] = useState({
     content: '',
-    area: 'A'
+    area: 1, // Default to integer 1
   });
-  const [events, setEvents] = useState([
-    { date: new Date(2025, 0, 2), employee: 'Tony', area: 'A', content: 'Task 1' },
-    { date: new Date(2025, 0, 6), employee: 'Tony', area: 'A', content: 'Task 2' },
-    { date: new Date(2025, 0, 10), employee: 'Karen', area: 'B', content: 'Task 3' },
-    { date: new Date(2025, 0, 15), employee: 'Tony', area: 'A', content: 'Task 4' },
-    { date: new Date(2025, 0, 15), employee: 'Karen', area: 'B', content: 'Task 5' },
-    { date: new Date(2025, 0, 15), employee: 'Johnny', area: 'C', content: 'Task 6' },
-    { date: new Date(2025, 0, 18), employee: 'Tony', area: 'A', content: 'Task 7' },
-    { date: new Date(2025, 0, 24), employee: 'Tony', area: 'A', content: 'Task 8' },
-    { date: new Date(2025, 0, 29), employee: 'Johnny', area: 'C', content: 'Task 9' },
-  ]);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      /*
       try {
-        const response = await api.get('/api/v1/scheduler/getEvents');
-        if (response.data.status === "OK") {
-          const eventData = response.data.data;
+        const response = await api.get('/api/v1/schedule/allCalendar');
+        if (response.data.status === 'OK') {
+          const eventData = response.data.data.eventList;
           setEvents(eventData.map(event => ({
-            ...event,
-            date: new Date(event.date)
+            id: event.id,
+            date: parseDateFromBackend(event.dateTime),
+            employee: '',
+            employeeId: event.userId,
+            area: event.area, // Now an integer (e.g., 1, 2, 3)
+            content: event.content,
           })));
+          setError(null);
         } else {
-          console.error("Error fetching events:", response.data.message);
+          console.error('Lỗi khi lấy danh sách sự kiện:', response.data.message);
+          setError('Lỗi khi lấy danh sách sự kiện');
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error('Lỗi API:', error.response?.data?.message || error.message);
+        setError('Lỗi khi lấy danh sách sự kiện');
       }
-      */
     };
 
     const fetchEmployees = async () => {
-      /*
       try {
-        const response = await api.get('/api/v1/employees/getAll');
-        if (response.data.status === "OK") {
-          const employeeData = response.data.data;
-          setEmployees(employeeData.map(employee => employee.name));
+        const response = await api.get('/api/v1/staff-manage/user-list');
+        if (response.data.status === 'OK') {
+          const employeeData = response.data.data.userList.map((user, index) => ({
+            userId: index + 1,
+            name: user.name || 'Không có tên',
+          }));
+          setEmployees(employeeData);
           if (employeeData.length > 0) {
-            setTaskData(prev => ({ ...prev, employee: employeeData[0].name }));
+            setTaskData(prev => ({
+              ...prev,
+              employee: employeeData[0].name,
+              employeeId: employeeData[0].userId,
+            }));
           }
+          setError(null);
         } else {
-          console.error("Error fetching employees:", response.data.message);
+          console.error('Lỗi khi lấy danh sách nhân viên:', response.data.message);
+          setError('Lỗi khi lấy danh sách nhân viên');
         }
       } catch (error) {
-        console.error("Error fetching employees:", error);
+        console.error('Lỗi API:', error.response?.data?.message || error.message);
+        setError('Lỗi khi lấy danh sách nhân viên');
       }
-      */
-      // Fake data for employees since the API call is commented out
-      const fakeEmployees = ['Tony', 'Karen', 'Johnny', 'Alice', 'Bob'];
-      setEmployees(fakeEmployees);
-      setTaskData(prev => ({ ...prev, employee: fakeEmployees[0] }));
     };
 
     fetchEvents();
     fetchEmployees();
   }, []);
 
+  useEffect(() => {
+    if (employees.length > 0) {
+      setEvents(prevEvents =>
+        prevEvents.map(event => {
+          const employee = employees.find(emp => emp.userId === event.employeeId);
+          return {
+            ...event,
+            employee: employee ? employee.name : 'Không xác định',
+          };
+        })
+      );
+    }
+  }, [employees]);
+
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'July', 'August', 'September', 'October', 'November', 'December',
   ];
   const years = [2025, 2026, 2027];
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const areas = [1, 2, 3]; // Define possible area values as integers starting from 1
 
   const handleAddTask = () => {
     setShowTaskModal(true);
@@ -95,61 +147,92 @@ const Scheduler = () => {
     setShowNotifModal(true);
   };
 
-  const handleTaskSubmit = () => {
-    const newEvent = {
-      date: new Date(2025, 0, parseInt(taskData.date.split(' ')[2])),
-      employee: taskData.employee,
-      area: taskData.area,
-      content: taskData.content
-    };
-    setEvents([...events, newEvent]);
-    setShowTaskModal(false);
-    setTaskData({ content: '', area: 'A', employee: employees[0] || '', date: 'Wednesday, 1th January' });
+  const handleTaskSubmit = async () => {
+    if (!taskData.content || !taskData.employeeId) {
+      setError('Vui lòng nhập nội dung công việc và chọn nhân viên');
+      return;
+    }
 
-    /*
-    const sendTaskToEmployee = async () => {
-      try {
-        const response = await api.post('/api/v1/scheduler/assignTask', {
-          employeeId: taskData.employee,
-          task: taskData.content,
-          date: newEvent.date,
-          area: taskData.area
+    if (typeof month !== 'number' || month < 0 || month > 11) {
+      setError('Tháng không hợp lệ');
+      return;
+    }
+    if (typeof year !== 'number' || year < 2025 || year > 2027) {
+      setError('Năm không hợp lệ');
+      return;
+    }
+
+    const day = taskData.day;
+    const daysInMonth = getDaysInMonth(month, year);
+    if (isNaN(day) || day < 1 || day > daysInMonth) {
+      setError(`Ngày không hợp lệ. Vui lòng chọn ngày từ 1 đến ${daysInMonth}`);
+      return;
+    }
+
+    const eventDate = new Date(year, month, day);
+    if (isNaN(eventDate.getTime())) {
+      setError('Không thể tạo ngày hợp lệ từ dữ liệu đã chọn');
+      return;
+    }
+
+    const formattedDate = formatDateForBackend(eventDate);
+
+    try {
+      const response = await api.post('/api/v1/schedule/addEvent', {
+        content: taskData.content,
+        area: taskData.area, // Send as integer
+        userId: taskData.employeeId,
+        dateTime: formattedDate,
+      });
+      if (response.data.status === 'OK') {
+        const newEvent = {
+          id: response.data.data.id,
+          date: parseDateFromBackend(response.data.data.dateTime),
+          employee: employees.find(emp => emp.userId === taskData.employeeId)?.name || 'Không xác định',
+          employeeId: taskData.employeeId,
+          area: taskData.area, // Integer
+          content: taskData.content,
+        };
+        setEvents([...events, newEvent]);
+        setShowTaskModal(false);
+        setTaskData({
+          content: '',
+          area: 1,
+          employee: employees[0]?.name || '',
+          employeeId: employees[0]?.userId || null,
+          day: 1,
         });
-        if (response.data.status === "OK") {
-          console.log("Task assigned successfully:", response.data.data);
-        } else {
-          console.error("Error assigning task:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error assigning task:", error);
+        setError(null);
+      } else {
+        console.error('Lỗi khi thêm sự kiện:', response.data.message);
+        setError('Lỗi khi thêm sự kiện: ' + response.data.message);
       }
-    };
-    sendTaskToEmployee();
-    */
+    } catch (error) {
+      console.error('Lỗi API:', error.response?.data?.message || error.message);
+      setError('Lỗi khi thêm sự kiện: ' + (error.response?.data?.message || error.message));
+    }
   };
 
   const handleNotifSubmit = () => {
-    /*
-    const sendNotificationToArea = async () => {
-      try {
-        const response = await api.post('/api/v1/scheduler/sendNotification', {
-          area: notifData.area,
-          content: notifData.content
-        });
-        if (response.data.status === "OK") {
-          console.log("Notification sent successfully:", response.data.data);
-        } else {
-          console.error("Error sending notification:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error sending notification:", error);
-      }
-    };
-    sendNotificationToArea();
-    */
-
     setShowNotifModal(false);
-    setNotifData({ content: '', area: 'A' });
+    setNotifData({ content: '', area: 1 });
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const response = await api.delete(`/api/v1/schedule/delete/${eventId}`);
+      if (response.data.status === 'OK') {
+        setEvents(events.filter(event => event.id !== eventId));
+        setSelectedEvent(null);
+        setError(null);
+      } else {
+        console.error('Lỗi khi xóa sự kiện:', response.data.message);
+        setError('Lỗi khi xóa sự kiện: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Lỗi API:', error.response?.data?.message || error.message);
+      setError('Lỗi khi xóa sự kiện: ' + (error.response?.data?.message || error.message));
+    }
   };
 
   const getDaysInMonth = (month, year) => {
@@ -201,13 +284,13 @@ const Scheduler = () => {
               <div className="sch-event-dot-wrapper" key={index}>
                 <span
                   className="sch-event-dot"
-                  style={{ backgroundColor: event.area === 'A' ? '#27ae60' : event.area === 'B' ? '#e74c3c' : '#f1c40f' }}
+                  style={{ backgroundColor: getAreaColor(event.area) }} // Map integer to color
                   onClick={(e) => handleDotClick(event, e)}
                 ></span>
                 <div className="sch-event-tooltip">
                   <p><strong>Task:</strong> {event.content}</p>
                   <p><strong>Employee:</strong> {event.employee}</p>
-                  <p><strong>Area:</strong> {event.area}</p>
+                  <p><strong>Area:</strong> {getAreaDisplayName(event.area)}</p>
                 </div>
               </div>
             ))}
@@ -225,7 +308,7 @@ const Scheduler = () => {
         <h13>Events</h13>
         <Navbar />
       </div>
-      
+      {error && <div className="error-message">{error}</div>}
       <div className="sch-calendar-container">
         <div className="sch-scheduler-header">
           <h14>Calendar</h14>
@@ -250,7 +333,6 @@ const Scheduler = () => {
             <button onClick={handleAddTask}>+ New Plan</button>
           </div>
         </div>
-      
         <div className="sch-calendar">
           {daysOfWeek.map(day => (
             <div className="sch-day-header" key={day}>{day}</div>
@@ -273,36 +355,45 @@ const Scheduler = () => {
             <label>Khu vực</label>
             <select
               value={taskData.area}
-              onChange={(e) => setTaskData({ ...taskData, area: e.target.value })}
+              onChange={(e) => setTaskData({ ...taskData, area: parseInt(e.target.value) })}
             >
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
+              {areas.map(area => (
+                <option key={area} value={area}>
+                  {getAreaDisplayName(area)}
+                </option>
+              ))}
             </select>
             <label>Nhân viên</label>
             <select
               value={taskData.employee}
-              onChange={(e) => setTaskData({ ...taskData, employee: e.target.value })}
+              onChange={(e) => {
+                const selectedEmployee = employees.find(emp => emp.name === e.target.value);
+                setTaskData({
+                  ...taskData,
+                  employee: e.target.value,
+                  employeeId: selectedEmployee ? selectedEmployee.userId : null,
+                });
+              }}
             >
               {employees.length > 0 ? (
                 employees.map((employee, index) => (
-                  <option key={index} value={employee}>{employee}</option>
+                  <option key={index} value={employee.name}>{employee.name}</option>
                 ))
               ) : (
-                <option value="">No employees available</option>
+                <option value="">Không có nhân viên</option>
               )}
             </select>
             <label>Ngày thực hiện</label>
             <select
-              value={taskData.date}
-              onChange={(e) => setTaskData({ ...taskData, date: e.target.value })}
+              value={taskData.day}
+              onChange={(e) => setTaskData({ ...taskData, day: parseInt(e.target.value) })}
             >
               {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => {
                 const day = i + 1;
                 const date = new Date(year, month, day);
                 const dayName = daysOfWeek[(date.getDay() === 0 ? 6 : date.getDay() - 1)];
                 return (
-                  <option key={day} value={`${dayName}, ${day}th ${months[month]}`}>
+                  <option key={day} value={day}>
                     {`${dayName}, ${day}th ${months[month]}`}
                   </option>
                 );
@@ -330,11 +421,13 @@ const Scheduler = () => {
             <label>Khu vực</label>
             <select
               value={notifData.area}
-              onChange={(e) => setNotifData({ ...notifData, area: e.target.value })}
+              onChange={(e) => setNotifData({ ...notifData, area: parseInt(e.target.value) })}
             >
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
+              {areas.map(area => (
+                <option key={area} value={area}>
+                  {getAreaDisplayName(area)}
+                </option>
+              ))}
             </select>
             <div className="sch-modal-buttons">
               <button onClick={() => setShowNotifModal(false)}>Hủy</button>
@@ -353,10 +446,11 @@ const Scheduler = () => {
               <div className="sch-task-details">
                 <p><strong>Task:</strong> {selectedEvent.content}</p>
                 <p><strong>Employee:</strong> {selectedEvent.employee}</p>
-                <p><strong>Area:</strong> {selectedEvent.area}</p>
+                <p><strong>Area:</strong> {getAreaDisplayName(selectedEvent.area)}</p>
                 <div className="sch-modal-buttons">
-                  <button onClick={() => setSelectedEvent(null)}>Back to All Tasks</button>
-                  <button onClick={() => setShowEventModal(false)}>Close</button>
+                  <button onClick={() => setSelectedEvent(null)}>Quay lại tất cả công việc</button>
+                  <button onClick={() => handleDeleteEvent(selectedEvent.id)}>Xóa</button>
+                  <button onClick={() => setShowEventModal(false)}>Đóng</button>
                 </div>
               </div>
             ) : (
@@ -366,14 +460,14 @@ const Scheduler = () => {
                     <div key={index} className="sch-task-item">
                       <p><strong>Task:</strong> {event.content}</p>
                       <p><strong>Employee:</strong> {event.employee}</p>
-                      <p><strong>Area:</strong> {event.area}</p>
+                      <p><strong>Area:</strong> {getAreaDisplayName(event.area)}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="sch-no-tasks">No tasks scheduled for this day.</p>
+                  <p className="sch-no-tasks">Không có công việc nào được lên lịch cho ngày này.</p>
                 )}
                 <div className="sch-modal-buttons">
-                  <button onClick={() => setShowEventModal(false)}>Close</button>
+                  <button onClick={() => setShowEventModal(false)}>Đóng</button>
                 </div>
               </div>
             )}
