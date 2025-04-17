@@ -42,22 +42,18 @@ import hcmut.smart_garden_system.Models.User;
 import hcmut.smart_garden_system.Repositories.DeviceRepository;
 import hcmut.smart_garden_system.Repositories.NotificationRepository;
 import hcmut.smart_garden_system.Repositories.RecordRepository;
-import hcmut.smart_garden_system.Repositories.ScheduleRepository;
-import hcmut.smart_garden_system.Repositories.StaffScheduleRepository;
 import hcmut.smart_garden_system.Repositories.TreeRepository;
 import hcmut.smart_garden_system.Repositories.UserRepository; // Import UserRepository
 import hcmut.smart_garden_system.DTOs.RestfulAPI.NotificationRequestDTO;
 import hcmut.smart_garden_system.DTOs.RestfulAPI.BroadcastNotificationDTO;
 import hcmut.smart_garden_system.DTOs.RestfulAPI.SendNotificationToUserDTO; // Import mới
 import hcmut.smart_garden_system.Models.DBTable.Tree; // Đảm bảo đã import Tree
+import hcmut.smart_garden_system.Models.Role; // Import Role enum
 
 @Service
 public class DashboardService {
     @Autowired
     private TreeRepository treeRepository;
-
-    @Autowired
-    private StaffScheduleRepository staffScheduleRepository;
 
     @Autowired
     private RecordRepository recordRepository;
@@ -75,7 +71,7 @@ public class DashboardService {
         try {
             // Lấy dữ liệu từ các repository
             Long plants = treeRepository.countAllPlants();
-            Long staff = staffScheduleRepository.countDistinctStaff();
+            long staff = userRepository.countByRole(Role.USER);
             Long events = recordRepository.countAllEvents();
             Long devices = deviceRepository.countAllDevices();
 
