@@ -25,6 +25,7 @@ public class UserProfileDTO {
         }
         return UserProfileDTO.builder()
                 .userId(user.getUserId())
+                .role(user.getRole())
                 .email(user.getEmail())
                 .information(user.getInformation()) // Lấy toàn bộ thông tin cá nhân
                 .build();
