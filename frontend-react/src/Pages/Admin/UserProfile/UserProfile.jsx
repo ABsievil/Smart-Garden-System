@@ -30,15 +30,15 @@ const UserProfile = () => {
                 return;
             }
             try {
-                console.log('[fetchProfile] Sending username:', username);
+                // console.log('[fetchProfile] Sending username:', username);
                 const response = await api.post('/api/v1/users/profile', { username });
-                console.log('[fetchProfile] Raw response:', response);
+                // console.log('[fetchProfile] Raw response:', response);
 
                 if (response && response.data) {
-                    console.log('[fetchProfile] Response data:', response.data);
+                    // console.log('[fetchProfile] Response data:', response.data);
                     if (response.data.status === "OK") {
                         const profileData = response.data.data;
-                        console.log('[fetchProfile] Profile data from API:', profileData);
+                        // console.log('[fetchProfile] Profile data from API:', profileData);
                         // Map backend fields to frontend state if needed
                         const mappedProfile = {
                             name: profileData.information.lname + " " + profileData.information.fname || '',
@@ -66,9 +66,9 @@ const UserProfile = () => {
                 console.error("[fetchProfile] Error fetching profile - Exception caught:", error);
                  // Log detailed Axios error information if available
                  if (error.response) {
-                    console.error('[fetchProfile] Axios error response data:', error.response.data);
-                    console.error('[fetchProfile] Axios error response status:', error.response.status);
-                    console.error('[fetchProfile] Axios error response headers:', error.response.headers);
+                    // console.error('[fetchProfile] Axios error response data:', error.response.data);
+                    // console.error('[fetchProfile] Axios error response status:', error.response.status);
+                    // console.error('[fetchProfile] Axios error response headers:', error.response.headers);
                  } else if (error.request) {
                     // The request was made but no response was received
                     console.error('[fetchProfile] Axios error request:', error.request);
