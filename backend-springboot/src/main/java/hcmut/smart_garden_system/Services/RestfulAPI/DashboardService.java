@@ -589,12 +589,12 @@ public class DashboardService {
             // Tạo reportName
             if ("month".equals(type)) {
                 Integer month = ((Number) row[periodIndex]).intValue();
-                reportName = String.format("báo cáo tháng %02d/%d", month, year);
+                reportName = String.format("Báo cáo tháng %02d/%d", month, year);
             } else if ("quarter".equals(type)) {
                 Integer quarter = ((Number) row[periodIndex]).intValue();
-                reportName = String.format("báo cáo quý %02d/%d", quarter, year);
+                reportName = String.format("Báo cáo quý %02d/%d", quarter, year);
             } else { // year
-                reportName = String.format("báo cáo năm %d", year);
+                reportName = String.format("Báo cáo năm %d", year);
             }
 
             // Lấy và làm tròn giá trị trung bình

@@ -13,18 +13,36 @@ const Dashboard = () => {
   const [lineChartData, setLineChartData] = useState(null);
   const [barChartData, setBarChartData] = useState(null);
   const [tableData, setTableData] = useState([]);
+  const [reports, setReports] = useState([]);
   const [gardens, setGardens] = useState([]);
   const [selectedGarden, setSelectedGarden] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
-  const [pageSize] = useState(4); // 4 rows per page
+  const [pageSize] = useState(5); // 5 rows per page
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [monthFilter, setMonthFilter] = useState('Tháng'); // Default month filter
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showGardenDropdown, setShowGardenDropdown] = useState(false);
   const printRef = useRef(); // Ref for printing
+
+  const fetchReports = async () => {
+    try {
+      const response = await api.get('/api/v1/dashboard/reports');
+      if (response.data.status === 'OK') {
+        setReports(response.data.data);
+      } else {
+        console.error('Lỗi khi lấy báo cáo:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gọi API báo cáo:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, [monthFilter]);
 
   useEffect(() => {
     // Fetch the list of gardens
@@ -571,8 +589,8 @@ const Dashboard = () => {
   });
 
   // Pagination logic
-  const totalPages = Math.ceil(sortedData.length / pageSize);
-  const paginatedData = sortedData.slice(page * pageSize, (page + 1) * pageSize);
+  const totalPages = Math.ceil(reports.length / pageSize);
+  const paginatedData = reports.slice(page * pageSize, (page + 1) * pageSize);
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -663,7 +681,7 @@ const Dashboard = () => {
       <div className="table-container" ref={printRef}>
         <div className="table-header">
           <h4>Thống kê (Trung bình)</h4>
-          <div className="custom-select-wrapper">
+          {/* <div className="custom-select-wrapper">
             <select
               value={monthFilter}
               onChange={handleMonthChange}
@@ -672,7 +690,7 @@ const Dashboard = () => {
               <option value="Tháng">Tháng</option>
               <option value="Năm">Quý</option>
             </select>
-          </div>
+          </div> */}
         </div>
         <table className="custom-table">
           <thead>
@@ -682,25 +700,25 @@ const Dashboard = () => {
               <th>Độ ẩm không khí</th>
               <th>Độ ẩm đất</th>
               <th>Ánh sáng</th>
-              <th>In báo cáo</th>
+              {/* <th>In báo cáo</th> */}
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((row) => (
-              <tr key={row.id}>
-                <td>{row.name}</td>
-                <td>{row.temp}</td>
-                <td>{row.airHumidity}</td>
-                <td>{row.soilHumidity}</td>
-                <td>{row.light}</td>
-                <td>
+            {paginatedData.map((report, index) => (
+              <tr key={index}>
+                <td>{report.reportName}</td>
+                <td>{report.temperature.toFixed(1)}</td>
+                <td>{report.humidity.toFixed(1)}</td>
+                <td>{report.soil_moisture.toFixed(1)}</td>
+                <td>{report.light.toFixed(1)}</td>
+                {/* <td>
                   <button
                     className="print-button"
-                    onClick={() => handlePrint(row)}
+                    onClick={() => handlePrint(report)}
                   >
                     <FaPrint />
                   </button>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
