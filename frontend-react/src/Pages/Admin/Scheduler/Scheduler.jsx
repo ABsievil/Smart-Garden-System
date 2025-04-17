@@ -58,6 +58,7 @@ const Scheduler = () => {
     content: '',
     area: 1, // Default to integer 1
   });
+  const [sendToAllAreas, setSendToAllAreas] = useState(false); // New state for checkbox
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
 
@@ -213,9 +214,30 @@ const Scheduler = () => {
     }
   };
 
-  const handleNotifSubmit = () => {
-    setShowNotifModal(false);
-    setNotifData({ content: '', area: 1 });
+  const handleNotifSubmit = async () => {
+    if (!notifData.content) {
+      setError('Vui lòng nhập nội dung thông báo');
+      return;
+    }
+
+    try {
+      const response = await api.post('/api/v1/dashboard/notifications/broadcast', {
+        content: notifData.content,
+        areaId: sendToAllAreas ? null : notifData.area, // Send null if sending to all areas
+      });
+      if (response.data.status === 'OK') {
+        setShowNotifModal(false);
+        setNotifData({ content: '', area: 1 });
+        setSendToAllAreas(false); // Reset checkbox
+        setError(null);
+      } else {
+        console.error('Lỗi khi thêm thông báo:', response.data.message);
+        setError('Lỗi khi thêm thông báo: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Lỗi API:', error.response?.data?.message || error.message);
+      setError('Lỗi khi thêm thông báo: ' + (error.response?.data?.message || error.message));
+    }
   };
 
   const handleDeleteEvent = async (eventId) => {
@@ -418,10 +440,23 @@ const Scheduler = () => {
               value={notifData.content}
               onChange={(e) => setNotifData({ ...notifData, content: e.target.value })}
             />
+            <label>Gửi đến tất cả khu vực</label>
+            <input
+              type="checkbox"
+              checked={sendToAllAreas}
+              onChange={(e) => {
+                setSendToAllAreas(e.target.checked);
+                setNotifData({
+                  ...notifData,
+                  area: e.target.checked ? null : 1, // Set to null if checked, else default to 1
+                });
+              }}
+            />
             <label>Khu vực</label>
             <select
-              value={notifData.area}
+              value={notifData.area || ''} // Handle null area
               onChange={(e) => setNotifData({ ...notifData, area: parseInt(e.target.value) })}
+              disabled={sendToAllAreas} // Disable when sending to all areas
             >
               {areas.map(area => (
                 <option key={area} value={area}>
