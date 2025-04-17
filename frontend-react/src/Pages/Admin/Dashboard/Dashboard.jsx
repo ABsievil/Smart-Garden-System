@@ -588,7 +588,7 @@ const Dashboard = () => {
         <div className="header-right">
           <div className="garden-dropdown">
             <button onClick={toggleGardenDropdown} className="garden-button">
-              {selectedGarden ? selectedGarden.name : 'Chọn khu vực'} ▼
+              {selectedGarden ? "Khu vực " + selectedGarden.id : 'Chọn khu vực'} ▼
             </button>
             {showGardenDropdown && (
               <div className="garden-dropdown-menu">
@@ -598,7 +598,7 @@ const Dashboard = () => {
                     className="garden-dropdown-item"
                     onClick={() => handleGardenSelect(garden)}
                   >
-                    {garden.name}
+                    Khu vực {garden.id} - {garden.name}
                   </div>
                 ))}
               </div>

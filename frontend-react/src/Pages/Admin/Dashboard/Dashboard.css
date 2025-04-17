@@ -81,6 +81,10 @@ font-size: 14px;
 color: #333;
 cursor: pointer;
 border-bottom: 1px solid #ddd;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
 }
 
 .garden-dropdown-item:last-child {
