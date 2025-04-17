@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.Locale; // Import Locale
 import java.util.Optional;
+import java.util.Set; // Import Set
+import java.util.HashSet; // Import HashSet
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -400,32 +402,67 @@ public class DashboardService {
         }
     }
 
-    // Send notification to all users with role 'USER'
+    // Send notification to all users (or users in a specific area)
     public ResponseEntity<ResponseObject> sendNotificationToAllUsers(BroadcastNotificationDTO request) {
         try {
-            // 1. Lấy danh sách tất cả user có role 'USER'
-            List<User> users = userRepository.findAllUsersByRoleUser();
-            if (users.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("OK", "No users with role USER found to send notification to.", null));
+            List<Integer> targetUserIds = new ArrayList<>();
+            String messageSuffix;
+
+            if (request.getAreaId() != null) {
+                // Case 1: Gửi thông báo cho người dùng thuộc khu vực cụ thể (dựa trên jobArea)
+                Integer areaIdInt = request.getAreaId(); // areaId trong DTO đã là Integer
+                // Gọi phương thức mới trong UserRepository
+                targetUserIds = userRepository.findUserIdsByJobArea(areaIdInt);
+                messageSuffix = "users in area " + areaIdInt;
+
+                if (targetUserIds.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("OK", "No users found belonging to area " + areaIdInt + ". No notifications sent.", null));
+                }
+
+            } else {
+                // Case 2: Gửi thông báo cho tất cả người dùng có role 'USER'
+                List<User> users = userRepository.findAllUsersByRoleUser();
+                if (users.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject("OK", "No users with role USER found to send notification to.", null));
+                }
+                // Lấy danh sách userId từ danh sách User
+                targetUserIds = users.stream().map(User::getUserId).collect(Collectors.toList());
+                messageSuffix = "all users with role USER";
             }
 
-            // 2. Tạo danh sách các thông báo cần lưu
+            // Tạo và lưu thông báo cho danh sách người dùng mục tiêu
             List<Notification> notificationsToSave = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-            for (User user : users) {
-                NotificationId notificationId = new NotificationId(user.getUserId(), request.getContent());
-                Notification notification = new Notification();
-                notification.setId(notificationId);
-                notification.setDatetime(now);
-                notificationsToSave.add(notification);
+            Set<NotificationId> existingNotificationsCheck = new HashSet<>(); // Để tránh lỗi trùng lặp
+
+            for (Integer userId : targetUserIds) {
+                NotificationId notificationId = new NotificationId(userId, request.getContent());
+                // Kiểm tra xem thông báo này đã tồn tại chưa (trong batch này)
+                if (existingNotificationsCheck.add(notificationId)) { 
+                    Notification notification = new Notification();
+                    notification.setId(notificationId);
+                    notification.setDatetime(now);
+                    notificationsToSave.add(notification);
+                }
             }
 
-            // 3. Lưu tất cả thông báo (batch save)
-            notificationRepository.saveAll(notificationsToSave);
+            // Lưu tất cả thông báo (batch save)
+            if (!notificationsToSave.isEmpty()) {
+                 try {
+                    notificationRepository.saveAll(notificationsToSave);
+                 } catch (DataIntegrityViolationException e) {
+                    // Xử lý trường hợp có thể vẫn bị trùng lặp với DB (mặc dù đã kiểm tra trong batch)
+                    System.err.println("Data integrity violation during batch save: " + e.getMessage());
+                    // Cân nhắc: Có thể thử lưu từng cái một hoặc trả về lỗi cụ thể hơn
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(new ResponseObject("ERROR", "One or more notifications with the same content already exist for the target users.", null));
+                 }
+            }
 
              return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ResponseObject("OK", "Notification sent to all users successfully", null));
+                    .body(new ResponseObject("OK", "Notification sent to " + messageSuffix + " successfully", null));
 
         } catch (DataAccessException e) {
             System.err.println("Database error in sendNotificationToAllUsers(): " + e.getMessage());
