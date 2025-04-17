@@ -118,13 +118,22 @@ const DeviceRecord = () => {
   };
 
   const handleViewMore = async () => {
+    // Kiểm tra xem đã chọn khu vực chưa
+    if (!selectedGarden) {
+      alert('Vui lòng chọn một khu vực để xem báo cáo.');
+      return;
+    }
+
+    const areaId = selectedGarden.id;
+    const areaName = selectedGarden.name;
+
     try {
-      // Gọi API để lấy 50 bản ghi gần nhất sử dụng instance api
-      const response = await api.get(`/api/v1/record/getRecentRecords`);
+      // Gọi API để lấy 50 bản ghi gần nhất cho khu vực đã chọn
+      const response = await api.get(`/api/v1/record/getRecentRecords/${areaId}`);
 
       if (response.data.status === 'OK' && response.data.data && response.data.data.length > 0) {
         const reportData = response.data.data;
-        const selectedGardenName = selectedGarden ? selectedGarden.name : 'Tất cả khu vực'; // Lấy tên khu vực nếu có
+        // const selectedGardenName = selectedGarden ? selectedGarden.name : 'Tất cả khu vực'; // Không cần nữa vì đã lấy areaName
 
         // Lấy thời gian của bản ghi đầu tiên và cuối cùng
         const firstRecordTime = new Date(reportData[reportData.length - 1].datetime).toLocaleString();
@@ -132,7 +141,7 @@ const DeviceRecord = () => {
 
         // Generate report content using fetched data
         const reportContent = `
-          <h3>Báo cáo ${reportData.length} dữ liệu gần nhất</h3>
+          <h3>Báo cáo ${reportData.length} dữ liệu gần nhất cho ${areaName} (Khu vực ${areaId})</h3>
           <p>Thời gian: Từ ${firstRecordTime} đến ${lastRecordTime}</p>
           <table border="1" style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -142,7 +151,7 @@ const DeviceRecord = () => {
                 <th>Độ ẩm không khí (%)</th>
                 <th>Độ ẩm đất (%)</th>
                 <th>Ánh sáng (Lux)</th>
-                <th>Khu vực</th>
+                <!-- <th>Khu vực</th> Không cần hiển thị cột khu vực nữa vì đã lọc theo khu vực -->
               </tr>
             </thead>
             <tbody>
@@ -153,7 +162,7 @@ const DeviceRecord = () => {
                   <td>${record.humidity !== null ? record.humidity.toFixed(0) : 'N/A'}</td>
                   <td>${record.soilMoisture !== null ? record.soilMoisture.toFixed(0) : 'N/A'}</td>
                   <td>${record.light !== null ? record.light.toFixed(0) : 'N/A'}</td>
-                   <td>${record.area}</td>
+                  <!-- <td>${record.area}</td> -->
                 </tr>
               `).join('')}
             </tbody>
@@ -183,7 +192,7 @@ const DeviceRecord = () => {
         reportWindow.document.close();
         reportWindow.print();
       } else {
-        alert('Không có dữ liệu gần đây để hiển thị.');
+        alert(`Không có dữ liệu gần đây để hiển thị cho ${areaName} (Khu vực ${areaId}).`);
         console.log("Không có dữ liệu hoặc lỗi API:", response.data);
       }
     } catch (error) {

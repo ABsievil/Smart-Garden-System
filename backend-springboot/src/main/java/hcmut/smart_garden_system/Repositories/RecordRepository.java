@@ -72,4 +72,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     // Phương thức mới để lấy 50 bản ghi gần đây nhất
     List<Record> findTop50ByOrderByDatetimeDesc();
+
+    // Phương thức mới để lấy 50 bản ghi gần đây nhất theo khu vực
+    List<Record> findTop50ByAreaOrderByDatetimeDesc(Integer area);
 }

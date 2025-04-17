@@ -94,17 +94,17 @@ public class RecordService {
         }
     }
 
-    public ResponseEntity<ResponseObject> getRecentRecords() {
+    public ResponseEntity<ResponseObject> getRecentRecords(Integer area) {
         try {
-            List<Record> recentRecords = recordRepository.findTop50ByOrderByDatetimeDesc();
+            List<Record> recentRecords = recordRepository.findTop50ByAreaOrderByDatetimeDesc(area);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("OK", "Query to get recent 50 records successfully", recentRecords));
+                    .body(new ResponseObject("OK", "Query to get recent 50 records for area " + area + " successfully", recentRecords));
         } catch (DataAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("ERROR", "Error getting recent records: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Error getting recent records for area " + area + ": " + e.getMessage(), null));
         }
     }
 
