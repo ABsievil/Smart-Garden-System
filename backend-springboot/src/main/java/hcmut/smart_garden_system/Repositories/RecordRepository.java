@@ -69,4 +69,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     //                "GROUP BY report_year " +
     //                "ORDER BY report_year", nativeQuery = true)
     // List<Object[]> findYearlyAverages();
+
+    // Phương thức mới để lấy 50 bản ghi gần đây nhất
+    List<Record> findTop50ByOrderByDatetimeDesc();
 }

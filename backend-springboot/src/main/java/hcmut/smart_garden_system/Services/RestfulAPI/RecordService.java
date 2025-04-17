@@ -2,7 +2,9 @@ package hcmut.smart_garden_system.Services.RestfulAPI;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +17,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hcmut.smart_garden_system.DTOs.ResponseObject;
+import hcmut.smart_garden_system.Models.DBTable.Record;
 import hcmut.smart_garden_system.Models.SensorData;
+import hcmut.smart_garden_system.Repositories.RecordRepository;
 
 @Service
 public class RecordService {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final RecordRepository recordRepository;
 
-    public RecordService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    @Autowired
+    public RecordService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper, RecordRepository recordRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
+        this.recordRepository = recordRepository;
     }
 
     public ResponseEntity<ResponseObject> FNC_getCurrentRecord(Integer area){
@@ -84,6 +91,20 @@ public class RecordService {
             // Xử lý các lỗi khác
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseObject("ERROR", "Error getting FNC_getAllRecord(): " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getRecentRecords() {
+        try {
+            List<Record> recentRecords = recordRepository.findTop50ByOrderByDatetimeDesc();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Query to get recent 50 records successfully", recentRecords));
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Error getting recent records: " + e.getMessage(), null));
         }
     }
 
