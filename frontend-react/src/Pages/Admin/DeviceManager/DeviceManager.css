@@ -247,7 +247,7 @@
   }
   
   /* Modal styles */
-  .modal-overlay {
+  .modal-overlay4 {
     position: fixed;
     top: 0;
     left: 0;
@@ -257,18 +257,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+   
   }
   
-  .modal {
+  .modal4 {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     width: 60%;
-    height: 60%;
+    height:fit-content;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   
-  .modal h3 {
+  .modal4 h3 {
     margin: 0 0 20px;
     font-size: 20px;
     height: 20px;
@@ -277,22 +278,22 @@
     font-weight: bold;
   }
   
-  .modal-content {
+  .modal-content4 {
     display: flex;
     flex-direction: column;
     gap: 5px;
     width: 100%;
-    height: 80%;
+    height:fit-content;
     padding: 20px 0;
   }
   
-  .modal-content label {
+  .modal-content4 label {
     font-size: 14px;
     color: #333;
     padding: 8px 0;
   }
   
-  .modal-content input {
+  .modal-content4 input {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -300,7 +301,7 @@
     font-size: 14px;
   }
   
-  .modal-actions {
+  .modal-actions4 {
     display: flex;
     justify-content: center;
     gap: 10px;
