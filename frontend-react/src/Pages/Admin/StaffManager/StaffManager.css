@@ -66,7 +66,7 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     margin-bottom: 20px;
-    height: 90%;
+    height:fit-content;
   }
   
   .staff-card {
@@ -169,6 +169,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
   }
   
   .modal1 {
@@ -176,7 +177,7 @@
     padding: 20px;
     border-radius: 8px;
     width: 600px;
-    height: 350px;
+    height: 70%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   
@@ -198,6 +199,7 @@
   .modal-content1 label {
     font-size: 17px;
     color: #333;
+    font-weight: bold;
   }
   
   .modal-content1 input {
@@ -213,7 +215,8 @@
     justify-content:center;
     align-items: center;
     gap: 10px;
-    margin-top: 20px;
+    margin: 0 auto;
+    margin-top: 35%;
   }
   
   .model-actions1 .cancel-button {
@@ -225,6 +228,8 @@
     cursor: pointer;
     width: 100px;
     height: 40px;
+    display: flex;
+    justify-content: center;
   }
   
   .cancel-button:hover {

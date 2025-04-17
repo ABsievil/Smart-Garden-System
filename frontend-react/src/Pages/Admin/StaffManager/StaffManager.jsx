@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/NavBar/NavBar';
+import api from '../../../api'; // Import the axios instance
 import './StaffManager.css';
 
 const StaffManagement = () => {
@@ -7,85 +8,63 @@ const StaffManagement = () => {
   const [filteredStaff, setFilteredStaff] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStaff, setNewStaff] = useState({
-    name: '',
-    memberId: '',
-    role: '',
+    username: '',
+    password: '',
+    email: '',
+    fname: '',
+    lname: '',
+    ssn: '',
+    jobName: '',
+    jobArea: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // State for current page
-  const [isPaginationModalOpen, setIsPaginationModalOpen] = useState(false); // State for pagination modal
-  const staffPerPage = 12; // Number of staff per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState(null); // For API errors
+  const staffPerPage = 12;
 
-  // FakeData
+  // Fetch staff from API
   useEffect(() => {
-    const mockStaff = [
-      { id: 1, name: 'Dimitres Viga', memberId: '#123456', role: 'Thực tập viên khu A', createdAt: '2025-01-20T10:00:00Z' },
-      { id: 2, name: 'Tom Housenburg', memberId: '#234567', role: 'Nhân viên quản lý', createdAt: '2025-01-20T12:00:00Z' },
-      { id: 3, name: 'Dana Benevista', memberId: '#345678', role: 'Thực tập viên khu B', createdAt: '2025-01-20T14:00:00Z' },
-      { id: 4, name: 'Salvadore Morbeau', memberId: '#456789', role: 'Nhân viên quản lý', createdAt: '2025-01-22T09:00:00Z' },
-      { id: 5, name: 'Maria Historia', memberId: '#567890', role: 'Thực tập viên khu A', createdAt: '2025-01-22T10:00:00Z' },
-      { id: 6, name: 'Jack Sally', memberId: '#678901', role: 'Thực tập viên khu A', createdAt: '2025-01-22T11:00:00Z' },
-      { id: 7, name: 'Lula Beatrice', memberId: '#789012', role: 'Thực tập viên khu A', createdAt: '2025-01-22T12:00:00Z' },
-      { id: 8, name: 'Nella Vita', memberId: '#890123', role: 'Thực tập viên khu A', createdAt: '2025-01-22T13:00:00Z' },
-      { id: 9, name: 'Nadia Laravela', memberId: '#901234', role: 'Thực tập viên khu A', createdAt: '2025-01-22T14:00:00Z' },
-      { id: 10, name: 'Dakota Farral', memberId: '#012345', role: 'Thực tập viên khu A', createdAt: '2025-01-22T15:00:00Z' },
-      { id: 11, name: 'Miranda Adila', memberId: '#112345', role: 'Thực tập viên khu A', createdAt: '2025-01-22T16:00:00Z' },
-      { id: 12, name: 'Indiana Barker', memberId: '#212345', role: 'Thực tập viên khu A', createdAt: '2025-01-22T17:00:00Z' },
-    ];
-    setStaff(mockStaff);
-    setFilteredStaff(mockStaff);
+    const fetchStaff = async () => {
+      try {
+        const response = await api.get('/api/v1/staff-manage/user-list');
+        if (response.data.status === 'OK') {
+          // Map API response to local state
+          const staffList = response.data.data.userList.map((user, index) => ({
+            id: index + 1, // Local id for rendering
+            name: user.name || 'Không có tên', // Fallback if name is null
+            memberId: user.ssn || 'N/A', // Map ssn to memberId
+            role: user.jobName || 'N/A', // Map jobName to role
+          }));
+          setStaff(staffList);
+          setFilteredStaff(staffList);
+          setError(null);
+        } else {
+          console.error('Lỗi khi lấy danh sách nhân viên:', response.data.message);
+          setError('Lỗi khi lấy danh sách nhân viên');
+        }
+      } catch (error) {
+        console.error('Lỗi API:', error.response?.data?.message || error.message);
+        setError('Lỗi khi lấy danh sách nhân viên');
+      }
+    };
+    fetchStaff();
   }, []);
 
-  // Xử lý tìm kiếm
+  // Handle search
   useEffect(() => {
     let updatedStaff = [...staff];
 
-    // Tìm kiếm theo tên, ID, hoặc role
     if (searchTerm) {
       updatedStaff = updatedStaff.filter((member) =>
-        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.memberId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.role.toLowerCase().includes(searchTerm.toLowerCase())
+        (member.name && member.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (member.memberId && member.memberId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (member.role && member.role.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
     setFilteredStaff(updatedStaff);
     setCurrentPage(1); // Reset to first page when filter changes
   }, [searchTerm, staff]);
-
-  // Commented API fetch logic
-  /*
-  useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const response = await api.get('/api/v1/staff/getAllStaff');
-        if (response.data.status === "OK") {
-          setStaff(response.data.data);
-          setFilteredStaff(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching staff:', error);
-      }
-    };
-    fetchStaff();
-  }, []);
-  */
-
-  // Commented API add logic
-  /*
-  const addStaff = async () => {
-    try {
-      const response = await api.post('/api/v1/staff/addStaff', newStaff);
-      if (response.data.status === "OK") {
-        setStaff([...staff, response.data.data]);
-        setIsModalOpen(false);
-        setNewStaff({ name: '', memberId: '', role: '' });
-      }
-    } catch (error) {
-      console.error('Error adding staff:', error);
-    }
-  };
-  */
 
   // Pagination logic
   const indexOfLastStaff = currentPage * staffPerPage;
@@ -96,58 +75,77 @@ const StaffManagement = () => {
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
-      setIsPaginationModalOpen(false); // Close modal after selecting a page
     }
   };
 
-  // Hàm mở/đóng modal
+  // Open/close modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     if (isModalOpen) {
-      setNewStaff({ name: '', memberId: '', role: '' }); // Reset form khi đóng modal
+      setNewStaff({
+        username: '',
+        password: '',
+        email: '',
+        fname: '',
+        lname: '',
+        ssn: '',
+        jobName: '',
+        jobArea: '',
+      }); // Reset form when closing modal
+      setError(null); // Clear errors when closing
     }
   };
 
-  // Hàm mở/đóng modal phân trang
-  const togglePaginationModal = () => {
-    setIsPaginationModalOpen(!isPaginationModalOpen);
-  };
-
-  // Hàm xử lý thay đổi input trong modal
+  // Handle input changes in modal
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewStaff({ ...newStaff, [name]: value });
   };
 
-  // Hàm thêm nhân viên mới (fake)
-  const handleAddStaff = () => {
-    const newId = staff.length + 1;
-    const addedStaff = {
-      id: newId,
-      name: newStaff.name,
-      memberId: newStaff.memberId,
-      role: newStaff.role,
-      createdAt: new Date().toISOString(), // Thêm thời gian hiện tại
-    };
-    setStaff([...staff, addedStaff]);
-    toggleModal();
+  // Add new staff via API
+  const handleAddStaff = async () => {
+    // Basic validation
+    if (!newStaff.username || !newStaff.password || !newStaff.fname || !newStaff.lname || !newStaff.jobArea) {
+      setError('Vui lòng nhập đầy đủ tên đăng nhập, mật khẩu, họ, tên và khu vực làm việc');
+      return;
+    }
 
-    // Commented API add logic
-    /*
     try {
-      const response = await api.post('/api/v1/staff/addStaff', newStaff);
-      if (response.data.status === "OK") {
-        setStaff([...staff, response.data.data]);
-        setIsModalOpen(false);
-        setNewStaff({ name: '', memberId: '', role: '' });
+      const response = await api.post('/api/v1/staff-manage/add-user', {
+        username: newStaff.username,
+        password: newStaff.password,
+        email: newStaff.email || null, // Optional
+        information: {
+          fname: newStaff.fname,
+          lname: newStaff.lname,
+          ssn: newStaff.ssn || null, // Optional
+          jobName: newStaff.jobName || null, // Optional
+          jobArea: parseInt(newStaff.jobArea), // Convert to integer
+        },
+      });
+      if (response.data.status === 'OK') {
+        // Map the saved user to local state
+        const savedUser = response.data.data;
+        const newStaffMember = {
+          id: staff.length + 1, // Local id for rendering
+          name: `${savedUser.information.lname} ${savedUser.information.fname}`,
+          memberId: savedUser.information.ssn || 'N/A',
+          role: savedUser.information.jobName || 'N/A',
+        };
+        setStaff([...staff, newStaffMember]);
+        toggleModal();
+        setError(null);
+      } else {
+        console.error('Lỗi khi thêm nhân viên:', response.data.message);
+        setError('Lỗi khi thêm nhân viên: ' + response.data.message);
       }
     } catch (error) {
-      console.error('Error adding staff:', error);
+      console.error('Lỗi API:', error.response?.data?.message || error.message);
+      setError('Lỗi khi thêm nhân viên: ' + (error.response?.data?.message || error.message));
     }
-    */
   };
 
-  // Hàm xử lý tìm kiếm
+  // Handle search input
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -157,38 +155,36 @@ const StaffManagement = () => {
       <div className="header">
         <h7>Quản lý nhân viên</h7>
         <Navbar />
-        </div>
-      {/* Thanh tìm kiếm và nút thêm nhân viên */}
-        
-        <div className="actions3">
-          <input
-            type="text"
-            placeholder="Search here..."
-            className="search-bar"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-          <button className="add-button" onClick={toggleModal}>
-            Thêm nhân viên
-          </button>
-        </div>
-     
-
-      {/* Lưới danh sách nhân viên */}
-      <div className="staff-grid">
-        {currentStaff.map((member) => (
-          <div key={member.id} className="staff-card">
-            <div className="avatar"></div>
-            <h11>{member.name}</h11>
-            <h12 className="member-id">{member.memberId}</h12>
-            <h12>{member.role}</h12>
-          </div>
-        ))}
       </div>
-
-      {/* Phân trang với modal */}
-      <div className="pagination" style={{ backGroundColor: "transparent" }} >
-        <span style={{ backGroundColor: "transparent", width: "100%" }}>
+      <div className="actions3">
+        <input
+          type="text"
+          placeholder="Search here..."
+          className="search-bar"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+        <button className="add-button" onClick={toggleModal}>
+          Thêm nhân viên
+        </button>
+      </div>
+      {error && <div className="error-message">{error}</div>}
+      <div className="staff-grid">
+        {currentStaff.length > 0 ? (
+          currentStaff.map((member) => (
+            <div key={member.id} className="staff-card">
+              <div className="avatar"></div>
+              <h11>{member.name}</h11>
+              <h12 className="member-id">{member.memberId}</h12>
+              <h12>{member.role}</h12>
+            </div>
+          ))
+        ) : (
+          <div>Không có nhân viên nào để hiển thị</div>
+        )}
+      </div>
+      <div className="pagination" style={{ backgroundColor: "transparent" }}>
+        <span style={{ backgroundColor: "transparent", width: "100%" }}>
           SHOWING {indexOfFirstStaff + 1}-{Math.min(indexOfLastStaff, filteredStaff.length)} OF {filteredStaff.length} DATA
         </span>
         <div className="pagination-controls">
@@ -199,7 +195,7 @@ const StaffManagement = () => {
           >
             &lt;
           </button>
-          {[1, 2, 3].map((page) => (
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
             <button
               key={page}
               className={`page-button ${currentPage === page ? 'active' : ''}`}
@@ -216,37 +212,80 @@ const StaffManagement = () => {
             &gt;
           </button>
         </div>
-        </div>
-
-      {/* Modal thêm nhân viên */}
+      </div>
       {isModalOpen && (
         <div className="modal-overlay1">
           <div className="modal1">
             <h3>Thêm nhân viên</h3>
             <div className="modal-content1">
-              <label>Tên nhân viên</label>
+              <label>Tên đăng nhập</label>
               <input
                 type="text"
-                name="name"
-                value={newStaff.name}
+                name="username"
+                value={newStaff.username}
                 onChange={handleInputChange}
-                placeholder="Nhập tên nhân viên"
+                placeholder="Nhập tên đăng nhập"
+                required
               />
-              <label>ID nhân viên</label>
+              <label>Mật khẩu</label>
+              <input
+                type="password"
+                name="password"
+                value={newStaff.password}
+                onChange={handleInputChange}
+                placeholder="Nhập mật khẩu"
+                required
+              />
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={newStaff.email}
+                onChange={handleInputChange}
+                placeholder="Nhập email (tuỳ chọn)"
+              />
+              <label>Họ</label>
               <input
                 type="text"
-                name="memberId"
-                value={newStaff.memberId}
+                name="lname"
+                value={newStaff.lname}
                 onChange={handleInputChange}
-                placeholder="Nhập ID nhân viên"
+                placeholder="Nhập họ"
+                required
+              />
+              <label>Tên</label>
+              <input
+                type="text"
+                name="fname"
+                value={newStaff.fname}
+                onChange={handleInputChange}
+                placeholder="Nhập tên"
+                required
+              />
+              <label>Mã số nhân viên (SSN)</label>
+              <input
+                type="text"
+                name="ssn"
+                value={newStaff.ssn}
+                onChange={handleInputChange}
+                placeholder="Nhập mã số nhân viên (tuỳ chọn)"
               />
               <label>Chức vụ</label>
               <input
                 type="text"
-                name="role"
-                value={newStaff.role}
+                name="jobName"
+                value={newStaff.jobName}
                 onChange={handleInputChange}
-                placeholder="Nhập chức vụ"
+                placeholder="Nhập chức vụ (tuỳ chọn)"
+              />
+              <label>Khu vực làm việc</label>
+              <input
+                type="number"
+                name="jobArea"
+                value={newStaff.jobArea}
+                onChange={handleInputChange}
+                placeholder="Nhập khu vực làm việc (số)"
+                required
               />
             </div>
             <div className="modal-actions1">
