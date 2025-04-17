@@ -36,7 +36,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name= "user_id")
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     @Embedded

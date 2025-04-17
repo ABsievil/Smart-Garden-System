@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     // Tìm user có userId lớn nhất
     Optional<User> findTopByOrderByUserIdDesc();
+
+    @Query(value = "SELECT nextval('users_id_seq')", nativeQuery = true)
+    Integer getNextUserId();
 } 
