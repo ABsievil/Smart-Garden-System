@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import hcmut.smart_garden_system.Models.User;
 import java.util.List;
 import java.util.Optional;
+import hcmut.smart_garden_system.Models.Role;
 
 public interface UserRepository extends JpaRepository<User, String> {
     User findByUsername(String username);
@@ -15,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     // Tìm tất cả user có role 'USER'
     @Query("SELECT u FROM User u WHERE u.role = 'USER'")
     List<User> findAllUsersByRoleUser();
+
+    // Đếm số lượng user theo Role
+    long countByRole(Role role);
 
     // Tìm admin (giả sử chỉ có một admin hoặc lấy admin đầu tiên)
     @Query("SELECT u FROM User u WHERE u.role = 'ADMIN'")
