@@ -58,6 +58,16 @@ const Sidebar = () => {
             <HomeIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Trang chủ
             </NavLink>
         </li>
+            <li>
+                <NavLink to="/scheduler" className={({ isActive }) => isActive ? "active" : ""}>
+                <CalendarMonthIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Lịch trình
+                </NavLink>
+            </li>
+        <li>
+            <NavLink to="/device-record" className={({ isActive }) => isActive ? "active" : ""}>
+            <StorageIcon style={{marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Dữ liệu thiết bị
+            </NavLink>
+        </li>
         <li>
             <NavLink to="/tree-manager" className={({ isActive }) => isActive ? "active" : ""}>
             <ForestIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Quản lý cây trồng
@@ -66,16 +76,6 @@ const Sidebar = () => {
         <li>
             <NavLink to="/staff-manager" className={({ isActive }) => isActive ? "active" : ""}>
             <ManageAccountsIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }} /> Quản lý nhân viên
-            </NavLink>
-        </li>
-        <li>
-            <NavLink to="/scheduler" className={({ isActive }) => isActive ? "active" : ""}>
-            <CalendarMonthIcon style={{ marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Lịch trình
-            </NavLink>
-        </li>
-        <li>
-            <NavLink to="/device-record" className={({ isActive }) => isActive ? "active" : ""}>
-            <StorageIcon style={{marginRight: "10px",fontSize: "25px" , marginTop: "-4px" }}  /> Dữ liệu thiết bị
             </NavLink>
         </li>
         <li>
