@@ -29,14 +29,23 @@ const Dashboard = () => {
     // Fetch the list of gardens
     const fetchGardens = async () => {
       try {
-        // const response = await api.get('/api/v1/gardens');
-        // if (response.data.status === "OK") {
-        //   setGardens(response.data.data);
-        //   if (response.data.data.length > 0) {
-        //     setSelectedGarden(response.data.data[0]);
+        // const response = await api.get('/api/v1/dashboard/areas'); // Matches DashboardController.java
+        // if (response.data.status === 'OK') {
+        //   // Handle potential duplicates by reducing to unique areas based on 'area' ID
+        //   // Note: This is a precaution; the sample response shows unique areas, but the backend uses Tree entities which might duplicate areas.
+        //   const uniqueGardens = response.data.data.reduce((acc, area) => {
+        //     if (!acc.find(g => g.id === area.area)) {
+        //       acc.push({ id: area.area, name: area.name });
+        //     }
+        //     return acc;
+        //   }, []);
+        //   setGardens(uniqueGardens);
+        //   if (uniqueGardens.length > 0) {
+        //     setSelectedGarden(uniqueGardens[0]);
         //   }
         // } else {
-        //   console.error("Error fetching gardens:", response.data.message);
+        //   console.error('Lỗi khi lấy danh sách khu vực:', response.data.message);
+        // }
           setGardens([
             { id: 1, name: 'Khu vực 1' },
             { id: 2, name: 'Khu vực 2' },
