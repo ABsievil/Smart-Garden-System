@@ -4,9 +4,10 @@ import { BsMoisture } from "react-icons/bs";
 import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
 import Navbar from "../../../Components/NavBar/NavBar";
+import api from './../../../api'; // Import the API module
 import './DeviceRecord.css';
 
-const ControlDevice = () => {
+const DeviceRecord = () => {
   const [data, setData] = useState({
     temperature: 0,
     humidity: 0,
@@ -22,25 +23,31 @@ const ControlDevice = () => {
   const [showGardenDropdown, setShowGardenDropdown] = useState(false);
 
   useEffect(() => {
-    // Mock garden data for area selection
+    // Fetch garden/area data from API
     const fetchGardens = async () => {
       try {
-        // const response = await api.get('/api/v1/gardens');
-        // if (response.data.status === "OK") {
-        //   setGardens(response.data.data);
-        //   if (response.data.data.length > 0) {
-        //     setSelectedGarden(response.data.data[0]);
-        //   }
-        // } else {
-        //   console.error("Error fetching gardens:", response.data.message);
+        const response = await api.get('/api/v1/dashboard/areas');
+        if (response.data.status === "OK") {
+          const areas = response.data.data.map(area => ({
+            id: area.area,
+            name: area.name,
+          }));
+          setGardens(areas);
+          if (areas.length > 0) {
+            setSelectedGarden(areas[0]);
+          }
+        } else {
+          console.error("Error fetching gardens:", response.data.message);
+          // Fallback to mock data
           setGardens([
             { id: 1, name: 'Khu vực 1' },
             { id: 2, name: 'Khu vực 2' },
           ]);
           setSelectedGarden({ id: 1, name: 'Khu vực 1' });
-        // }
+        }
       } catch (error) {
         console.error("Error fetching gardens:", error);
+        // Fallback to mock data
         setGardens([
           { id: 1, name: 'Khu vực 1' },
           { id: 2, name: 'Khu vực 2' },
@@ -59,27 +66,30 @@ const ControlDevice = () => {
 
     const fetchData = async () => {
       try {
-        // const response = await api.get(`/api/v1/record/getCurrentRecord/${areaId}`);
-        // if (response.data.status === "OK") {
-        //   const sensorData = response.data.data;
-        //   setData(prevData => ({
-        //     ...prevData,
-        //     temperature: sensorData.temperature,
-        //     humidity: sensorData.humidity,
-        //     light: sensorData.light,
-        //     soilMoisture: sensorData.soilMoisture
-        //   }));
-        // }
-        // Mock data based on area
-        setData(prevData => ({
-          ...prevData,
-          temperature: areaId === 1 ? 32.50 : 30.00, // Khu vực 1: 32.50°C, Khu vực 2: 30.00°C
-          humidity: areaId === 1 ? 85 : 90, // Khu vực 1: 85%, Khu vực 2: 90%
-          light: areaId === 1 ? 60 : 55, // Khu vực 1: 60 Lux, Khu vực 2: 55 Lux
-          soilMoisture: areaId === 1 ? 60 : 65, // Khu vực 1: 60%, Khu vực 2: 65%
-        }));
+        const response = await api.get(`/api/v1/record/getCurrentRecord/${areaId}`);
+        if (response.data.status === "OK") {
+          const sensorData = response.data.data;
+          setData(prevData => ({
+            ...prevData,
+            temperature: sensorData.temperature || 0,
+            humidity: sensorData.humidity || 0,
+            light: sensorData.light || 0,
+            soilMoisture: sensorData.soilMoisture || 0,
+          }));
+        } else {
+          console.error("Error fetching sensor data:", response.data.message);
+          // Fallback to mock data
+          setData(prevData => ({
+            ...prevData,
+            temperature: areaId === 1 ? 32.50 : 30.00,
+            humidity: areaId === 1 ? 85 : 90,
+            light: areaId === 1 ? 60 : 55,
+            soilMoisture: areaId === 1 ? 60 : 65,
+          }));
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching sensor data:", error);
+        // Fallback to mock data
         setData(prevData => ({
           ...prevData,
           temperature: areaId === 1 ? 32.50 : 30.00,
@@ -92,6 +102,7 @@ const ControlDevice = () => {
 
     fetchData();
 
+    // Poll data every 1 second
     const intervalId = setInterval(fetchData, 1000);
     return () => clearInterval(intervalId);
   }, [selectedGarden]);
@@ -105,7 +116,9 @@ const ControlDevice = () => {
     setShowGardenDropdown(!showGardenDropdown);
   };
 
-  const handleViewMore = () => {
+  const handleViewMore = async () => {
+    // Since the backend does not provide a historical data endpoint, we use mock data for the report
+    // Alternatively, implement a new backend endpoint to fetch historical records
     const areaId = selectedGarden.id;
     const now = new Date('2025-04-15T12:00:00'); // Current time for mock data
     const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000); // 3 hours ago
@@ -116,23 +129,23 @@ const ControlDevice = () => {
       reportData.push({
         timestamp: new Date(time).toISOString(),
         temperature: areaId === 1
-          ? (32 + Math.random() * 1).toFixed(2) // Khu vực 1: around 32°C
-          : (29 + Math.random() * 1).toFixed(2), // Khu vực 2: around 29°C
+          ? (32 + Math.random() * 1).toFixed(2)
+          : (29 + Math.random() * 1).toFixed(2),
         humidity: areaId === 1
-          ? Math.floor(83 + Math.random() * 4) // Khu vực 1: around 85%
-          : Math.floor(88 + Math.random() * 4), // Khu vực 2: around 90%
+          ? Math.floor(83 + Math.random() * 4)
+          : Math.floor(88 + Math.random() * 4),
         light: areaId === 1
-          ? Math.floor(58 + Math.random() * 4) // Khu vực 1: around 60 Lux
-          : Math.floor(53 + Math.random() * 4), // Khu vực 2: around 55 Lux
+          ? Math.floor(58 + Math.random() * 4)
+          : Math.floor(53 + Math.random() * 4),
         soilMoisture: areaId === 1
-          ? Math.floor(58 + Math.random() * 4) // Khu vực 1: around 60%
-          : Math.floor(63 + Math.random() * 4), // Khu vực 2: around 65%
+          ? Math.floor(58 + Math.random() * 4)
+          : Math.floor(63 + Math.random() * 4),
       });
     }
 
     // Generate report
     const reportContent = `
-      <h3>Báo cáo dữ liệu 3 giờ gần nhất</h3>
+      <h3>Báo cáo dữ liệu tổng hơp gần nhất</h3>
       <p>Khu vực: ${selectedGarden.name}</p>
       <p>Thời gian: Từ ${threeHoursAgo.toLocaleString()} đến ${now.toLocaleString()}</p>
       <table border="1" style="width: 100%; border-collapse: collapse;">
@@ -189,7 +202,7 @@ const ControlDevice = () => {
         <div className="header-right">
           <div className="garden-dropdown">
             <button onClick={toggleGardenDropdown} className="garden-button">
-              {selectedGarden ? selectedGarden.name : 'Chọn khu vực'} ▼
+              {selectedGarden ? 'Khu vực ' + selectedGarden.id : 'Chọn khu vực'} ▼
             </button>
             {showGardenDropdown && (
               <div className="garden-dropdown-menu">
@@ -199,13 +212,12 @@ const ControlDevice = () => {
                     className="garden-dropdown-item"
                     onClick={() => handleGardenSelect(garden)}
                   >
-                    {garden.name}
+                    Khu vực {garden.id}:{garden.name}
                   </div>
                 ))}
               </div>
             )}
           </div>
-         
         </div>
         <Navbar />
       </div>
@@ -232,7 +244,7 @@ const ControlDevice = () => {
               <h3>LIGHT</h3>
               <div className="content-grid">
                 <CiLight className='icon1' />
-                <p>{data.light} Lux</p>
+                <p>{data.light}%</p>
               </div>
             </div>
 
@@ -255,4 +267,4 @@ const ControlDevice = () => {
   );
 };
 
-export default ControlDevice;
+export default DeviceRecord;
