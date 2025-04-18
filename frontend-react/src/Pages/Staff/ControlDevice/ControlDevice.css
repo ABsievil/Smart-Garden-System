@@ -8,17 +8,20 @@
 }
 
 .control-device-content h2 {
-  height: 50px;
+  height: 30px;
   font-size: 28px;
   font-weight: bold;
   color: #34772e; /* Xanh lá cây */
   margin-top: 20px;
   margin-left: 20px;
+  width: 600px;
 }
 
 .control-device-content .device-content {
   width: 100%;
   height: 95vh;
+  margin-top: -20px;
+  
 }
 .control-device-content .device-grid {
   width: 100%;

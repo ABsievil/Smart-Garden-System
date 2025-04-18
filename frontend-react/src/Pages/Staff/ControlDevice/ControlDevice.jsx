@@ -5,13 +5,14 @@ import React, { useEffect, useState } from "react";
 import { BsMoisture } from "react-icons/bs";
 import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
+import { useLocation } from 'react-router-dom';
+import Navbar from "../../../Components/NavBar/NavBar";
 import api from './../../../api';
 import './ControlDevice.css';
-import { useLocation } from 'react-router-dom';
 
 const ControlDevice = () => {
   const location = useLocation();
-  const [areaId, setAreaId] = useState("1");
+  const [areaId, setAreaId] = useState();
   
   useEffect(() => {
     // Kiểm tra URL hiện tại để xác định area
@@ -127,8 +128,10 @@ const ControlDevice = () => {
 
   return (
     <div className="control-device-content">
-    <h2> Dữ liệu thiết bị - Khu vực {areaId} </h2>
-
+      <div className="header">
+    <h2>Dữ liệu thiết bị-Khu vực {areaId}</h2>
+      <Navbar/>
+      </div>
       <Box className='device-content' sx={{ width: "100%" }}>
       <div className="device-grid">
     <div className="device-card">
