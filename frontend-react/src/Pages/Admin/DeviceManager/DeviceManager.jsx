@@ -8,10 +8,10 @@ const DeviceManager = () => {
   const [filteredDevices, setFilteredDevices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
-  const [currentDeviceId, setCurrentDeviceId] = useState(null);
+  const [currentDeviceId, setCurrentDeviceId] = useState(null); // Holds the backend deviceId
   const [newDevice, setNewDevice] = useState({
     name: '',
-    area: '',
+    area: '', // Area is a separate field
     status: 'ON', // Default value
     state: 'ACTIVE', // Default value
     warranty: '',
@@ -33,13 +33,17 @@ const DeviceManager = () => {
         const response = await api.get('/api/v1/device-manage/device-list');
         console.log('API response:', response.data.data); // Log the API response
         if (response.data.status === 'success') {
-          // Map API response to local state, adding a local id for rendering
-          const deviceList = response.data.data.deviceList.map((device, index) => ({
-            id: index + 1, // Local id for rendering
+          // Sort the device list by deviceId in ascending order
+          const sortedDeviceList = response.data.data.deviceList.sort((a, b) => a.deviceId - b.deviceId);
+          
+          // Map API response correctly: deviceId is the unique ID
+          const deviceList = sortedDeviceList.map((device) => ({
+            id: device.deviceId, // Use backend deviceId as the primary ID
             name: device.name,
-            deviceId: device.area, // Map 'area' to 'deviceId' for display
+            area: device.area, // Store area separately
             status: device.status, // Already "ON" or "OFF"
             state: device.state, // Already "ACTIVE" or "BROKEN"
+            mode: device.mode,
           }));
           setDevices(deviceList);
           setFilteredDevices(deviceList);
@@ -81,12 +85,13 @@ const DeviceManager = () => {
     setIsModalOpen(!isModalOpen);
     setModalMode(mode);
     if (mode === 'edit' && device) {
-      setCurrentDeviceId(device.id);
+      setCurrentDeviceId(device.id); // Set currentDeviceId to the backend deviceId
       setNewDevice({
         name: device.name,
-        area: device.deviceId, // Map back to 'area' for API
+        area: device.area, // Set area from the device data
         status: device.status,
         state: device.state,
+        mode: device.mode,
         warranty: '', // Not fetched from API; edit locally
         drive: '',
         inputVoltage: '',
@@ -127,15 +132,17 @@ const DeviceManager = () => {
           state: newDevice.state, // "ACTIVE" or "BROKEN"
           status: newDevice.status, // "ON" or "OFF"
           speed: parseFloat(newDevice.speed) || 0,
+          mode: newDevice.mode || 'MANUAL', // Add default mode if not set
         });
         if (response.data.status === 'OK') {
           // Map the saved device to local state
           const savedDevice = {
-            id: devices.length + 1, // Local id for rendering
+            id: response.data.data.deviceId, // Use backend deviceId as the ID
             name: response.data.data.name,
-            deviceId: response.data.data.area.toString(), // Map 'area' to 'deviceId'
+            area: response.data.data.area.toString(), // Store area
             status: response.data.data.status ? 'ON' : 'OFF', // Convert boolean to string
             state: response.data.data.state ? 'ACTIVE' : 'BROKEN', // Convert boolean to string
+            mode: response.data.data.mode,
           };
           setDevices([...devices, savedDevice]);
           setError(null);
@@ -149,23 +156,65 @@ const DeviceManager = () => {
         setError('Lỗi khi thêm thiết bị');
       }
     } else {
-      // Local edit (since no update API is provided)
-      const updatedDevice = {
-        id: currentDeviceId,
-        name: newDevice.name,
-        deviceId: newDevice.area,
-        status: newDevice.status,
-        state: newDevice.state,
-      };
-      setDevices(devices.map((device) => (device.id === currentDeviceId ? updatedDevice : device)));
-      toggleModal();
+      // Handle edit using API
+      try {
+        const response = await api.put(`/api/v1/device-manage/update-device/${currentDeviceId}`, {
+          name: newDevice.name,
+          area: parseInt(newDevice.area), // Send area in the body
+          warranty: newDevice.warranty || 'N/A',
+          drive: newDevice.drive || 'N/A',
+          inputVoltage: parseFloat(newDevice.inputVoltage) || 0,
+          outputVoltage: parseFloat(newDevice.outputVoltage) || 0,
+          state: newDevice.state, // "ACTIVE" or "BROKEN"
+          status: newDevice.status, // "ON" or "OFF"
+          speed: parseFloat(newDevice.speed) || 0,
+          mode: newDevice.mode || 'MANUAL',
+        });
+
+        if (response.data.status === 'OK') {
+           // Map the updated device data from the response
+          const updatedDeviceData = response.data.data;
+          const updatedDevice = {
+            id: updatedDeviceData.deviceId, // Keep the backend deviceId
+            name: updatedDeviceData.name,
+            area: updatedDeviceData.area.toString(), // Update area
+            status: updatedDeviceData.status ? 'ON' : 'OFF',
+            state: updatedDeviceData.state ? 'ACTIVE' : 'BROKEN',
+            mode: updatedDeviceData.mode,
+          };
+          setDevices(devices.map((device) => (device.id === currentDeviceId ? updatedDevice : device)));
+          setError(null);
+          toggleModal();
+        } else {
+          console.error('Lỗi khi cập nhật thiết bị:', response.data.message);
+          setError('Lỗi khi cập nhật thiết bị');
+        }
+      } catch (error) {
+        console.error('Lỗi API cập nhật:', error.response?.data?.message || error.message);
+        setError('Lỗi khi cập nhật thiết bị');
+      }
     }
   };
 
-  const handleDeleteDevice = (id) => {
-    // Local delete (since no delete API is provided)
-    setDevices(devices.filter((device) => device.id !== id));
-    setOpenMenuId(null); // Close the menu after deleting
+  const handleDeleteDevice = async (deviceIdToDelete) => { // Parameter is the backend deviceId
+    // Use API to delete
+    try {
+      const response = await api.delete(`/api/v1/device-manage/delete-device/${deviceIdToDelete}`);
+      if (response.data.status === 'OK') {
+        // Remove from local state using the backend deviceId
+        setDevices(devices.filter((device) => device.id !== deviceIdToDelete));
+        setError(null);
+        setOpenMenuId(null); // Close the menu
+      } else {
+        console.error('Lỗi khi xóa thiết bị:', response.data.message);
+        setError('Lỗi khi xóa thiết bị');
+        setOpenMenuId(null);
+      }
+    } catch (error) {
+      console.error('Lỗi API xóa:', error.response?.data?.message || error.message);
+      setError('Lỗi khi xóa thiết bị');
+      setOpenMenuId(null);
+    }
   };
 
   const handleEditDevice = (device) => {
@@ -213,6 +262,7 @@ const DeviceManager = () => {
             <th>Khu vực</th>
             <th>Tình trạng</th>
             <th>Trạng thái</th>
+            <th>Mode</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -224,9 +274,10 @@ const DeviceManager = () => {
                   <span className="device-icon"></span>
                   {device.name}
                 </td>
-                <td>{device.deviceId}</td>
+                <td>{device.area}</td> {/* Display area */}
                 <td>{device.state}</td>
                 <td>{device.status}</td>
+                <td>{device.mode}</td>
                 <td>
                   <div className="action-menu" style={{ position: 'relative' }}>
                     <button
@@ -240,7 +291,7 @@ const DeviceManager = () => {
                         <button className="edit" onClick={() => handleEditDevice(device)}>
                           Sửa
                         </button>
-                        <button className="delete" onClick={() => handleDeleteDevice(device.id)}>
+                        <button className="delete" onClick={() => handleDeleteDevice(device.id)}> {/* Pass backend deviceId */}
                           Xóa
                         </button>
                       </div>
@@ -322,6 +373,15 @@ const DeviceManager = () => {
               >
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="BROKEN">BROKEN</option>
+              </select>
+              <label>Mode</label>
+              <select
+                name="mode"
+                value={newDevice.mode}
+                onChange={handleInputChange}
+              >
+                <option value="AUTO">AUTO</option>
+                <option value="MANUAL">MANUAL</option>
               </select>
               <label>Bảo hành</label>
               <input
