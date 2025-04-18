@@ -14,7 +14,7 @@ const Navbar = ({ namePage }) => {
   const navigate = useNavigate();
 
   const currentUsername=localStorage.getItem('username');
-
+  const currentUserId=localStorage.getItem('userId');
   // Load viewed notification IDs from localStorage
   const [viewedNotifications, setViewedNotifications] = useState(() => {
     const saved = localStorage.getItem('viewedNotifications');
@@ -68,6 +68,7 @@ const Navbar = ({ namePage }) => {
         });
         if (response.data.status === "OK") {
           const userData = response.data.data;
+          // localStorage.setItem('userId', userData.userId);
           console.log("name" + response.data.data.name);
           setUser({
             name: userData.information.lname + ' ' + userData.information.fname ,

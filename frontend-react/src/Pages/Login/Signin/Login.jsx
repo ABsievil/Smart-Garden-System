@@ -39,7 +39,18 @@ const handleLoginSubmit = async (event) => {
       const role = decodedToken.role;
       localStorage.setItem("username", username);
       localStorage.setItem("role", role);
-
+      const currentUsername=localStorage.getItem('username');
+      const fetchUser = async () => {
+        try {
+          const response = await api.post('/api/v1/users/profile', {
+            username: currentUsername,
+          });
+            localStorage.setItem('userId', response.data.data.userId);
+        } catch (error) {
+          console.error('Error fetching user info:', error.response?.data?.message || error.message);
+         
+        }
+      };
       {role === "USER"? navigate('/control-device') : navigate('/dash-board')}
     } else {
       alert(res.data.message);
@@ -49,6 +60,9 @@ const handleLoginSubmit = async (event) => {
 
   }
 };
+
+
+
 const loginLink =() => {
     setAction('')
 };
