@@ -5,28 +5,45 @@ import React, { useEffect, useState } from "react";
 import { BsMoisture } from "react-icons/bs";
 import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
-import { useLocation } from 'react-router-dom';
 import Navbar from "../../../Components/NavBar/NavBar";
 import api from './../../../api';
 import './ControlDevice.css';
 
 const ControlDevice = () => {
-  const location = useLocation();
   const [areaId, setAreaId] = useState();
   
   useEffect(() => {
-    // Kiểm tra URL hiện tại để xác định area
-    const params = new URLSearchParams(location.search);
-    const area = params.get("area");
-    
-    if (location.pathname === "/control-device") {
-      if (area === "2") {
-        setAreaId("2");
-      } else {
-        setAreaId("1");
+    // Fetch user profile to determine areaId
+    const fetchUserProfile = async () => {
+      try {
+        // Assume username is stored in localStorage
+        const username = localStorage.getItem('username'); 
+        if (!username) {
+          console.error("Username not found!");
+          // Handle error, maybe redirect to login or show a message
+          return; 
+        }
+
+        const response = await api.post('/api/v1/users/profile', { username });
+        
+        if (response.data.status === "OK" && response.data.data?.information?.jobArea) {
+          const jobArea = response.data.data.information.jobArea;
+          console.log("User jobArea:", jobArea);
+          setAreaId(jobArea.toString()); // Ensure areaId is a string if needed later
+        } else {
+          console.error("Error fetching user profile or jobArea missing:", response.data.message || "No jobArea found");
+          // Handle error appropriately
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        // Handle API call error
       }
-    }
-  }, [location]);
+    };
+
+    fetchUserProfile();
+    
+    // No dependencies needed if username comes from localStorage and doesn't change reactively
+  }, []); 
 
   const [data, setData] = useState({
     // default data
@@ -42,34 +59,44 @@ const ControlDevice = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get(`/api/v1/record/getCurrentRecord/${areaId}`);
-        
-        if (response.data.status === "OK") {
-          const sensorData = response.data.data;
-          console.log("Sensor data:", sensorData);
-          // Update sensor values into const [data, setData]
-          setData(prevData => ({
-            ...prevData,
-            temperature: sensorData.temperature,
-            humidity: sensorData.humidity,
-            light: sensorData.light,
-            soilMoisture: sensorData.soilMoisture
-          }));
+      // Only fetch if areaId is set
+      if (areaId) { 
+        try {
+          const response = await api.get(`/api/v1/record/getCurrentRecord/${areaId}`);
+          
+          if (response.data.status === "OK") {
+            const sensorData = response.data.data;
+            console.log("Sensor data:", sensorData);
+            // Update sensor values into const [data, setData]
+            setData(prevData => ({
+              ...prevData,
+              temperature: sensorData.temperature,
+              humidity: sensorData.humidity,
+              light: sensorData.light,
+              soilMoisture: sensorData.soilMoisture
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
+    // Only run the interval if areaId is set
+    let intervalId = null;
+    if (areaId) {
+      fetchData(); // Fetch immediately when areaId is available
+      // Setup call fetch data every 1 seconds
+      intervalId = setInterval(fetchData, 1000);
+    }
     
-    // Setup call fetch data every 1 seconds
-    const intervalId = setInterval(fetchData, 1000);
-    
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [areaId]);
+    // Clean up interval on component unmount or when areaId changes
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [areaId]); // Depend on areaId
 
   const sendDeviceState = async (deviceName, updatedData) => {
     if (!updatedData || updatedData[deviceName] === undefined) {
