@@ -50,4 +50,7 @@ public class Device {
 
     @Column(name = "speed")
     private Integer speed;
+
+    @Column(name = "mode")
+    private String mode;
 }

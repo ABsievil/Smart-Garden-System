@@ -166,6 +166,9 @@ CREATE TABLE device (
     speed INTEGER
 );
 
+alter table device
+add column mode VARCHAR(10);
+
 ALTER TABLE otp ADD COLUMN name VARCHAR(255);
 
 ALTER TABLE device DROP COLUMN nameofdevices;

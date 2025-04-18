@@ -39,10 +39,12 @@ public class DeviceManageService {
 
             for (Device device : devices) {
                 Map<String, Object> deviceData = new LinkedHashMap<>();
+                deviceData.put("deviceId", device.getDeviceId());
                 deviceData.put("name", device.getName());
                 deviceData.put("area", String.valueOf(device.getArea())); // Chuyển Integer sang String nếu cần
                 deviceData.put("state", device.getState() ? "ACTIVE" : "BROKEN"); // Chuyển Boolean sang String
                 deviceData.put("status", device.getStatus() ? "ON" : "OFF"); // Chuyển Boolean sang String
+                deviceData.put("mode", device.getMode());
                 resultList.add(deviceData);
             }
 
@@ -114,6 +116,7 @@ public class DeviceManageService {
                     .state(stateValue) // Use converted boolean value
                     .status(statusValue) // Use converted boolean value
                     .speed(requestDTO.getSpeed())
+                    .mode(requestDTO.getMode())
                     .build();
 
             Device savedDevice = deviceRepository.save(newDevice);
@@ -140,7 +143,7 @@ public class DeviceManageService {
             Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
             if (!deviceOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseObject("error", "Device not found with id: " + deviceId, null));
+                        .body(new ResponseObject("ERROR", "Device not found with id: " + deviceId, null));
             }
 
             Device existingDevice = deviceOpt.get();
@@ -176,22 +179,23 @@ public class DeviceManageService {
             existingDevice.setState(stateValue);
             existingDevice.setStatus(statusValue);
             existingDevice.setSpeed(requestDTO.getSpeed());
+            existingDevice.setMode(requestDTO.getMode());
 
             Device updatedDevice = deviceRepository.save(existingDevice);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("success", "Device updated successfully", updatedDevice));
+                    .body(new ResponseObject("OK", "Device updated successfully", updatedDevice));
 
         } catch (DataAccessException e) {
             System.err.println("Database error in updateDevice(): " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("error", "Database error: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
         } catch (Exception e) {
             System.err.println("Unexpected error in updateDevice(): " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("error", "Unexpected error: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
         }
     }
 
@@ -200,7 +204,7 @@ public class DeviceManageService {
         try {
             if (!deviceRepository.existsById(deviceId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseObject("error", "Device not found with id: " + deviceId, null));
+                        .body(new ResponseObject("ERROR", "Device not found with id: " + deviceId, null));
             }
 
             deviceAreaRepository.deleteByDeviceId(deviceId);
@@ -208,18 +212,18 @@ public class DeviceManageService {
             deviceRepository.deleteById(deviceId);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject("success", "Device deleted successfully with id: " + deviceId, null));
+                    .body(new ResponseObject("OK", "Device deleted successfully with id: " + deviceId, null));
 
         } catch (DataAccessException e) {
             System.err.println("Database error in deleteDevice(): " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("error", "Database error: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Database error: " + e.getMessage(), null));
         } catch (Exception e) {
             System.err.println("Unexpected error in deleteDevice(): " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject("error", "Unexpected error: " + e.getMessage(), null));
+                    .body(new ResponseObject("ERROR", "Unexpected error: " + e.getMessage(), null));
         }
     }
 }
