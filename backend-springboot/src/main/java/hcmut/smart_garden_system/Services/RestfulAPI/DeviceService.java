@@ -2,6 +2,7 @@ package hcmut.smart_garden_system.Services.RestfulAPI;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ import hcmut.smart_garden_system.Controllers.SensorController;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
 import hcmut.smart_garden_system.Models.SensorData;
 import hcmut.smart_garden_system.Models.SensorRequest;
+import hcmut.smart_garden_system.Models.DBTable.Device;
+import hcmut.smart_garden_system.Repositories.DeviceRepository;
 
 @Service
 public class DeviceService {
@@ -24,6 +27,9 @@ public class DeviceService {
     
     @Autowired
     private SensorController sensorController;
+
+    @Autowired
+    private DeviceRepository deviceRepository;
 
     public DeviceService(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
@@ -85,6 +91,74 @@ public class DeviceService {
             // Xử lý các lỗi khác
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseObject("ERROR", "Error updating PROC_controlPumpSpeed(): " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> updateModeByArea(Integer area, String mode) {
+        try {
+            List<Device> devicesInArea = deviceRepository.findByArea(area);
+
+            if (devicesInArea.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("NOT_FOUND", "No devices found for area: " + area, null));
+            }
+
+            // Validate mode (optional, but good practice)
+            if (!"AUTO".equalsIgnoreCase(mode) && !"MANUAL".equalsIgnoreCase(mode)) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("BAD_REQUEST", "Invalid mode specified. Use 'AUTO' or 'MANUAL'.", null));
+            }
+
+            for (Device device : devicesInArea) {
+                device.setMode(mode.toUpperCase()); // Ensure mode is stored consistently (e.g., uppercase)
+            }
+
+            deviceRepository.saveAll(devicesInArea); // Save all updated devices
+
+            // Consider if an MQTT message needs to be sent for mode changes
+            // If so, iterate through devicesInArea and call sensorController.publishMessage() appropriately.
+            // For now, assuming no MQTT message is needed.
+
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("OK", "Successfully updated mode for all devices in area " + area + " to " + mode.toUpperCase(), null));
+
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Database error while updating modes: " + e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Error updating modes for area " + area + ": " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> getModeByArea(Integer area) {
+        try {
+            List<Device> devicesInArea = deviceRepository.findByArea(area);
+
+            if (devicesInArea.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("NOT_FOUND", "No devices found for area: " + area, null));
+            }
+
+            // Return the mode of the first device found in the area
+            // If modes can be mixed, the UI might need more complex handling
+            String mode = devicesInArea.get(0).getMode(); 
+
+            // Handle case where the first device might have a null mode (optional, depends on DB constraints)
+            if (mode == null) {
+                 return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "First device found in area " + area + " has no mode set.", null));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("OK", "Successfully retrieved mode for area " + area, mode));
+
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Database error while retrieving mode: " + e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Error retrieving mode for area " + area + ": " + e.getMessage(), null));
         }
     }
 }

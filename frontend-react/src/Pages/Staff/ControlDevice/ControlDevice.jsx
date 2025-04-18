@@ -98,6 +98,28 @@ const ControlDevice = () => {
     };
   }, [areaId]); // Depend on areaId
 
+  // Fetch initial mode for the area when areaId is set
+  useEffect(() => {
+    const fetchMode = async () => {
+      if (areaId) {
+        try {
+          const response = await api.get(`/api/v1/device/getModeByArea?area=${areaId}`);
+          if (response.data.status === "OK" && response.data.data) {
+            console.log("Initial mode for area", areaId, ":", response.data.data);
+            setData(prevData => ({ ...prevData, mode: response.data.data.toLowerCase() })); // Ensure mode is lowercase for state consistency
+          } else {
+             console.error("Error fetching initial mode:", response.data.message || "Mode not found");
+             // Keep default mode or handle error
+          }
+        } catch (error) {
+          console.error("Error fetching initial mode:", error);
+        }
+      }
+    };
+
+    fetchMode();
+  }, [areaId]);
+
   const sendDeviceState = async (deviceName, updatedData) => {
     if (!updatedData || updatedData[deviceName] === undefined) {
       console.error("updatedData không hợp lệ:", updatedData);
@@ -116,6 +138,27 @@ const ControlDevice = () => {
       }
     } catch (error) {
       console.error("Error updating device state:", error);
+    }
+  };
+
+  const handleModeChange = async () => {
+    if (!areaId) return; // Don't do anything if areaId isn't set
+
+    const currentMode = data.mode;
+    const newMode = currentMode === "auto" ? "MANUAL" : "AUTO"; // API expects uppercase
+
+    try {
+      const response = await api.put(`/api/v1/device/updateModeByArea?area=${areaId}&mode=${newMode}`);
+      if (response.data.status === "OK") {
+        console.log(`Mode for area ${areaId} updated to ${newMode}`);
+        setData(prevData => ({ ...prevData, mode: newMode.toLowerCase() })); // Update local state after successful API call
+      } else {
+        console.error(`Error updating mode for area ${areaId}:`, response.data.message);
+        // Optionally revert the switch visually or show an error message
+      }
+    } catch (error) {
+      console.error(`Error calling updateModeByArea API:`, error);
+      // Optionally revert the switch visually or show an error message
     }
   };
 
@@ -223,10 +266,8 @@ const ControlDevice = () => {
         <Switch 
           className='device-control' 
           checked={data.mode === "manual"} 
-          onChange={() => {
-            const updatedData = { ...data, mode: data.mode === "auto" ? "manual" : "auto" };
-            sendDeviceState("mode", updatedData);
-          }} 
+          onChange={handleModeChange}
+          disabled={!areaId}
         />
         Manual</span>
       </div>

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,19 @@ public class DeviceController {
         @RequestParam(value = "value") Integer value, 
         @RequestParam(value = "area") Integer area) {
         return deviceService.PROC_controlPumpSpeed(deviceName, value, area);
+    }
+
+    @PutMapping("/updateModeByArea")
+    public ResponseEntity<ResponseObject> updateModeByArea(
+        @RequestParam(value = "area") Integer area,
+        @RequestParam(value = "mode") String mode) {
+        return deviceService.updateModeByArea(area, mode);
+    }
+
+    @GetMapping("/getModeByArea")
+    public ResponseEntity<ResponseObject> getModeByArea(
+        @RequestParam(value = "area") Integer area) {
+        return deviceService.getModeByArea(area);
     }
 
     // @GetMapping("/controlState")
