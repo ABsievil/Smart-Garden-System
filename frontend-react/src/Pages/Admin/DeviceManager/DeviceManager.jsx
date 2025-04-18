@@ -261,7 +261,7 @@ const DeviceManager = () => {
             <th>Tên thiết bị</th>
             <th>Khu vực</th>
             <th>Tình trạng</th>
-            <th>Trạng thái</th>
+            {/* <th>Trạng thái</th> */}
             <th>Mode</th>
             <th>Action</th>
           </tr>
@@ -276,7 +276,7 @@ const DeviceManager = () => {
                 </td>
                 <td>{device.area}</td> {/* Display area */}
                 <td>{device.state}</td>
-                <td>{device.status}</td>
+                {/* <td>{device.status}</td> */}
                 <td>{device.mode}</td>
                 <td>
                   <div className="action-menu" style={{ position: 'relative' }}>
