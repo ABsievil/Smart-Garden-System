@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { default as Switch } from '@mui/material/Switch';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { BsMoisture } from "react-icons/bs";
 import { CiLight, CiTempHigh } from "react-icons/ci";
 import { RiWaterPercentLine } from "react-icons/ri";
@@ -57,6 +57,11 @@ const ControlDevice = () => {
     mode: "manual", // manual hoặc auto
   });
   
+  // Ref for debounce timeout
+  const debounceTimeoutRef = useRef(null);
+  // Ref to track if it's the initial load for Pump1 to avoid initial API call
+  const isInitialPumpLoad = useRef(true);
+
   useEffect(() => {
     const fetchData = async () => {
       // Only fetch if areaId is set
@@ -146,6 +151,35 @@ const ControlDevice = () => {
     fetchInitialData();
   }, [areaId]);
 
+  // useEffect for debouncing pump speed API call
+  useEffect(() => {
+    // Skip the very first render/load for Pump1
+    if (isInitialPumpLoad.current) {
+      isInitialPumpLoad.current = false;
+      return;
+    }
+    
+    // Clear any existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set a new timeout to send the API request after 400ms of inactivity
+    debounceTimeoutRef.current = setTimeout(() => {
+      if (data.mode === "manual" && areaId) { // Only send if in manual mode and areaId is set
+        console.log(`[Debounced] Sending Pump1 speed: ${data.Pump1}`);
+        sendPumpSpeed(data.Pump1);
+      }
+    }, 400); // Changed delay to 400ms
+
+    // Cleanup function to clear timeout if component unmounts or areaId/mode changes
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [data.Pump1, data.mode, areaId]); // Rerun effect if Pump1 value, mode, or areaId changes
+
   const sendDeviceState = async (deviceName, updatedData) => {
     if (!updatedData || updatedData[deviceName] === undefined) {
       console.error("updatedData không hợp lệ:", updatedData);
@@ -195,6 +229,12 @@ const ControlDevice = () => {
   };
  
   const sendPumpSpeed = async (newPumpSpeed) => {
+    // No need for setTimeout here anymore
+    if (!areaId) {
+      console.error("Cannot send pump speed, areaId is not set.");
+      return;
+    }
+    console.log(`Sending pump speed update. Device: Pump1, Value: ${newPumpSpeed}, Area: ${areaId}`);
     try {
       const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}&area=${areaId}`);
       if (response.data.status === "OK") {
@@ -203,18 +243,16 @@ const ControlDevice = () => {
         console.error("Error updating pump speed:", response.data.message);
       }
     } catch (error) {
+         console.error("Error calling controlPumpSpeed API:", error);
     }
   };
   
   
-
+  // Update state immediately, debounce effect handles API call
   const handlePumpSpeedChange = (event, newValue) => {
     if (data.mode === "manual") {
       setData((prevData) => ({ ...prevData, Pump1: newValue }));
-  
-      setTimeout(() => {
-        sendPumpSpeed(newValue); // Gửi API sau 1s
-      }, 1000);
+      // Removed setTimeout and direct sendPumpSpeed call from here
     }
   };
 
