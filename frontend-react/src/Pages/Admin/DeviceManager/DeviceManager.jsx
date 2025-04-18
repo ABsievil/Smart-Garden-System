@@ -225,8 +225,8 @@ const DeviceManager = () => {
                   {device.name}
                 </td>
                 <td>{device.deviceId}</td>
-                <td>{device.status}</td>
                 <td>{device.state}</td>
+                <td>{device.status}</td>
                 <td>
                   <div className="action-menu" style={{ position: 'relative' }}>
                     <button
