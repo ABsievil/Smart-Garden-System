@@ -15,6 +15,9 @@ public interface DeviceRepository extends JpaRepository<Device, Integer> {
 
     List<Device> findByArea(Integer area);
 
+    // Find a device by its name and area
+    Optional<Device> findByNameAndArea(String name, Integer area);
+
     // Optional: Add this if you want to check for existing device names
     // Optional<Device> findByName(String name);
 }

@@ -47,6 +47,12 @@ public class DeviceController {
         return deviceService.getModeByArea(area);
     }
 
+    @GetMapping("/getDevicesByArea")
+    public ResponseEntity<ResponseObject> getDevicesByArea(
+        @RequestParam(value = "area") Integer area) {
+        return deviceService.getDevicesByArea(area);
+    }
+
     // @GetMapping("/controlState")
     // public ResponseEntity<ResponseObject> controlState(@PathVariable Boolean state) {
     //     return deviceService.PROC_controlState(state);

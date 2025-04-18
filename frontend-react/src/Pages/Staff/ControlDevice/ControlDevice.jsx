@@ -53,7 +53,7 @@ const ControlDevice = () => {
     soilMoisture: 0,
     Fan1: false,
     Led1: false,
-    Pump1: 50,
+    Pump1: 0,
     mode: "manual", // manual hoặc auto
   });
   
@@ -98,26 +98,52 @@ const ControlDevice = () => {
     };
   }, [areaId]); // Depend on areaId
 
-  // Fetch initial mode for the area when areaId is set
+  // Fetch initial mode and device statuses for the area when areaId is set
   useEffect(() => {
-    const fetchMode = async () => {
+    const fetchInitialData = async () => {
       if (areaId) {
+        // Fetch Mode
         try {
-          const response = await api.get(`/api/v1/device/getModeByArea?area=${areaId}`);
-          if (response.data.status === "OK" && response.data.data) {
-            console.log("Initial mode for area", areaId, ":", response.data.data);
-            setData(prevData => ({ ...prevData, mode: response.data.data.toLowerCase() })); // Ensure mode is lowercase for state consistency
+          const modeResponse = await api.get(`/api/v1/device/getModeByArea?area=${areaId}`);
+          if (modeResponse.data.status === "OK" && modeResponse.data.data) {
+            console.log("Initial mode for area", areaId, ":", modeResponse.data.data);
+            setData(prevData => ({ ...prevData, mode: modeResponse.data.data.toLowerCase() }));
           } else {
-             console.error("Error fetching initial mode:", response.data.message || "Mode not found");
-             // Keep default mode or handle error
+             console.error("Error fetching initial mode:", modeResponse.data.message || "Mode not found");
           }
         } catch (error) {
           console.error("Error fetching initial mode:", error);
         }
+
+        // Fetch Device Statuses
+        try {
+          const devicesResponse = await api.get(`/api/v1/device/getDevicesByArea?area=${areaId}`);
+          if (devicesResponse.data.status === "OK" && devicesResponse.data.data) {
+            const devices = devicesResponse.data.data;
+            console.log("Initial devices for area", areaId, ":", devices);
+            
+            const fanStatus = devices.find(d => d.name?.toLowerCase() === 'fan1')?.status;
+            const ledStatus = devices.find(d => d.name?.toLowerCase() === 'led1')?.status;
+            const pumpSpeed = devices.find(d => d.name?.toLowerCase() === 'pump1')?.speed; // Get pump speed
+
+            setData(prevData => ({
+              ...prevData,
+              // Only update if status/speed is found (not undefined)
+              ...(fanStatus !== undefined && { Fan1: fanStatus }), 
+              ...(ledStatus !== undefined && { Led1: ledStatus }),
+              ...(pumpSpeed !== undefined && { Pump1: pumpSpeed }) // Update Pump1 state with fetched speed
+            }));
+
+          } else {
+            console.error("Error fetching initial device statuses:", devicesResponse.data.message || "Devices not found");
+          }
+        } catch (error) {
+          console.error("Error fetching initial device statuses:", error);
+        }
       }
     };
 
-    fetchMode();
+    fetchInitialData();
   }, [areaId]);
 
   const sendDeviceState = async (deviceName, updatedData) => {
@@ -128,7 +154,6 @@ const ControlDevice = () => {
     setData(updatedData);
     try {
       const response = await api.get(`/api/v1/device/controlStatus?deviceName=${deviceName}&status=${updatedData[deviceName]}&area=${areaId}`);
-      
       if (response.data.status === "OK") {
         const res = response.data.data;
         console.log("Device state updated: ", res);
@@ -157,7 +182,6 @@ const ControlDevice = () => {
         // Optionally revert the switch visually or show an error message
       }
     } catch (error) {
-      console.error(`Error calling updateModeByArea API:`, error);
       // Optionally revert the switch visually or show an error message
     }
   };
@@ -173,14 +197,12 @@ const ControlDevice = () => {
   const sendPumpSpeed = async (newPumpSpeed) => {
     try {
       const response = await api.get(`/api/v1/device/controlPumpSpeed?deviceName=Pump1&value=${newPumpSpeed}&area=${areaId}`);
-      
       if (response.data.status === "OK") {
         console.log("Pump speed updated successfully:", response.data.data);
       } else {
         console.error("Error updating pump speed:", response.data.message);
       }
     } catch (error) {
-      console.error("Lỗi khi cập nhật tốc độ bơm:", error);
     }
   };
   
@@ -211,7 +233,7 @@ const ControlDevice = () => {
     <p>{data.temperature}°C</p> </div>
    
       <span >Fan
-      <Switch className='toggle' checked={data.fan} onChange={() => toggleDevice("Fan1")} disabled={data.mode !== "manual"} />
+      <Switch className='toggle' checked={!!data.Fan1} onChange={() => toggleDevice("Fan1")} disabled={data.mode !== "manual"} />
       </span>
   </div>
 
@@ -230,7 +252,7 @@ const ControlDevice = () => {
     <p>{data.light} %</p> 
     </div>
     <span> Led
-    <Switch className='toggle' checked={data.led} onChange={() => toggleDevice("Led1")} disabled={data.mode !== "manual"} />
+    <Switch className='toggle' checked={!!data.Led1} onChange={() => toggleDevice("Led1")} disabled={data.mode !== "manual"} />
     </span>
     
   </div>
@@ -245,7 +267,7 @@ const ControlDevice = () => {
     <div className="pump-control">
       <span>Pump</span>
               <Slider
-                value={data.pumpSpeed}
+                value={data.Pump1}
                 onChange={handlePumpSpeedChange}
                 aria-labelledby="pump-speed-slider"
                 valueLabelDisplay="auto"
