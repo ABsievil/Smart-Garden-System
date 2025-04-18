@@ -21,6 +21,7 @@ import hcmut.smart_garden_system.Models.SensorData;
 import hcmut.smart_garden_system.Models.SensorRequest;
 import hcmut.smart_garden_system.Models.DBTable.Device;
 import hcmut.smart_garden_system.Repositories.DeviceRepository;
+import hcmut.smart_garden_system.Models.DeviceData;
 
 @Service
 public class DeviceService {
@@ -179,6 +180,52 @@ public class DeviceService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ResponseObject("ERROR", "Error retrieving devices for area " + area + ": " + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Updates the mode for all devices within a specific area based on DeviceData.
+     * @param deviceData DTO containing areaId and the new mode.
+     * @return ResponseEntity with the operation status.
+     */
+    public ResponseEntity<ResponseObject> updateModeByAreaFromData(DeviceData deviceData) {
+        Integer areaId = deviceData.getArea();
+        String mode = deviceData.getMode();
+
+        if (areaId == null || mode == null) {
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObject("BAD_REQUEST", "Missing areaId or mode in the request body.", null));
+        }
+
+        try {
+            List<Device> devicesInArea = deviceRepository.findByArea(areaId);
+
+            if (devicesInArea.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject("NOT_FOUND", "No devices found for area: " + areaId, null));
+            }
+
+            if (!"AUTO".equalsIgnoreCase(mode) && !"MANUAL".equalsIgnoreCase(mode)) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseObject("BAD_REQUEST", "Invalid mode specified. Use 'AUTO' or 'MANUAL'.", null));
+            }
+
+            String upperCaseMode = mode.toUpperCase();
+            for (Device device : devicesInArea) {
+                device.setMode(upperCaseMode);
+            }
+
+            deviceRepository.saveAll(devicesInArea);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject("OK", "Successfully updated mode for all devices in area " + areaId + " to " + upperCaseMode, null));
+
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Database error while updating modes: " + e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ResponseObject("ERROR", "Error updating modes for area " + areaId + ": " + e.getMessage(), null));
         }
     }
 }
