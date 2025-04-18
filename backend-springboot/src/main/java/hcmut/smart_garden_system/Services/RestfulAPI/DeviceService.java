@@ -112,6 +112,11 @@ public class DeviceService {
             }
 
             deviceRepository.saveAll(devicesInArea);
+            // Xác định giá trị deviceMode bằng toán tử ba ngôi, sửa lỗi so sánh chuỗi
+            boolean deviceModeAuto = mode.equalsIgnoreCase("AUTO");
+            SensorRequest sensorRequest = new SensorRequest(area, "Fan1", false, deviceModeAuto, 0);
+            sensorController.publishMessage(sensorRequest);
+            System.out.println("Sent message to change Device Mode to " + mode + " for Fan1 in area " + area);
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseObject("OK", "Successfully updated mode for all devices in area " + area + " to " + mode.toUpperCase(), null));
