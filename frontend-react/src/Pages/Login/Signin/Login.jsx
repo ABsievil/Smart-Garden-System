@@ -29,7 +29,7 @@ const handleLoginSubmit = async (event) => {
   }
   try {
     const res = await LoginApi(username, password);
-    console.log(res);
+    // console.log(res);
     if (res && res.data.status=="OK") {
       dispatch(login(res.data));
       
@@ -40,17 +40,7 @@ const handleLoginSubmit = async (event) => {
       localStorage.setItem("username", username);
       localStorage.setItem("role", role);
       const currentUsername=localStorage.getItem('username');
-      const fetchUser = async () => {
-        try {
-          const response = await api.post('/api/v1/users/profile', {
-            username: currentUsername,
-          });
-            localStorage.setItem('userId', response.data.data.userId);
-        } catch (error) {
-          console.error('Error fetching user info:', error.response?.data?.message || error.message);
-         
-        }
-      };
+      fetchUser(currentUsername);
       {role === "USER"? navigate('/control-device') : navigate('/dash-board')}
     } else {
       alert(res.data.message);
@@ -61,7 +51,17 @@ const handleLoginSubmit = async (event) => {
   }
 };
 
-
+const fetchUser = async (currentUsername) => {
+  try {
+    const response = await api.post('/api/v1/users/profile', {
+      username: currentUsername,
+    });
+      localStorage.setItem('userId', response.data.data.userId);
+  } catch (error) {
+    console.error('Error fetching user info:', error.response?.data?.message || error.message);
+   
+  }
+};
 
 const loginLink =() => {
     setAction('')
