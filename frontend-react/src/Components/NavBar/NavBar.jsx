@@ -11,6 +11,7 @@ const Navbar = ({ namePage }) => {
   const [user, setUser] = useState(null);
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const [error, setError] = useState(null); // Add error state for UI feedback
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
   const navigate = useNavigate();
 
   const currentUsername = localStorage.getItem('username');
@@ -122,6 +123,11 @@ const Navbar = ({ namePage }) => {
     }
   };
 
+  // Toggle between showing all notifications or limited notifications
+  const toggleShowAllNotifications = () => {
+    setShowAllNotifications(!showAllNotifications);
+  };
+
   const handleUserClick = () => {
     navigate('/user-profile');
   };
@@ -156,7 +162,7 @@ const Navbar = ({ namePage }) => {
                 </Typography>
                 <div className="notification-list">
                   {notifications.length > 0 ? (
-                    notifications.map((notification) => (
+                    (showAllNotifications ? notifications : notifications.slice(0, 4)).map((notification) => (
                       <div key={notification.id} className="notification-item">
                         <Typography variant="body1" style={{ fontWeight: "bold", color: "#333", height: "20px" }}>
                           {notification.title}
@@ -175,9 +181,15 @@ const Navbar = ({ namePage }) => {
                     </Typography>
                   )}
                 </div>
-                <Button className="view-more" variant="contained">
-                  VIEW MORE
-                </Button>
+                {notifications.length > 5 && (
+                  <Button 
+                    className="view-more" 
+                    variant="contained" 
+                    onClick={toggleShowAllNotifications}
+                  >
+                    {showAllNotifications ? 'VIEW LESS' : 'VIEW MORE'}
+                  </Button>
+                )}
               </div>
             )}
           </div>
