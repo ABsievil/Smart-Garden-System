@@ -1,5 +1,6 @@
 package hcmut.smart_garden_system.Services.RestfulAPI;
 
+import java.util.Comparator;
 import java.math.BigDecimal;
 import java.sql.Date; // Import java.sql.Date
 import java.time.LocalDate;
@@ -331,7 +332,15 @@ public class DashboardService {
                 map.put("datetime", n.getDatetime());
                 return map;
             }).collect(Collectors.toList());
-
+            
+            notificationList.sort(Comparator.comparing((Map<String, Object> m) -> {
+                Object datetime = m.get("datetime");
+                if (datetime instanceof LocalDateTime) {
+                    return (LocalDateTime) datetime;
+                }
+                return LocalDateTime.MIN; // Fallback for invalid types
+            }).reversed());
+            
             // Tạo Map kết quả trả về
             Map<String, Object> responseData = new LinkedHashMap<>();
             responseData.put("totalNotifications", totalNotifications);
