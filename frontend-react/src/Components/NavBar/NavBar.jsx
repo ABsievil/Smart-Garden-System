@@ -26,11 +26,19 @@ const Navbar = ({ namePage }) => {
         const response = await api.get(`/api/v1/dashboard/notifications/user/${userId}`);
         if (response.data.status === "OK") {
           const notificationData = response.data.data.notifications.map((notif, index) => {
-            const date = new Date(notif.datetime).toLocaleDateString('en-GB', {
+            // Format time and date separately and combine with time first
+            const dateObj = new Date(notif.datetime);
+            const time = dateObj.toLocaleTimeString('en-GB', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            });
+            const datePart = dateObj.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
-              year: 'numeric',
+              year: 'numeric'
             });
+            const date = `${time} ${datePart}`;
             // Extract title from content if possible (e.g., "Khu vực 1: Urgent issue")
             let title = "Thông báo";
             let description = notif.content;
