@@ -52,7 +52,7 @@ const Scheduler = () => {
     area: 1, // Default to integer 1
     employee: '',
     employeeId: null,
-    day: 1,
+    dateString: '', // Added dateString for dd/mm/yyyy input
   });
   const [notifData, setNotifData] = useState({
     content: '',
@@ -163,18 +163,46 @@ const Scheduler = () => {
       return;
     }
 
-    const day = taskData.day;
-    const daysInMonth = getDaysInMonth(month, year);
-    if (isNaN(day) || day < 1 || day > daysInMonth) {
-      setError(`Ngày không hợp lệ. Vui lòng chọn ngày từ 1 đến ${daysInMonth}`);
+    // --- Date Parsing and Validation ---
+    if (!taskData.dateString) {
+      setError('Vui lòng nhập ngày thực hiện (dd/mm/yyyy)');
       return;
     }
 
-    const eventDate = new Date(year, month, day);
-    if (isNaN(eventDate.getTime())) {
-      setError('Không thể tạo ngày hợp lệ từ dữ liệu đã chọn');
+    const dateParts = taskData.dateString.split('/');
+    if (dateParts.length !== 3) {
+      setError('Định dạng ngày không hợp lệ. Vui lòng nhập dd/mm/yyyy.');
       return;
     }
+
+    const day = parseInt(dateParts[0], 10);
+    const monthInput = parseInt(dateParts[1], 10); // 1-based month from input
+    const yearInput = parseInt(dateParts[2], 10);
+
+    if (isNaN(day) || isNaN(monthInput) || isNaN(yearInput)) {
+      setError('Ngày, tháng, hoặc năm không phải là số hợp lệ.');
+      return;
+    }
+
+    if (monthInput < 1 || monthInput > 12) {
+      setError('Tháng không hợp lệ. Vui lòng nhập tháng từ 1 đến 12.');
+      return;
+    }
+
+    // Validate day based on month and year (handles leap years)
+    const daysInMonthSelected = new Date(yearInput, monthInput, 0).getDate(); // monthInput is 1-based here
+    if (day < 1 || day > daysInMonthSelected) {
+      setError(`Ngày không hợp lệ cho tháng ${monthInput}. Vui lòng nhập ngày từ 1 đến ${daysInMonthSelected}.`);
+      return;
+    }
+
+    // Create Date object (month is 0-indexed for Date constructor)
+    const eventDate = new Date(yearInput, monthInput - 1, day);
+    if (isNaN(eventDate.getTime())) {
+      setError('Không thể tạo ngày hợp lệ từ dữ liệu đã nhập.');
+      return;
+    }
+    // --- End Date Parsing and Validation ---
 
     const formattedDate = formatDateForBackend(eventDate);
 
@@ -201,7 +229,7 @@ const Scheduler = () => {
           area: 1,
           employee: employees[0]?.name || '',
           employeeId: employees[0]?.userId || null,
-          day: 1,
+          dateString: '', // Reset dateString
         });
         setError(null);
       } else {
@@ -326,6 +354,28 @@ const Scheduler = () => {
     return days;
   };
 
+  // --- New handler for date input formatting ---
+  const handleDateInputChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    let formattedValue = '';
+
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 2); // dd
+    }
+    if (value.length >= 3) {
+      formattedValue += '/' + value.substring(2, 4); // mm
+    }
+    if (value.length >= 5) {
+      formattedValue += '/' + value.substring(4, 8); // yyyy
+    }
+
+    // Ensure the final value doesn't exceed dd/mm/yyyy format
+    formattedValue = formattedValue.substring(0, 10);
+
+    setTaskData({ ...taskData, dateString: formattedValue });
+  };
+  // --- End new handler ---
+
   return (
     <div className="sch-container">
       <div className="header">
@@ -408,21 +458,13 @@ const Scheduler = () => {
               )}
             </select>
             <label>Ngày thực hiện</label>
-            <select
-              value={taskData.day}
-              onChange={(e) => setTaskData({ ...taskData, day: parseInt(e.target.value) })}
-            >
-              {Array.from({ length: getDaysInMonth(month, year) }, (_, i) => {
-                const day = i + 1;
-                const date = new Date(year, month, day);
-                const dayName = daysOfWeek[(date.getDay() === 0 ? 6 : date.getDay() - 1)];
-                return (
-                  <option key={day} value={day}>
-                    {`${dayName}, ${day}th ${months[month]}`}
-                  </option>
-                );
-              })}
-            </select>
+            <input
+              type="text"
+              placeholder="dd/mm/yyyy"
+              value={taskData.dateString}
+              onChange={handleDateInputChange}
+              maxLength="10"
+            />
             <div className="sch-modal-buttons">
               <button onClick={() => setShowTaskModal(false)}>Hủy</button>
               <button onClick={handleTaskSubmit}>Thêm</button>
