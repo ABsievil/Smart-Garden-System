@@ -28,7 +28,6 @@ const ControlDevice = () => {
         
         if (response.data.status === "OK" && response.data.data?.information?.jobArea) {
           const jobArea = response.data.data.information.jobArea;
-          console.log("User jobArea:", jobArea);
           setAreaId(jobArea.toString()); // Ensure areaId is a string if needed later
         } else {
           console.error("Error fetching user profile or jobArea missing:", response.data.message || "No jobArea found");
@@ -71,7 +70,7 @@ const ControlDevice = () => {
           
           if (response.data.status === "OK") {
             const sensorData = response.data.data;
-            console.log("Sensor data:", sensorData);
+            // console.log("Sensor data:", sensorData);
             // Update sensor values into const [data, setData]
             setData(prevData => ({
               ...prevData,
