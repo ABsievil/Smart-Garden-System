@@ -221,6 +221,8 @@ const Scheduler = () => {
     }
 
     try {
+      // console.log("notifData", notifData);
+      // console.log("sendToAllAreas", sendToAllAreas);
       const response = await api.post('/api/v1/dashboard/notifications/broadcast', {
         content: notifData.content,
         areaId: sendToAllAreas ? null : notifData.area, // Send null if sending to all areas
@@ -440,18 +442,6 @@ const Scheduler = () => {
               value={notifData.content}
               onChange={(e) => setNotifData({ ...notifData, content: e.target.value })}
             />
-            <label>Gửi đến tất cả khu vực</label>
-            <input
-              type="checkbox"
-              checked={sendToAllAreas}
-              onChange={(e) => {
-                setSendToAllAreas(e.target.checked);
-                setNotifData({
-                  ...notifData,
-                  area: e.target.checked ? null : 1, // Set to null if checked, else default to 1
-                });
-              }}
-            />
             <label>Khu vực</label>
             <select
               value={notifData.area || ''} // Handle null area
@@ -464,6 +454,22 @@ const Scheduler = () => {
                 </option>
               ))}
             </select>
+            <div className="sch-send-all-container">
+              <input
+                type="checkbox"
+                id="sendToAllAreasCheckbox"
+                className="sch-send-all-checkbox"
+                checked={sendToAllAreas}
+                onChange={(e) => {
+                  setSendToAllAreas(e.target.checked);
+                  setNotifData({
+                    ...notifData,
+                    area: e.target.checked ? null : 1, // Set to null if checked, else default to 1
+                  });
+                }}
+              />
+              <label htmlFor="sendToAllAreasCheckbox" className="sch-send-all-label">Gửi đến tất cả khu vực</label>
+            </div>
             <div className="sch-modal-buttons">
               <button onClick={() => setShowNotifModal(false)}>Hủy</button>
               <button onClick={handleNotifSubmit}>Thêm</button>

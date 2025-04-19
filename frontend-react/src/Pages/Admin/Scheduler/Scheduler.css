@@ -360,3 +360,31 @@ h14 {
 .sch-task-details p strong {
   color: #34772e;
 }
+
+/* Styling for the 'Send to all areas' container in the notification modal */
+.sch-send-all-container {
+  display: flex;
+  align-items: center; /* Vertically align checkbox and label */
+  justify-content: flex-start; /* Align items to the start (checkbox first) */
+  margin-top: 15px; /* Add space above the checkbox container */
+  width: fit-content; /* Make container only as wide as needed */
+}
+
+/* Styling for the checkbox itself */
+.sch-send-all-checkbox {
+  width: 14px; /* Make checkbox smaller */
+  height: 14px; /* Make checkbox smaller */
+  margin: 0; /* Reset default margins */
+  margin-right: 4px; /* Add space to the right of the checkbox */
+  cursor: pointer;
+}
+
+/* Styling for the checkbox label */
+.sch-send-all-label {
+  margin: 0; /* Reset default label margins */
+  display: inline; /* Keep label inline with checkbox */
+  height: auto; /* Allow label height to adjust */
+  color: #2c3e50; /* Match other label colors */
+  cursor: pointer;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
