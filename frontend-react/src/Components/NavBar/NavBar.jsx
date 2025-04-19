@@ -13,18 +13,17 @@ const Navbar = ({ namePage }) => {
   const [error, setError] = useState(null); // Add error state for UI feedback
   const navigate = useNavigate();
 
-  const currentUsername=localStorage.getItem('username');
-  const currentUserId=localStorage.getItem('userId');
-  // Load viewed notification IDs from localStorage
+  const currentUsername = localStorage.getItem('username');
   const [viewedNotifications, setViewedNotifications] = useState(() => {
     const saved = localStorage.getItem('viewedNotifications');
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchNotifications = async (userId) => {
       try {
-        const response = await api.get(`/api/v1/dashboard/notifications/user/${currentUserId}`);
+        // console.log("currentUserId: " + userId);
+        const response = await api.get(`/api/v1/dashboard/notifications/user/${userId}`);
         if (response.data.status === "OK") {
           const notificationData = response.data.data.notifications.map((notif, index) => {
             const date = new Date(notif.datetime).toLocaleDateString('en-GB', {
@@ -68,11 +67,9 @@ const Navbar = ({ namePage }) => {
         });
         if (response.data.status === "OK") {
           const userData = response.data.data;
-          // localStorage.setItem('userId', userData.userId);
-          console.log("name" + response.data.data.name);
           setUser({
-            name: userData.information.lname + ' ' + userData.information.fname ,
-            role: userData.role ,
+            name: userData.information.lname + ' ' + userData.information.fname,
+            role: userData.role,
           });
           setError(null);
         } else {
@@ -88,9 +85,21 @@ const Navbar = ({ namePage }) => {
       }
     };
 
-    fetchNotifications();
+    // Use a while loop to keep checking for currentUserId until it's not null
+    const checkUserIdAndFetch = async () => {
+      let currentUserId = localStorage.getItem('userId');
+      while (!currentUserId) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait 1 second before retrying
+        currentUserId = localStorage.getItem('userId');
+      }
+      // Once currentUserId is not null, fetch notifications
+      await fetchNotifications(currentUserId);
+    };
+
+    // Start the userId checking and notification fetching process
+    checkUserIdAndFetch();
     fetchUser();
-  }, []);
+  }, [currentUsername, viewedNotifications]);
 
   // Update viewed notifications when the dropdown is opened
   const toggleNotificationDropdown = () => {
