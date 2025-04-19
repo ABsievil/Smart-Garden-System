@@ -18,6 +18,7 @@
     "axios": "^1.8.3",
     "chart.js": "^4.4.8",
     "frontend-react": "file:",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "mui-one-time-password-input": "^3.0.2",
     "react": "^19.0.0",

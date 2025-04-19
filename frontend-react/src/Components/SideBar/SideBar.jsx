@@ -11,17 +11,24 @@ import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { logout } from "../../redux/action";
 import api from "./../../api";
+import Cookies from 'js-cookie';
 import './SideBar.css';
 const Sidebar = () => {
     const dispatch = useDispatch();
+    
     const handleLogout = async () => {
-    try{
-        api.post('api/logout');
-        dispatch(logout());
-    }catch(e){
-        console.error(e);
-    }
+        try {
+            // await api.post('api/logout');
+            // Clear all localStorage
+            localStorage.clear();
+            // Remove jwt cookie
+            Cookies.remove('jwt');
+            dispatch(logout());
+        } catch (e) {
+            console.error(e);
+        }
     };
+
     const userRole = localStorage.getItem("role");
     return (
     <div className="sidebar">
