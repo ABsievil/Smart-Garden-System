@@ -125,34 +125,82 @@ const UserProfile = () => {
     };
 
     const handleSaveProfile = () => {
-        // Add API call for updating profile if available
-        /*
+        // console.log("Saving profile:", editProfile); // Debug log
+
         const updateProfile = async () => {
             const username = localStorage.getItem("username");
              if (!username) {
-                 console.error("Username not found");
+                 console.error("Username not found for update");
+                 alert("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
                  return;
              }
+
+             // Map frontend state to backend DTO
+            const nameParts = editProfile.name.trim().split(' ');
+            const fname = nameParts[nameParts.length - 1] || ''; // Last word as fname
+            const lname = nameParts.slice(0, -1).join(' ') || ''; // All words except the last as lname
+
+             const payload = {
+                 username: username,
+                 email: editProfile.email, // User field
+                 // PersonalInformation fields from the modal
+                 lname: lname,
+                 fname: fname,
+                 address: editProfile.dob, // 'dob' in state maps to address
+                 phoneNumber: editProfile.phone,
+                 sex: editProfile.gender,
+                 // Add other fields here if they become editable in the modal
+                 // ssn: editProfile.ssn,
+                 // date: editProfile.date, // Needs date formatting if used
+                 // salary: editProfile.salary,
+                 // jobName: editProfile.role, // Assuming 'role' maps to jobName
+                 // jobArea: editProfile.jobArea
+             };
+
+             // console.log("Update payload:", payload); // Debug log
+
             try {
-                 // Assuming an endpoint like /api/v1/users/update-profile exists
-                 // And expects data similar to editProfile + username
-                 const payload = { ...editProfile, username };
-                 const response = await api.put('/api/v1/users/update-profile', payload);
+                 // Use the correct endpoint from backend setup
+                 const response = await api.post('/api/v1/users/update-profile', payload);
+                //  console.log("Update response:", response); // Debug log
+
                  if (response.data.status === "OK") {
-                     setProfile({ ...editProfile }); // Update profile state locally
-                     console.log("Profile updated successfully:", response.data.data);
+                     // Option 1: Use data returned from backend if available and matches frontend structure
+                     const updatedProfileData = response.data.data;
+                     if (updatedProfileData) {
+                         const mappedProfile = {
+                            name: updatedProfileData.information.lname + " " + updatedProfileData.information.fname || '',
+                            role: updatedProfileData.information.jobName || 'N/A',
+                            dob: updatedProfileData.information.address || '',
+                            phone: updatedProfileData.information.phoneNumber || '',
+                            email: updatedProfileData.email || '',
+                            gender: updatedProfileData.information.sex || '',
+                         };
+                         setProfile(mappedProfile);
+                         // Also update edit form state in case user reopens it without refresh
+                         setEditProfile(mappedProfile);
+                     } else {
+                        // Option 2: Update profile state locally with edited data (fallback)
+                         setProfile({ ...editProfile });
+                     }
+                     console.log("Profile updated successfully");
+                     alert("Cập nhật thông tin thành công!");
+                     toggleEditModal(); // Close modal on success
                  } else {
-                     console.error("Error updating profile:", response.data.message);
+                     console.error("Error updating profile - API:", response.data.message);
+                     alert(`Cập nhật thất bại: ${response.data.message}`);
                  }
             } catch (error) {
-                console.error("Error updating profile:", error);
+                console.error("Error updating profile - Exception:", error);
+                if (error.response) {
+                    console.error('Update error response data:', error.response.data);
+                    alert(`Lỗi cập nhật: ${error.response.data.message || 'Lỗi không xác định từ máy chủ'}`);
+                } else {
+                    alert('Đã xảy ra lỗi khi kết nối đến máy chủ để cập nhật thông tin.');
+                }
             }
         };
         updateProfile();
-        */
-        // Local update for now
-        setProfile({ ...editProfile });
-        toggleEditModal();
     };
 
     const handleChangePassword = () => {

@@ -1,6 +1,8 @@
 package hcmut.smart_garden_system.Services.RestfulAPI;
 import hcmut.smart_garden_system.DTOs.ResponseObject;
+import hcmut.smart_garden_system.DTOs.RestfulAPI.UpdateProfileDTO;
 import hcmut.smart_garden_system.DTOs.RestfulAPI.UserProfileDTO;
+import hcmut.smart_garden_system.Models.PersonalInformation;
 import hcmut.smart_garden_system.Models.User;
 import hcmut.smart_garden_system.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,73 @@ public class UserService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseObject("ERROR", "Failed to reset password: " + e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ResponseObject> updateProfile(UpdateProfileDTO updateProfileDTO) {
+        try {
+            User user = userRepository.findByUsername(updateProfileDTO.getUsername());
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject("NOT_FOUND", "User not found with username: " + updateProfileDTO.getUsername(), null));
+            }
+
+            // Update User fields if provided
+            if (updateProfileDTO.getEmail() != null) {
+                user.setEmail(updateProfileDTO.getEmail());
+            }
+
+            // Update PersonalInformation fields if provided
+            PersonalInformation info = user.getInformation();
+            if (info == null) { // Initialize if null
+                info = new PersonalInformation();
+                user.setInformation(info);
+            }
+
+            if (updateProfileDTO.getSsn() != null) {
+                info.setSsn(updateProfileDTO.getSsn());
+            }
+            if (updateProfileDTO.getSex() != null) {
+                info.setSex(updateProfileDTO.getSex());
+            }
+            if (updateProfileDTO.getFname() != null) {
+                info.setFname(updateProfileDTO.getFname());
+            }
+            if (updateProfileDTO.getLname() != null) {
+                info.setLname(updateProfileDTO.getLname());
+            }
+            if (updateProfileDTO.getDate() != null) {
+                info.setDate(updateProfileDTO.getDate());
+            }
+            if (updateProfileDTO.getSalary() != null) {
+                info.setSalary(updateProfileDTO.getSalary());
+            }
+            if (updateProfileDTO.getPhoneNumber() != null) {
+                info.setPhoneNumber(updateProfileDTO.getPhoneNumber());
+            }
+            if (updateProfileDTO.getAddress() != null) {
+                info.setAddress(updateProfileDTO.getAddress());
+            }
+            if (updateProfileDTO.getJobName() != null) {
+                info.setJobName(updateProfileDTO.getJobName());
+            }
+            if (updateProfileDTO.getJobArea() != null) {
+                info.setJobArea(updateProfileDTO.getJobArea());
+            }
+
+            userRepository.save(user);
+
+            UserProfileDTO updatedUserProfile = UserProfileDTO.fromUser(user); // Return updated profile
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject("OK", "Profile updated successfully", updatedUserProfile));
+
+        } catch (Exception e) {
+            System.err.println("Error updating profile for username " + updateProfileDTO.getUsername() + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject("ERROR", "Failed to update profile: " + e.getMessage(), null));
         }
     }
 }
