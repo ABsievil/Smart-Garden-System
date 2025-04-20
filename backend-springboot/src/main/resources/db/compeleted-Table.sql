@@ -37,6 +37,15 @@ CREATE TABLE otp (
     CONSTRAINT pk_otp PRIMARY KEY (otp, email)
 );
 
+-- Xóa khóa chính hiện tại
+ALTER TABLE otp DROP CONSTRAINT pk_otp;
+
+-- Thay đổi kiểu dữ liệu của cột email từ INTEGER thành VARCHAR(255)
+ALTER TABLE otp ALTER COLUMN email TYPE VARCHAR(255);
+
+-- Tạo lại khóa chính với cột email đã đổi kiểu
+ALTER TABLE otp ADD CONSTRAINT pk_otp PRIMARY KEY (otp, email);
+
 -- Bảng Notification
 CREATE TABLE notification (
     user_id INTEGER,
