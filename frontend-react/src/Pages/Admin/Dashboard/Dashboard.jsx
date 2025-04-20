@@ -667,20 +667,20 @@ const Dashboard = () => {
 
       {/* Biểu đồ đường - Nhiệt độ trung bình */}
       <div className="chart-container">
-        <h4>Nhiệt độ trung bình</h4>
+        <h4>NHIỆT ĐỘ TRUNG BÌNH</h4>
         <Line data={lineChartData} options={{ responsive: true }} />
       </div>
 
       {/* Biểu đồ cột - Tình trạng */}
       <div className="chart-container">
-        <h4>Tình trạng</h4>
+        <h4>ĐỘ ẨM TUẦN QUA</h4>
         <Bar data={barChartData} options={{ responsive: true }} />
       </div>
 
       {/* Bảng thông tin */}
       <div className="table-container" ref={printRef}>
         <div className="table-header">
-          <h4>Thống kê (Trung bình)</h4>
+          <h4>THỐNG KÊ (TRUNG BÌNH)</h4>
           {/* <div className="custom-select-wrapper">
             <select
               value={monthFilter}

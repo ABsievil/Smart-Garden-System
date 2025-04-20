@@ -311,7 +311,7 @@ toggleModal(); // Close modal after editing
         <thead>
           <tr>
             <th>Tên cây</th>
-            <th>Độ ẩm đầu cuối</th>
+            <th>Độ ẩm đề xuất</th>
             <th>Mùa vụ</th>
             <th>Ngày thu hoạch dự kiến</th>
             <th>Số lượng</th>
@@ -394,7 +394,7 @@ toggleModal(); // Close modal after editing
                 onChange={handleInputChange}
                 placeholder="Nhập tên cây"
               />
-              <label>Độ ẩm đầu cuối</label>
+              <label>Độ ẩm đề xuất</label>
               <input
                 type="number"
                 step="0.01"
