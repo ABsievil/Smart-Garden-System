@@ -185,12 +185,12 @@ const ScheduleViewing = () => {
 
   const getFormattedDate = (date) => {
     const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    return date.toLocaleDateString('vi-VN', options);
   };
 
   const getTaskDate = (date) => {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    return date.toLocaleDateString('vi-VN', options);
   };
 
   const taskColors = ['#27ae60', '#e74c3c', '#f1c40f', '#34772e'];
@@ -198,7 +198,7 @@ const ScheduleViewing = () => {
   return (
     <div className="sch-container">
       <div className="header">
-        <h13>Events</h13>
+        <h13>Lịch Trình</h13>
         <Navbar />
       </div>
       {error && <div className="error-message">{error}</div>}
@@ -206,7 +206,7 @@ const ScheduleViewing = () => {
       <div style={{ display: 'flex', gap: '20px' }}>
         <div className="sch-calendar-container" style={{ width: '70%' }}>
           <div className="sch-scheduler-header">
-            <h14>Calendar</h14>
+            <h14 style={{ color: "white" }}>Calendar</h14>
             <div className="sch-select-button">
               <select value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
                 {months.map((m, index) => (
@@ -222,7 +222,7 @@ const ScheduleViewing = () => {
               </select>
             </div>
             <div className="sch-notification-button">
-              <button onClick={handleAddNotification}>+ New Notification</button>
+              <button onClick={handleAddNotification}>+ Thêm thông báo</button>
             </div>
           </div>
           
@@ -235,8 +235,8 @@ const ScheduleViewing = () => {
         </div>
 
         <div className="sch-weekly-tasks" style={{ width: '30%' }}>
-          <h3 className="sch-weekly-title">Schedule Details</h3>
-          <p className="sch-weekly-date">{getFormattedDate(new Date(2025, 3, 15))}</p>
+          <h3 className="sch-weekly-title">Chi Tiết</h3>
+          <p className="sch-weekly-date">Hôm nay là {getFormattedDate(new Date())}</p>
           {weeklyTasks.length > 0 ? (
             weeklyTasks.map((task, index) => (
               <div
@@ -250,9 +250,9 @@ const ScheduleViewing = () => {
               </div>
             ))
           ) : (
-            <p className="sch-no-tasks">No tasks scheduled for this week.</p>
+            <p className="sch-no-tasks">Không có công việc nào trong tuần này.</p>
           )}
-          <button className="view-more-task">View More</button>
+          <button className="view-more-task">Xem Thêm</button>
         </div>
       </div>
 
@@ -293,17 +293,17 @@ const ScheduleViewing = () => {
         <div className="sch-modal">
           <div className="sch-modal-content">
             <button className="sch-close-btn" onClick={() => setShowNotifModal(false)}>✖</button>
-            <h3>Send Notification to Admin</h3>
-            <label>Content</label>
+            <h3>Gửi thông báo tới Admin</h3>
+            <label>Nội dung</label>
             <input
               type="text"
               value={notifData.content}
               onChange={(e) => setNotifData({ ...notifData, content: e.target.value })}
-              placeholder="Enter important situation..."
+              placeholder="Nhập nội dung..."
             />
             <div className="sch-modal-buttons">
-              <button onClick={() => setShowNotifModal(false)}>Cancel</button>
-              <button onClick={handleNotifSubmit}>Send</button>
+              <button onClick={() => setShowNotifModal(false)}>Hủy</button>
+              <button onClick={handleNotifSubmit}>Gửi ngay</button>
             </div>
           </div>
         </div>
