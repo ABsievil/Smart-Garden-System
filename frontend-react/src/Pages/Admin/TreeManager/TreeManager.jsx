@@ -313,7 +313,7 @@ toggleModal(); // Close modal after editing
             <th>Tên cây</th>
             <th>Độ ẩm đầu cuối</th>
             <th>Mùa vụ</th>
-            <th>Thời gian sinh trưởng</th>
+            <th>Ngày thu hoạch dự kiến</th>
             <th>Số lượng</th>
             <th>Action</th>
           </tr>
@@ -411,7 +411,7 @@ toggleModal(); // Close modal after editing
                 onChange={handleInputChange}
                 placeholder="Nhập mùa vụ"
               />
-              <label>Thời gian sinh trưởng</label>
+              <label>Ngày thu hoạch dự kiến</label>
               <input
                 type="text"
                 name="growthTime"

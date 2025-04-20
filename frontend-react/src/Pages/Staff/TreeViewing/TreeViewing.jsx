@@ -99,7 +99,7 @@ const TreeView = () => {
             <th>Tên cây</th>
             <th>Độ ẩm đầu cuối</th>
             <th>Mùa vụ</th>
-            <th>Thời gian sinh trưởng</th>
+            <th>Ngày thu hoạch dự kiến</th>
             <th>Số lượng</th>
           </tr>
         </thead>
