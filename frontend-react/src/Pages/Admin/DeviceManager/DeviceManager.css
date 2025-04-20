@@ -217,6 +217,7 @@
   }
   
   .pagination-controls {
+    width: fit-content;
     display: flex;
     gap: 8px;
   }
@@ -234,6 +235,7 @@
     cursor: pointer;
     font-size: 14px;
     color: #555;
+    margin: 0 auto;
   }
   
   .page-button.active {

@@ -119,9 +119,9 @@ const TreeView = () => {
         </tbody>
       </table>
       <div className="pagination">
-        <span>
+        {/* <span>
           SHOWING {indexOfFirstPlant + 1}-{Math.min(indexOfLastPlant, filteredPlants.length)} OF {filteredPlants.length} DATA
-        </span>
+        </span> */}
         <div className="pagination-controls">
           <button
             className="page-button"

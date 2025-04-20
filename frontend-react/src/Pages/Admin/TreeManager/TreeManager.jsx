@@ -354,7 +354,7 @@ toggleModal(); // Close modal after editing
         </tbody>
       </table>
       <div className="pagination">
-        <span>SHOWING {indexOfFirstPlant + 1}-{Math.min(indexOfLastPlant, filteredPlants.length)} OF {filteredPlants.length} DATA</span>
+        {/* <span>SHOWING {indexOfFirstPlant + 1}-{Math.min(indexOfLastPlant, filteredPlants.length)} OF {filteredPlants.length} DATA</span> */}
         <div className="pagination-controls">
           <button
             className="page-button"

@@ -207,23 +207,23 @@
   width: 95%;
   background-color: #ffffff; /* Light green background */
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-top: 20px;
   font-size: 14px;
- 
   color: #555;
   margin-top: 0;
-  margin-right: 5%;
   border-radius: 0 12px;
 }
 
 .pagination-controls {
+  width: fit-content;
   display: flex;
   gap: 8px;
 }
 
 .page-button {
+  margin: 0 auto;
   width: 32px;
   height: 32px;
   border: 1px solid #ddd;

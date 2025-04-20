@@ -308,7 +308,7 @@ const DeviceManager = () => {
         </tbody>
       </table>
       <div className="pagination">
-        <span>SHOWING {indexOfFirstDevice + 1}-{Math.min(indexOfLastDevice, filteredDevices.length)} OF {filteredDevices.length} DATA</span>
+        {/* <span>SHOWING {indexOfFirstDevice + 1}-{Math.min(indexOfLastDevice, filteredDevices.length)} OF {filteredDevices.length} DATA</span> */}
         <div className="pagination-controls">
           <button
             className="page-button"

@@ -184,9 +184,7 @@ const StaffManagement = () => {
         )}
       </div>
       <div className="pagination" style={{ backgroundColor: "transparent" }}>
-        <span style={{ backgroundColor: "transparent", width: "100%" }}>
-          SHOWING {indexOfFirstStaff + 1}-{Math.min(indexOfLastStaff, filteredStaff.length)} OF {filteredStaff.length} DATA
-        </span>
+          {/* SHOWING {indexOfFirstStaff + 1}-{Math.min(indexOfLastStaff, filteredStaff.length)} OF {filteredStaff.length} DATA */}
         <div className="pagination-controls">
           <button
             className="page-button"
