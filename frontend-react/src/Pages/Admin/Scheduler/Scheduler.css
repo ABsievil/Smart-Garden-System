@@ -1,0 +1,390 @@
+.sch-container {
+  background-color: #f0f8e7; /* Light green background */
+  width: 100%;
+  min-height: calc(100vh - 32px);
+  padding: 25px;
+  border-radius: 12px;
+  margin-left: 20px;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+}
+
+h13 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #34772e; /* Dark green for the title */
+  margin: 0;
+}
+
+h14 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #34772e; /* Dark green for the title */
+  margin: 0;
+  padding-right: 30%;
+}
+
+.sch-calendar-container {
+  background-color: #fff; /* White background for calendar */
+  width: 100%;
+  padding: 25px;
+  height: 100%;
+  border-radius: 12px;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+}
+
+.sch-calendar-container .sch-scheduler-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  height: 20px;
+  gap: 10px;
+}
+
+.sch-select-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5; /* Light gray background */
+  border: 1px solid #34772e; /* Dark green border */
+  border-radius: 20px; /* Rounded corners */
+  padding: 0;
+  height: 40px;
+  width: 500px;
+  margin-top: 20px;
+}
+
+.sch-scheduler-header select {
+  padding: 8px 24px 8px 12px; /* Adjusted padding for arrow space */
+  border: none; /* Remove default border */
+  background: transparent; /* Transparent background */
+  font-size: 14px;
+  color: #34772e; /* Dark green text */
+  appearance: none; /* Remove default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px; /* Match container border radius */
+}
+
+.sch-scheduler-header select:focus {
+  outline: none; /* Remove default focus outline */
+}
+
+/* Custom dropdown arrow */
+.sch-select-button {
+  position: relative;
+  border-radius: 30px; /* Dark green border */
+  background-color: #f5f5f5; /* Light gray background */
+}
+
+.sch-select-button::after {
+  content: '▼'; /* Downward arrow */
+  position: absolute;
+  right: 12px;
+  color: #34772e; /* Dark green arrow */
+  font-size: 12px;
+  pointer-events: none; /* Prevent arrow from interfering with clicks */
+}
+
+.sch-scheduler-header button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px; /* Match dropdown button style */
+  font-size: 14px;
+  height: 40px;
+}
+
+.sch-scheduler-header button:hover {
+  background-color: #219653;
+}
+
+.sch-scheduler-header .sch-notification-button {
+  background-color: transparent; /* Light gray background */
+}
+
+.sch-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 50px;
+  margin-top: -30px;
+}
+
+.sch-day-header {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  background-color: transparent;
+  border-radius: 4px;
+  height: 0px;
+  color: #2c5038;
+  margin-bottom: -30px;
+}
+
+.sch-day {
+  padding: 20px;
+  border: 1px solid #ddd;
+  min-height: 80px;
+  position: relative;
+  background-color: #fff;
+  color: #2c3e50;
+  height: 125px;
+  border-radius: 40px;
+  margin-bottom: -30px;
+  cursor: pointer;
+}
+
+.sch-day.sch-event {
+  border: 2px solid #e74c3c;
+}
+
+.sch-day-number {
+  font-weight: bold;
+}
+
+.sch-event-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -10%;
+  margin-bottom: -10%;
+  padding: 0 10px;
+  margin-left: 10px;
+}
+
+.sch-event-dot-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.sch-event-dot {
+  width: 24px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.sch-event-dot:hover {
+  transform: scale(1.2);
+}
+
+.sch-event-tooltip {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+}
+
+.sch-event-dot-wrapper:hover .sch-event-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.sch-event-tooltip p {
+  margin: 5px 0;
+}
+
+.sch-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sch-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 40%;
+  position: relative;
+  height: fit-content;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.sch-modal-content h3 {
+  margin-top: 0;
+  color: #27ae60;
+  height: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sch-modal-content label {
+  display: block;
+  margin: 10px 0 5px;
+  color: #2c3e50;
+  height: 20px;
+}
+
+.sch-modal-content input, .sch-modal-content select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.sch-modal-buttons {
+  margin-top: 20px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sch-modal-buttons button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sch-modal-buttons button:first-child {
+  background-color: #fff;
+  color: #2c3e50;
+  border: 1px solid #ccc;
+}
+
+.sch-modal-buttons button:last-child {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+}
+
+.sch-modal-buttons button:last-child:hover {
+  background-color: #219653;
+}
+
+.sch-close-btn {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: flex;
+  justify-content: flex-end;
+  width: 0%;
+  height: 5%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #2c3e50;
+  font-size: 16px;
+  padding: 10px;
+}
+.sch-close-btn:hover,
+.sch-close-btn:focus,
+.sch-close-btn:active {
+    color: #555;
+    background: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.sch-task-list {
+  margin-top: 20px;
+}
+
+.sch-task-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.sch-task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sch-task-item p {
+  margin: 5px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.sch-task-item p strong {
+  color: #34772e;
+}
+
+.sch-no-tasks {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.sch-task-details {
+  background-color: #f0f8e7;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.sch-task-details p {
+  margin: 5px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.sch-task-details p strong {
+  color: #34772e;
+}
+
+/* Styling for the 'Send to all areas' container in the notification modal */
+.sch-send-all-container {
+  display: flex;
+  align-items: center; /* Vertically align checkbox and label */
+  justify-content: flex-start; /* Align items to the start (checkbox first) */
+  margin-top: 15px; /* Add space above the checkbox container */
+  width: fit-content; /* Make container only as wide as needed */
+}
+
+/* Styling for the checkbox itself */
+.sch-send-all-checkbox {
+  width: 14px; /* Make checkbox smaller */
+  height: 14px; /* Make checkbox smaller */
+  margin: 0; /* Reset default margins */
+  margin-right: 4px; /* Add space to the right of the checkbox */
+  cursor: pointer;
+}
+
+/* Styling for the checkbox label */
+.sch-send-all-label {
+  margin: 0; /* Reset default label margins */
+  display: inline; /* Keep label inline with checkbox */
+  height: auto; /* Allow label height to adjust */
+  color: #2c3e50; /* Match other label colors */
+  cursor: pointer;
+  white-space: nowrap; /* Prevent text from wrapping */
+}

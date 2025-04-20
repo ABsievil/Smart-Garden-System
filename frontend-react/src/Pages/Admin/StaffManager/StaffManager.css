@@ -1,0 +1,239 @@
+.staff-management {
+  background-color: #f0f8e7; /* Light green background */
+  width: 100%;
+  min-height: calc(100vh - 32px);
+  padding: 25px;
+  border-radius: 12px;
+  margin-left: 20px;
+  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    height: 20px;
+  }
+  
+  .header h7 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #34772e; /* Dark green for the title */
+    margin: 0;
+  }
+  
+  
+  .actions3 {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: -20px;
+    height: 80px;
+    margin-top: -30px;
+  }
+  
+  .search-bar {
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 400px;
+    height: 40px;
+  }
+  
+  
+  .add-button {
+    background-color: #4CAF50;
+    color: white;
+    width: 300px;
+    height: 40px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .add-button:hover {
+    background-color: #45a049;
+  }
+  
+  .staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+    height:fit-content;
+  }
+  
+  .staff-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    
+  }
+  
+  .avatar {
+    width: 80px;
+    height: 80px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+  }
+  
+  .staff-card h11 {
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    margin: 0px;
+    font-size: 20px;
+    color: #333;
+    gap: 5px;
+    padding: 5px 0;
+  }
+  
+  .staff-card .member-id {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #777;
+    font-weight: bold;
+  }
+  
+  .staff-grid .staff-card h12 {
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    margin: 5px 0 0;
+    font-size: 20px;
+    color: #555;
+    white-space: pre-line;
+  }
+  
+  .pagination {
+    height: 60px;
+    width: 95%;
+    background-color: transparent; /* Light green background */
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+    margin-top: 0;
+    margin-right: 5%;
+    border-radius: 0 12px;
+  }
+  
+  .pagination-controls {
+    width: fit-content;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .page-button {
+    margin: 0 auto;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    margin-top: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .page-button.active {
+    background-color: #34772e;
+    color: white;
+    border-color: #34772e;
+  }
+  
+  .page-button:hover:not(.active) {
+    background-color: #f5f5f5;
+  }
+  
+  /* Modal styles */
+  .modal-overlay1 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .modal1 {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 40%;
+    height: 70%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal1 h3 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    color: #333;
+    height: 20px;
+    font-weight: bold;
+  }
+  
+  .modal-content1 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 60px;
+  }
+  
+  .modal-content1 label {
+    font-size: 17px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .modal-content1 input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    height: 40px;
+  }
+  
+  .modal-overlay1  .modal-actions1 {
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    margin-top: 28%;
+  }
+  
+  .model-actions1 .cancel-button {
+    background-color: #ccc;
+    color: #333;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    width: 100px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .cancel-button:hover {
+    background-color: #bbb;
+  }

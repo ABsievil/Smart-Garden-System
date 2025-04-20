@@ -9,11 +9,10 @@ function Layout2() {
         <Sidebar />
       </div>
       <main className="content-container">
-        {/* <div className={"header-container"}>
-          <Header />
-        </div> */}
+       
         <div className="content-double">
           <div className="component-change">
+        
             <Outlet />
           </div>
         </div>

@@ -1,0 +1,449 @@
+/* General Dashboard Styles */
+.dashboard {
+  background-color: #f0f8e7; /* Light green background */
+  width: 100%;
+  min-height: calc(100vh - 32px);
+  padding: 25px;
+  border-radius: 12px;
+  margin-left: 20px;
+  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Header Styles */
+.header {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 1px;
+}
+
+.header h6 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #34772e; /* Dark green for the title */
+  margin: 0;
+  width: 20%;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 80%;
+}
+
+/* Garden Dropdown Styles */
+.garden-dropdown {
+  position: relative;
+  width: 300px;
+}
+
+.garden-button {
+  background-color: transparent;
+  color: #34772e;
+  padding: 8px;
+  width: 80%;
+  border: 2px solid #34772e;
+  border-radius: 20px;
+  font-size: 17px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.garden-button:hover {
+  background-color: #576456;
+  color: #fff;
+}
+
+.garden-dropdown-menu {
+  position: absolute;
+  top: 40px; /* Adjust as needed based on button height */
+  left: 0; /* Align with the left edge of the parent */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 80%; /* Match the button width */
+  height: auto;
+}
+
+.garden-dropdown-item {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.garden-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.garden-dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.summary-cards {
+  display: flex;
+  height: 200px;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.card {
+  width: 80%;
+  height: 200px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.card h4 {
+  height: 60px;
+  text-align: center;
+  font-weight: bold;
+  margin: 0;
+  margin-top: 30px;
+  font-size: 30px;
+  color: #333;
+}
+
+.card h5 {
+  margin: 0;
+  font-size: 60px;
+  text-align: center;
+  font-weight: bold;
+  color: #FF6F61;
+}
+
+.card .icon3 {
+  width: 90px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-left: 30px;
+}
+
+.card .plants-icon {
+  background-color: #4CAF50;
+  font-size: 30px;
+}
+
+.card .tasks-icon {
+  background-color: #FF6F61;
+  font-size: 30px;
+}
+
+.card .warnings-icon {
+  background-color: #F4A261;
+  font-size: 30px;
+}
+
+.card .sensors-icon {
+  background-color: #333;
+  font-size: 30px;
+}
+
+.chart-container {
+  background-color: #fff;
+  height: 900px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.chart-container h4 {
+  height: 30px;
+  margin: 0 0 10px;
+  font-weight: bold;
+  font-size: 30px;
+  color: #333;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 20px;
+  height: auto;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* Add horizontal scroll for small screens */
+}
+
+.table-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.table-header h4 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Style for the custom select dropdown */
+.custom-select-wrapper {
+  position: relative;
+  margin-top: 40px;
+  width: 200px;
+  height: 70px;
+}
+
+.custom-select {
+  border: 1px solid #4CAF50; /* Green border */
+  border-radius: 80px; /* Rounded border */
+  height: 40px;
+  font-size: 15px;
+  background-color: #fff; /* White background */
+  padding: 8px 24px 8px 12px;
+  width: 100%;
+  appearance: none; /* Remove default arrow */
+  cursor: pointer;
+}
+
+.custom-select-wrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 12px;
+  top: 30%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+  padding: 20px;
+}
+
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: #FF6F61;
+  padding: 20px;
+}
+
+/* Custom table styling */
+.custom-table {
+  width: 100%;
+  table-layout: fixed; /* Fixed layout for better control */
+  border-collapse: collapse;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 15px;
+  text-align: center;
+  font-size: 16px;
+  color: #31511e;
+  word-wrap: break-word; /* Allow text wrapping */
+  overflow: hidden; /* Hide overflow content */
+}
+
+.custom-table th {
+  background-color: #f0ffef;
+  color: #1b2e11;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.custom-table td {
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Sort button styling */
+.sort-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 5px;
+  color: #333;
+}
+
+/* Sort dropdown styling */
+.sort-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: 150px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.sort-dropdown button {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.sort-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Print button styling */
+.print-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.print-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Pagination styling */
+.pagination1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  padding: 10px 0;
+  width: auto;
+  gap: 8px;
+}
+
+.pagination-button1 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ddd;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pagination-button1:hover {
+  background-color: #ccc;
+}
+
+.pagination-button1.active {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.pagination-button1:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Styles for filter controls container */
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center; /* Align items vertically */
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 992px) {
+  .summary-cards {
+    flex-wrap: wrap;
+    height: auto;
+  }
+  
+  .card {
+    min-width: 45%;
+    margin-bottom: 15px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .header h6 {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .garden-dropdown {
+    width: 100%;
+  }
+  
+  .card {
+    min-width: 100%;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  /* Stack filters vertically on smaller screens */
+  .filter-controls {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch; /* Stretch items to fill width */
+    gap: 10px; /* Adjust gap for vertical layout */
+    margin-top: 10px; /* Add some space above filters */
+  }
+  
+  .garden-dropdown {
+    width: 100%;
+  }
+}

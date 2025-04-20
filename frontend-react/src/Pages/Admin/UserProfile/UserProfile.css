@@ -1,0 +1,320 @@
+.usr-profile {
+    background-color: #f0f8e7; /* Light green background */
+    width: 100%;
+    min-height: calc(100vh - 32px);
+    padding: 25px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+
+.usr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #34772e; /* Dark green header */
+    padding: 15px 25px;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.usr-header h13 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff; /* White text for the title */
+    margin: 0;
+}
+
+.usr-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.usr-decor {
+    position: relative;
+    height: 200px;
+    
+    border-radius: 12px 12px 0 0;
+    background-color: #34772e; /* Match the header color */
+   /* Overlap with header */
+  
+}
+
+.usr-decor-oval {
+    position: absolute;
+    width: 150px;
+    height: 100px;
+    background-color: #4CAF50; /* Green oval */
+    border-radius: 60px;
+    left: 25px;
+    top: 0;
+}
+
+.usr-profile-container {
+    background-color: #fff; /* White background for content */
+    border-radius:12px;
+    padding: 0  0 0 0;
+    box-sizing: border-box;
+    height: 700px;
+}
+
+.usr-content {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    align-items: flex-start;
+}
+
+.usr-info-section {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
+    margin-top: 200px;
+}
+
+.usr-info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    height: 40px;
+    margin-left: 40px;;
+     /* Light gray background for info items */
+}
+
+.usr-icon {
+    width: 30px;
+    height: 20px;
+    background-color: transparent; /* Yellow icon background */
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4CAF50; /* Green color for icons */
+    font-size: 16px;
+  
+}
+
+.usr-dob-icon::before {
+    content: '📍'; /* Location icon */
+    font-size: 16px;
+}
+
+.usr-phone-icon::before {
+    content: '📞'; /* Phone icon */
+    font-size: 16px;
+}
+
+.usr-email-icon::before {
+    content: '✉️'; /* Email icon */
+    font-size: 16px;
+}
+
+.usr-gender-icon::before {
+    content: '♂️'; /* Gender icon */
+    font-size: 16px;
+}
+
+.usr-info-item span {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.usr-avatar-section {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-top: -100px;
+    height: 100px;
+    padding: 25px;
+    gap: 20px;
+}
+
+.usr-avatar-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 100px;
+    height: 200px;
+    padding: 25px;
+}
+
+.usr-avatar {
+    width: 200px; /* Smaller avatar */
+    height: 200px;
+    background-color: #4CAF50; /* Green color */
+    border-radius: 50%;
+}
+
+.usr-avatar-details {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.usr-avatar-section h16 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+margin-top: 10px;
+margin-left: 30px;
+}
+
+.usr-role {
+    margin: 10px 10px 0 100px;
+    margin-left: 70px;
+    font-size: 18px;
+    color: #555;
+}
+
+.usr-dropdown-button {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    background: none;
+    width: 30px;
+    height: 30px;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555; /* Darker color for dots */
+    transition: color 0.3s;
+}
+.usr-dropdown-button:hover,
+.usr-dropdown-button:focus,
+.usr-dropdown-button:active {
+    color: #555;
+    background: none;
+    outline: none;
+    box-shadow: none;
+}
+.usr-dropdown-menu {
+    position: absolute;
+    top: 70%;
+    right: 0;
+    width: 200px;
+    height: auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.usr-dropdown-item {
+    padding: 10px 20px;
+    font-size: 14px;
+    height: 40px;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.usr-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.usr-dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Modal styles */
+.usr-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.usr-modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    height: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.usr-modal h16 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.usr-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.usr-modal-content label {
+    font-size: 14px;
+    color: #333;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.usr-modal-content input {
+    padding: 8px;
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.usr-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.usr-cancel-button {
+    background-color: #ccc;
+    color: #333;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.usr-cancel-button:hover {
+    background-color: #bbb;
+}
+
+.usr-save-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.usr-save-button:hover {
+    background-color: #45a049;
+}
+
+.usr-loading {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    padding: 20px;
+}

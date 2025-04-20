@@ -24,15 +24,7 @@ public class EmailController {
 
     @GetMapping("/sendEmail")
     public ResponseEntity<ResponseObject> sendEmailRequest(@RequestParam("toGmail") String gmail) {
-        try {
-            emailSenderService.sendOTPEmail(gmail, "Authentication Code for System");
-            return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseObject("OK",  "Sent email Successfully", null));
-        } catch (MessagingException e) {
-            // Handle the exception here, e.g., log the error or return an error message
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ResponseObject("Failed", "Error sending email: " + e.getMessage(), null));
-        }
+        return emailSenderService.sendOTPEmail(gmail, "Authentication Code for System");
     }
 
     @PutMapping("/deleteOTPByEmail/{email}")

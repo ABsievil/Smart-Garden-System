@@ -17,8 +17,10 @@ import org.springframework.messaging.MessageHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hcmut.smart_garden_system.Models.DeviceData;
 import hcmut.smart_garden_system.Models.SensorData;
 import hcmut.smart_garden_system.Services.SensorDataService;
+import hcmut.smart_garden_system.Services.RestfulAPI.DeviceService;
 import hcmut.smart_garden_system.Services.RestfulAPI.RecordService;
 
 @Configuration
@@ -30,6 +32,12 @@ public class MqttConfig {
     @Value("${mqtt.client.id}")
     private String clientId;
     
+    @Value("${mqtt.username}")
+    private String username;
+
+    @Value("${mqtt.password}")
+    private String password;
+    
     @Value("${mqtt.topic}")
     private String topic;
 
@@ -39,6 +47,9 @@ public class MqttConfig {
     @Autowired
     private RecordService recordService;
 
+    @Autowired
+    private DeviceService deviceService;
+
     private final ObjectMapper mapper = new ObjectMapper();
     
     @Bean
@@ -47,6 +58,8 @@ public class MqttConfig {
         MqttConnectOptions options = new MqttConnectOptions();
         
         options.setServerURIs(new String[] { brokerUrl }); // Địa chỉ MQTT broker
+        options.setUserName(username); // Set username
+        options.setPassword(password.toCharArray()); // Set password
         options.setCleanSession(true);
         
         factory.setConnectionOptions(options);
@@ -74,18 +87,34 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
+            String payload = message.getPayload().toString();
+            System.out.println("Received message: " + payload);
+
             try {
-                String payload = message.getPayload().toString();
-                System.out.println("Sensor received message: " + payload);
+                // Thử parse thành SensorData trước
+                SensorData sensorData = mapper.readValue(payload, SensorData.class);
+                System.out.println("Parsed as SensorData: " + sensorData);
                 // Lưu message vào service để render ra view
-                SensorDataService.updateLatestData(payload);
-    
-                SensorData latestData = mapper.readValue(payload, SensorData.class);
-                recordService.PROC_saveRecord(latestData);
-            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-                // Log the error
-                System.err.println("Error processing JSON: " + e.getMessage());
-                // You might want to add more sophisticated error handling here
+                SensorDataService.updateLatestData(payload); // Giả sử service này chỉ xử lý SensorData dạng String
+                recordService.PROC_saveRecord(sensorData); // Lưu record SensorData
+
+            } catch (com.fasterxml.jackson.core.JsonProcessingException eSensor) {
+                // Nếu không phải SensorData, thử parse thành DeviceData
+                try {
+                    DeviceData deviceData = mapper.readValue(payload, DeviceData.class);
+                    deviceService.updateModeByAreaFromData(deviceData);
+                    System.out.println("Parsed as DeviceData: " + deviceData);
+                    // Xử lý DeviceData ở đây (ví dụ: lưu vào DB khác, cập nhật trạng thái,...)
+                    // deviceStatusService.updateDeviceStatus(deviceData);
+                } catch (com.fasterxml.jackson.core.JsonProcessingException eDevice) {
+                    // Nếu cũng không phải DeviceData, log lỗi
+                    System.err.println("Error processing JSON: Unknown format. Payload: " + payload);
+                    System.err.println("SensorData parse error: " + eSensor.getMessage());
+                    System.err.println("DeviceData parse error: " + eDevice.getMessage());
+                }
+            } catch (Exception e) {
+                // Các lỗi khác không liên quan đến JSON parsing
+                System.err.println("An unexpected error occurred: " + e.getMessage());
             }
         };
     }

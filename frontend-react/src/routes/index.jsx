@@ -7,82 +7,86 @@ import DeviceRecord from "../Pages/Admin/DeviceRecord/DeviceRecord";
 import Scheduler from "../Pages/Admin/Scheduler/Scheduler";
 import StaffManager from "../Pages/Admin/StaffManager/StaffManager";
 import TreeManager from "../Pages/Admin/TreeManager/TreeManager";
+import UserProfile from "../Pages/Admin/UserProfile/UserProfile";
 import ForgetPassword from "../Pages/Login/ForgetPassword/ForgetPassword";
 import SignIn from "../Pages/Login/Signin/Login";
 import ControlDevice from "../Pages/Staff/ControlDevice/ControlDevice";
 import ViewScheduler from "../Pages/Staff/SchedulerViewing/SchedulerViewing";
 import TreeView from "../Pages/Staff/TreeViewing/TreeViewing";
-const userData = localStorage.getItem("userData");
-export const routes = [
-    {
-      path: "/",
-      element: <Layout1 />,
-      children: [
-        {
-          path: "/", 
-          element: <Navigate to="/signin" replace />, 
-        },
-        {
-          path: "/signin",
-          element: <SignIn />,
-        },
-        {
-          path: "/forget-password",
-          element: (
-            <ForgetPassword  />
-          ),
-        },
-      ],
-    },
-    {
-      path: "/",
-      element: <Layout2 />,
-      children: [
-        {
-          path: "/",
-          element: <Dashboard />,
-        },
-        {
-          path: "/dash-board",
-          element: <Dashboard />,
-        },
-        {
-          path: "/device-manager",
-          element: <DeviceManager/>,
-        },
-        {
-            path: "/",
-            element: <ControlDevice/>,
-        },
-        {
-          path: "/control-device",
-          element: <ControlDevice/>,
-      },
-        {
-          path: "/device-record",
-          element: <DeviceRecord/>,
-       },
-        {
-            path: "/tree-manager",
-            element: <TreeManager/>,
-        },
-        {
-            path: "/staff-manager",
-            element: <StaffManager/>,
-        },
-        {
-            path: "/scheduler",
-            element: <Scheduler/>,
-        },
-        {
-            path: "/tree-view",
-            element: <TreeView/>,
-        },
-        {
-            path: "/scheduler-view",
-            element: <ViewScheduler/>,
-        },
-    ],
-    },
 
+// ProtectedRoute component to check for userData and redirect if not present
+const ProtectedRoute = ({ children }) => {
+  const userData = localStorage.getItem("userData");
+  return userData ? children : <Navigate to="/signin" replace />;
+};
+
+export const routes = [
+  {
+    path: "/",
+    element: <Layout1 />,
+    children: [
+      {
+        path: "/",
+        element: <Navigate to="/signin" replace />,
+      },
+      {
+        path: "/signin",
+        element: <SignIn />,
+      },
+      {
+        path: "/forget-password",
+        element: <ForgetPassword />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <Layout2 />,
+    children: [
+      {
+        path: "/",
+        element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+      },
+      {
+        path: "/dash-board",
+        element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+      },
+      {
+        path: "/device-manager",
+        element: <ProtectedRoute><DeviceManager /></ProtectedRoute>,
+      },
+      {
+        path: "/control-device",
+        element: <ProtectedRoute><ControlDevice /></ProtectedRoute>,
+      },
+      {
+        path: "/device-record",
+        element: <ProtectedRoute><DeviceRecord /></ProtectedRoute>,
+      },
+      {
+        path: "/tree-manager",
+        element: <ProtectedRoute><TreeManager /></ProtectedRoute>,
+      },
+      {
+        path: "/staff-manager",
+        element: <ProtectedRoute><StaffManager /></ProtectedRoute>,
+      },
+      {
+        path: "/scheduler",
+        element: <ProtectedRoute><Scheduler /></ProtectedRoute>,
+      },
+      {
+        path: "/tree-view",
+        element: <ProtectedRoute><TreeView /></ProtectedRoute>,
+      },
+      {
+        path: "/scheduler-view",
+        element: <ProtectedRoute><ViewScheduler /></ProtectedRoute>,
+      },
+      {
+        path: "/user-profile",
+        element: <ProtectedRoute><UserProfile /></ProtectedRoute>,
+      },
+    ],
+  },
 ];

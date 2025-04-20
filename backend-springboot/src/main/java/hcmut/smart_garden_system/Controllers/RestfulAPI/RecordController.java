@@ -27,4 +27,10 @@ public class RecordController {
     public ResponseEntity<ResponseObject> getAllRecord() {
         return recordService.FNC_getAllRecord();
     }
+
+    // Endpoint mới để lấy 50 bản ghi gần nhất theo khu vực
+    @GetMapping("/getRecentRecords/{area}")
+    public ResponseEntity<ResponseObject> getRecentRecords(@PathVariable Integer area) {
+        return recordService.getRecentRecords(area);
+    }
 }

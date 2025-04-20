@@ -21,16 +21,19 @@
 //     @Autowired
 //     PasswordEncoder passwordEncoder;
 
+//     @Autowired
+//     UserRepository userRepository;
+
 //     // CommandLineRunner is used to initialize data for Database (For testing)
 //     @Bean
 //     CommandLineRunner initDatabase(UserRepository userRepository) {
 //         return new CommandLineRunner() {
 //             @Override
 //             public void run(String... args) throws Exception {
-//                 User user1 = new User("user", passwordEncoder.encode("1245"), "nccuong@gmail.com", Role.USER, null);
+//                 User user1 = new User("user3", passwordEncoder.encode("1245"), "nccuong123@gmail.com", Role.USER, userRepository.getNextUserId(), null);
 //                 logger.info("insert user account: " + userRepository.save(user1));
-//                 User admin = new User("admin", passwordEncoder.encode("1245"), "nccuong317qb@gmail.com", Role.ADMIN, null);
-//                 logger.info("insert admin account: " + userRepository.save(admin));
+//                 // User admin = new User("admin", passwordEncoder.encode("1245"), "nccuong317qb@gmail.com", Role.ADMIN, null);
+//                 // logger.info("insert admin account: " + userRepository.save(admin));
 //             }
 //         };
 //     }
