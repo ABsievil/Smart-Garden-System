@@ -244,7 +244,7 @@ const StaffManagement = () => {
                 onChange={handleInputChange}
                 placeholder="Nhập email (tuỳ chọn)"
               />
-              <label>Họ</label>
+              <label>Họ và tên đệm</label>
               <input
                 type="text"
                 name="lname"
