@@ -379,13 +379,13 @@ const Scheduler = () => {
   return (
     <div className="sch-container">
       <div className="header">
-        <h13>Events</h13>
+        <h13>Lịch Trình</h13>
         <Navbar />
       </div>
       {error && <div className="error-message">{error}</div>}
       <div className="sch-calendar-container">
         <div className="sch-scheduler-header">
-          <h14>Calendar</h14>
+          <h14 style={{ color: "white" }}>Calendar</h14>
           <div className="sch-select-button">
             <select value={month} onChange={(e) => setMonth(parseInt(e.target.value))}>
               {months.map((m, index) => (
@@ -401,10 +401,10 @@ const Scheduler = () => {
             </select>
           </div>
           <div className="sch-notification-button">
-            <button onClick={handleAddNotification}>+ New Notification</button>
+            <button onClick={handleAddNotification}>+ Thêm thông báo</button>
           </div>
           <div>
-            <button onClick={handleAddTask}>+ New Plan</button>
+            <button onClick={handleAddTask}>+ Thêm công việc</button>
           </div>
         </div>
         <div className="sch-calendar">

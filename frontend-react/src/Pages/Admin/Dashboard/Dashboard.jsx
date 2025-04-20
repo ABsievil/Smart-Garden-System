@@ -602,7 +602,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <div className="header">
-        <h6>Dashboard</h6>
+        <h6>Trang Chủ</h6>
         <div className="header-right">
           <div className="garden-dropdown">
             <button onClick={toggleGardenDropdown} className="garden-button">

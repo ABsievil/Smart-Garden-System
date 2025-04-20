@@ -264,7 +264,7 @@ const DeviceRecord = () => {
           </div>
           <div className="view-more-container">
             <button onClick={handleViewMore} className="view-more-button">
-              VIEW RECENT RECORDS
+              XEM BÁO CÁO GẦN NHẤT
             </button>
           </div>
         </Box>
