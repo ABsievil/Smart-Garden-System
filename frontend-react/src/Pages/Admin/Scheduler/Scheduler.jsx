@@ -426,17 +426,6 @@ const Scheduler = () => {
               value={taskData.content}
               onChange={(e) => setTaskData({ ...taskData, content: e.target.value })}
             />
-            <label>Khu vực</label>
-            <select
-              value={taskData.area}
-              onChange={(e) => setTaskData({ ...taskData, area: parseInt(e.target.value) })}
-            >
-              {areas.map(area => (
-                <option key={area} value={area}>
-                  {getAreaDisplayName(area)}
-                </option>
-              ))}
-            </select>
             <label>Nhân viên</label>
             <select
               value={taskData.employee}
@@ -456,6 +445,17 @@ const Scheduler = () => {
               ) : (
                 <option value="">Không có nhân viên</option>
               )}
+            </select>
+            <label>Chọn khu vực</label>
+            <select
+              value={taskData.area}
+              onChange={(e) => setTaskData({ ...taskData, area: parseInt(e.target.value) })}
+            >
+              {areas.map(area => (
+                <option key={area} value={area}>
+                  {getAreaDisplayName(area)}
+                </option>
+              ))}
             </select>
             <label>Ngày thực hiện</label>
             <input
