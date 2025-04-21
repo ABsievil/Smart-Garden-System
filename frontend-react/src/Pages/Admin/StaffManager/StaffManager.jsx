@@ -165,7 +165,7 @@ const StaffManagement = () => {
           onChange={handleSearch}
         />
         <button className="add-button" onClick={toggleModal}>
-          Thêm nhân viên
+          + Thêm nhân viên
         </button>
       </div>
       {error && <div className="error-message">{error}</div>}

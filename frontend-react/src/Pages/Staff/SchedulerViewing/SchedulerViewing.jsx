@@ -25,9 +25,9 @@ const ScheduleViewing = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
 
-  const currentUser = 'Tony';
-  const currentUserId = 1; // Should be fetched dynamically in a real app
-  const fixedArea = 1;
+  const currentUser = localStorage.getItem('name');
+  const currentUserId = localStorage.getItem('userId'); // Should be fetched dynamically in a real app
+  const fixedArea = localStorage.getItem('jobArea');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,16 +43,28 @@ const ScheduleViewing = () => {
             content: event.content,
           }));
 
-          const filteredEvents = parsedEvents.filter(event => event.area === fixedArea);
-          setEvents(filteredEvents);
+          // const filteredEvents = parsedEvents.filter(event => event.area === fixedArea);
+          // setEvents(filteredEvents);
+          const Events = parsedEvents.filter(event => event.employee === currentUser);
+          setEvents(Events);
+          
+          // Calculate start and end of the current week (Monday - Sunday)
+          const currentDate = new Date();
+          const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+          const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust Sunday to be end of week
+          const startOfWeek = new Date(currentDate);
+          startOfWeek.setDate(currentDate.getDate() + diffToMonday);
+          startOfWeek.setHours(0, 0, 0, 0); // Set to beginning of the day
 
-          const currentDate = new Date(2025, 3, 15);
-          const endOfWeek = new Date(currentDate);
-          endOfWeek.setDate(currentDate.getDate() + 7);
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+          endOfWeek.setHours(23, 59, 59, 999); // Set to end of the day
 
-          const tasksInWeek = filteredEvents.filter(event => {
+          const tasksInWeek = parsedEvents.filter(event => {
             const eventDate = new Date(event.date);
-            return eventDate >= currentDate && eventDate <= endOfWeek;
+            // Ensure comparison is done correctly by setting time parts if needed
+            // Assuming event.date already includes time, direct comparison should work
+            return eventDate >= startOfWeek && eventDate <= endOfWeek;
           });
           setWeeklyTasks(tasksInWeek);
 
@@ -235,7 +247,7 @@ const ScheduleViewing = () => {
         </div>
 
         <div className="sch-weekly-tasks" style={{ width: '30%' }}>
-          <h3 className="sch-weekly-title">Chi Tiết</h3>
+          <h3 className="sch-weekly-title">Công việc trong tuần</h3>
           <p className="sch-weekly-date">Hôm nay là {getFormattedDate(new Date())}</p>
           {weeklyTasks.length > 0 ? (
             weeklyTasks.map((task, index) => (

@@ -48,6 +48,7 @@ public class StaffManageService {
                     userData.put("name", name.trim().isEmpty() ? null : name.trim());
                     userData.put("jobName", info.getJobName());
                     userData.put("ssn", info.getSsn());
+                    userData.put("userId", user.getUserId());
                 } else {
                     userData.put("name", null);
                     userData.put("jobName", null);

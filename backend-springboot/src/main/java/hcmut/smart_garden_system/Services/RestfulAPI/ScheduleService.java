@@ -51,6 +51,14 @@ public class ScheduleService {
         scheduleData.put("content", schedule.getContent());
         scheduleData.put("area", schedule.getArea());
         scheduleData.put("userId", schedule.getUserId());
+
+        // Get name of user
+        User user = userRepository.findByUserId(schedule.getUserId());
+        if (user != null) {
+            scheduleData.put("name", user.getInformation().getLname() + " " + user.getInformation().getFname());
+        } else {
+            scheduleData.put("name", "");
+        }
         // Format LocalDateTime to ISO standard string for consistent JSON output
         scheduleData.put("dateTime", schedule.getDateTime() != null ? schedule.getDateTime().format(ISO_FORMATTER) : null);
         return scheduleData;
@@ -64,7 +72,7 @@ public class ScheduleService {
                         .body(new ResponseObject("FAILED", "User with ID " + userId + " not found", null));
             }
 
-            List<Schedule> schedules = scheduleRepository.findByUserId(userId);
+            List<Schedule> schedules = scheduleRepository.findByUserIdOrderByDateTimeAsc(userId);
             List<Map<String, Object>> resultList = new ArrayList<>();
             for (Schedule schedule : schedules) {
                 resultList.add(mapScheduleToMap(schedule));

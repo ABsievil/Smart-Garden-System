@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     
     User findByEmail(String email);
 
+    User findByUserId(Integer userId);
+
     // Tìm tất cả user có role 'USER'
     @Query("SELECT u FROM User u WHERE u.role = 'USER'")
     List<User> findAllUsersByRoleUser();
