@@ -71,7 +71,7 @@ const Scheduler = () => {
           setEvents(eventData.map(event => ({
             id: event.id,
             date: parseDateFromBackend(event.dateTime),
-            employee: '',
+            employee: event.name,
             employeeId: event.userId,
             area: event.area, // Now an integer (e.g., 1, 2, 3)
             content: event.content,
@@ -92,7 +92,7 @@ const Scheduler = () => {
         const response = await api.get('/api/v1/staff-manage/user-list');
         if (response.data.status === 'OK') {
           const employeeData = response.data.data.userList.map((user, index) => ({
-            userId: index + 1,
+            userId: user.userId,
             name: user.name || 'Không có tên',
           }));
           setEmployees(employeeData);
