@@ -57,6 +57,7 @@ const fetchUser = async (currentUsername) => {
       username: currentUsername,
     });
       localStorage.setItem('userId', response.data.data.userId);
+      localStorage.setItem('jobArea', response.data.data.information.jobArea);
   } catch (error) {
     console.error('Error fetching user info:', error.response?.data?.message || error.message);
    
