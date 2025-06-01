@@ -10,6 +10,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: [
+      'localhost',
+      'smart-gardent-system.azurewebsites.net' // Add this line to allow the specific host
+    ],
     watch: {
       usePolling: true,
     },
